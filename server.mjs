@@ -10,6 +10,7 @@
 //   TOSS_CLIENT_KEY / TOSS_SECRET_KEY   카드·계좌이체 결제 (토스페이먼츠)
 //   BANK_NAME / BANK_ACCOUNT / BANK_HOLDER  무통장 입금 계좌. 사업자 계좌를 쓰세요
 //   ADMIN_TOKEN                         입금 확인 처리용 관리자 토큰
+//   SHOW_VERIFY_CODE=1                  테스트 전용. 메일 발송 없이 인증 코드를 화면에 보여 줘요
 //   ANTHROPIC_API_KEY                   물병 사이즈 찾기(웹 검색). 없으면 그 기능만 꺼져요
 //
 // ⚠ 비밀 키와 토큰은 환경 변수로만 넣으세요. 저장소·HTML에 절대 커밋하지 마세요.
@@ -38,6 +39,7 @@ const FIT_MODEL = env.FIT_MODEL || 'claude-haiku-5-5';
 const SHIPPING_FEE = Number(env.SHIPPING_FEE || 0);
 const DB_FILE = env.DB_FILE || './data.json';
 const SECURE_COOKIE = env.NODE_ENV === 'production';
+const SHOW_VERIFY_CODE = env.SHOW_VERIFY_CODE === '1';   // 테스트 전용: 메일 대신 화면에 인증 코드 표시. 실제 운영에서는 끄세요
 
 // 가격의 기준은 서버예요. 브라우저가 보낸 금액은 받지 않아요.
 const CATALOG = {
@@ -50,6 +52,7 @@ const DEPOSIT_DAYS = 3;
 if (!TOSS_CLIENT_KEY || !TOSS_SECRET_KEY) console.warn('[경고] TOSS_CLIENT_KEY / TOSS_SECRET_KEY가 비어 있어요. 카드·계좌이체 결제가 동작하지 않아요.');
 if (!BANK_ON) console.warn('[안내] BANK_* 가 비어 있어 무통장 입금이 꺼져 있어요.');
 if (!ANTHROPIC_API_KEY) console.warn('[안내] ANTHROPIC_API_KEY가 없어 물병 사이즈 검색이 꺼져 있어요.');
+if (SHOW_VERIFY_CODE) console.warn('[주의] SHOW_VERIFY_CODE=1: 인증 코드를 화면에 보여 줘요. 테스트가 끝나면 꼭 끄세요.');
 
 /* ---------- 저장소 (예시: JSON 파일) ---------- */
 let db = { users: {}, orders: {}, fit: {} };
@@ -194,7 +197,7 @@ const routes = {
       createdAt: new Date().toISOString(),
     };
     await save(); await sendVerificationEmail(email, code);
-    return { ok: true };
+    return SHOW_VERIFY_CODE ? { ok: true, demoCode: code } : { ok: true };
   },
   'POST /api/auth/resend': async req => {
     const email = clip((await readJson(req)).email, 254).toLowerCase(), u = db.users[email];
@@ -203,7 +206,7 @@ const routes = {
     const code = String(randomInt(100000, 1000000));
     Object.assign(u, { code: await hashSecret(code), codeExp: Date.now() + 10 * 60e3, codeSentAt: Date.now(), tries: 0 });
     await save(); await sendVerificationEmail(email, code);
-    return { ok: true };
+    return SHOW_VERIFY_CODE ? { ok: true, demoCode: code } : { ok: true };
   },
   'POST /api/auth/verify': async (req, res) => {
     const b = await readJson(req), u = db.users[clip(b.email, 254).toLowerCase()];

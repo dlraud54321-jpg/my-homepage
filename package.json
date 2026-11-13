@@ -1,0 +1,8 @@
+{
+  "name": "setsign",
+  "private": true,
+  "type": "module",
+  "description": "SETSIGN 세트사인 홈페이지와 참고용 백엔드",
+  "scripts": { "start": "node server.mjs" },
+  "engines": { "node": ">=18" }
+}
