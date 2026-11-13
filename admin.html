@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>SETSIGN 주문 관리</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#0E1240;--orange:#FF5A1F;--white:#F5F5F0;--gut:clamp(16px,4vw,40px)}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--white);color:var(--navy);font:400 15px/1.6 'Noto Sans KR',system-ui,sans-serif;word-break:keep-all}
+button,input{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--orange);outline-offset:2px}
+.hd{position:sticky;top:0;z-index:2;display:flex;align-items:center;gap:16px;padding:14px var(--gut);background:var(--navy);color:var(--white);border-bottom:3px solid var(--orange)}
+.hd h1{margin:0 auto 0 0;font:400 22px/1 Anton,sans-serif;letter-spacing:.03em}
+.hd h1 small{font:700 13px/1 'Noto Sans KR',sans-serif;color:var(--orange);margin-left:8px;letter-spacing:0}
+.btn{min-height:44px;padding:0 18px;border:2px solid currentColor;background:transparent;font-weight:700;cursor:pointer}
+.btn-o{background:var(--orange);border-color:var(--orange);color:var(--navy)}
+.btn-n{background:var(--navy);border-color:var(--navy);color:var(--white)}
+.btn[disabled]{opacity:.5;cursor:progress}
+main{max-width:1080px;margin:0 auto;padding:24px var(--gut) 64px}
+.login{max-width:420px;margin:12vh auto 0;padding:28px;background:#fff;border:2px solid var(--navy)}
+.login h2{margin:0 0 6px;font-size:22px}
+.login p{margin:0 0 16px;font-size:14px}
+.login input{display:block;width:100%;height:48px;padding:0 12px;margin:0 0 12px;border:2px solid var(--navy);background:var(--white)}
+.msg{margin:12px 0;padding:10px 12px;background:var(--orange);font-weight:700}
+.msg:empty{display:none}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 20px}
+.tabs{display:flex;border:2px solid var(--navy)}
+.tabs button{min-height:40px;padding:0 14px;border:0;background:transparent;font-weight:700;cursor:pointer}
+.tabs button[aria-pressed="true"]{background:var(--navy);color:var(--white)}
+.sum{margin-left:auto;font-weight:700}
+.sum b{font:400 26px/1 Anton,sans-serif;color:var(--orange);margin:0 2px}
+.list{list-style:none;margin:0;padding:0;display:grid;gap:12px}
+.card{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 24px;padding:18px;background:#fff;border:2px solid var(--navy)}
+.card.ready{border-color:var(--orange);box-shadow:6px 6px 0 var(--orange)}
+.who{font-size:13px}
+.dep{font-size:20px;font-weight:700}
+.dep small{font-size:13px;font-weight:500;margin-left:6px}
+.amt{font:400 34px/1 Anton,sans-serif;text-align:right}
+.meta{grid-column:1 / -1;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:4px 24px;font-size:14px;border-top:1.5px solid var(--navy);padding-top:10px}
+.meta span b{display:inline-block;min-width:64px}
+.badge{display:inline-block;padding:3px 8px;font-size:12px;font-weight:700;border:1.5px solid var(--navy);margin-right:6px}
+.badge.done{background:var(--navy);color:var(--white)}
+.badge.ready{background:var(--orange)}
+.acts{grid-column:1 / -1;display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end}
+.empty{padding:40px;text-align:center;border:2px dashed var(--navy)}
+@media (max-width:600px){.card{grid-template-columns:minmax(0,1fr)}.amt{text-align:left}.sum{margin-left:0;width:100%}}
+</style>
+</head>
+<body>
+<header class="hd">
+  <h1>SETSIGN<small>주문 관리</small></h1>
+  <button class="btn" type="button" id="btn-refresh" hidden>새로고침</button>
+  <button class="btn" type="button" id="btn-out" hidden>나가기</button>
+</header>
+<main>
+  <form class="login" id="f-login">
+    <h2>판매자 로그인</h2>
+    <p>서버의 ADMIN_TOKEN 값을 입력하세요. 이 창을 닫으면 다시 입력해야 해요.</p>
+    <label for="tok" class="sr">관리자 비밀번호</label>
+    <input id="tok" type="password" autocomplete="current-password" placeholder="관리자 비밀번호" required>
+    <button class="btn btn-n" type="submit" style="width:100%">들어가기</button>
+    <p class="msg" role="alert" id="login-msg"></p>
+  </form>
+
+  <section id="panel" hidden>
+    <div class="bar">
+      <div class="tabs" role="group" aria-label="주문 상태">
+        <button type="button" data-f="WAITING_DEPOSIT" aria-pressed="true">입금 대기</button>
+        <button type="button" data-f="DONE" aria-pressed="false">입금 확인됨</button>
+        <button type="button" data-f="ALL" aria-pressed="false">전체</button>
+      </div>
+      <p class="sum" id="sum" aria-live="polite"></p>
+    </div>
+    <p class="msg" role="alert" id="msg"></p>
+    <ul class="list" id="list"></ul>
+  </section>
+</main>
+
+<script>
+(function(){
+  var $ = function(id){ return document.getElementById(id); };
+  var KEY = 'setsign-admin-token', token = '', filter = 'WAITING_DEPOSIT', orders = [];
+  var STATUS = { WAITING_DEPOSIT:['입금 대기','ready'], DONE:['입금 확인됨','done'], EXPIRED:['기한 지남',''], CANCELED:['취소',''] };
+  var won = function(n){ return Number(n).toLocaleString('ko-KR') + '원'; };
+  var dt = function(s){ return s ? new Date(s).toLocaleString('ko-KR', { month:'numeric', day:'numeric', hour:'2-digit', minute:'2-digit' }) : ''; };
+  try { token = sessionStorage.getItem(KEY) || ''; } catch (e) {}
+
+  async function api(path, body){
+    var r = await fetch(path, { method: body ? 'POST' : 'GET', cache:'no-store',
+      headers: Object.assign({ 'x-admin-token': token }, body ? { 'Content-Type':'application/json' } : {}),
+      body: body ? JSON.stringify(body) : undefined });
+    var data = {}; try { data = await r.json(); } catch (e) {}
+    if (r.status === 404 && !data.message) throw new Error('서버가 없는 곳에서 열었어요. server.mjs 가 실행 중인 주소의 /admin.html 로 들어오세요.');
+    if (!r.ok) { var err = new Error(data.message || ('요청 실패 (' + r.status + ')')); err.status = r.status; throw err; }
+    return data;
+  }
+  function el(tag, cls, text){ var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+  function line(label, value){ var s = el('span'); s.append(el('b', '', label), String(value || '-')); return s; }
+
+  function render(){
+    var shown = orders.filter(function(o){ return filter === 'ALL' || o.status === filter; });
+    var wait = orders.filter(function(o){ return o.status === 'WAITING_DEPOSIT'; });
+    $('sum').textContent = '';
+    $('sum').append('입금 대기 ', el('b', '', wait.length), '건 · ', el('b', '', won(wait.reduce(function(a, o){ return a + o.amount; }, 0))));
+    var list = $('list'); list.textContent = '';
+    if (!shown.length) { list.append(el('li', 'empty', filter === 'WAITING_DEPOSIT' ? '입금을 기다리는 주문이 없어요.' : '주문이 없어요.')); return; }
+    shown.forEach(function(o){
+      var st = STATUS[o.status] || [o.status, ''], sh = o.shipping || {};
+      var li = el('li', 'card' + (o.status === 'WAITING_DEPOSIT' ? ' ready' : ''));
+      var left = el('div');
+      var who = el('p', 'who'); who.style.margin = '0 0 4px'; who.append(el('span', 'badge ' + st[1], st[0]), o.orderId + ' · ' + dt(o.createdAt) + ' 주문');
+      var dep = el('p', 'dep', o.depositor || '-'); dep.style.margin = '0'; dep.append(el('small', '', '입금자명'));
+      left.append(who, dep, el('p', '', o.orderName));
+      left.lastChild.style.margin = '4px 0 0';
+      var amt = el('p', 'amt', won(o.amount)); amt.style.margin = '0';
+      var meta = el('div', 'meta');
+      meta.append(line('받는 분', sh.name), line('연락처', sh.phone), line('주소', '(' + (sh.zip || '') + ') ' + (sh.addr1 || '') + ' ' + (sh.addr2 || '')),
+                  line('메모', sh.memo), line('이메일', o.email), line(o.status === 'DONE' ? '확인 일시' : '입금 기한', o.status === 'DONE' ? dt(o.approvedAt) : dt(o.depositDue)));
+      var acts = el('div', 'acts');
+      if (o.status === 'WAITING_DEPOSIT' || o.status === 'EXPIRED') {
+        acts.append(actBtn('입금 확인', 'btn btn-o', '/api/admin/deposit', o, '입금자명과 금액이 통장과 같나요? 한 번 더 누르면 확정돼요'));
+      }
+      if (o.status !== 'DONE' && o.status !== 'CANCELED') acts.append(actBtn('주문 취소', 'btn', '/api/admin/cancel', o, '정말 취소할까요? 한 번 더 누르면 취소돼요'));
+      li.append(left, amt, meta); if (acts.childNodes.length) li.append(acts);
+      list.append(li);
+    });
+  }
+  // 실수 방지: 한 번 누르면 확인 문구로 바뀌고, 4초 안에 한 번 더 눌러야 실행돼요
+  function actBtn(label, cls, path, o, confirmText){
+    var b = el('button', cls, label), armed = false, t; b.type = 'button';
+    b.addEventListener('click', async function(){
+      if (!armed) { armed = true; b.textContent = confirmText; t = setTimeout(function(){ armed = false; b.textContent = label; }, 4000); return; }
+      clearTimeout(t); b.disabled = true; b.textContent = '처리 중…';
+      try { await api(path, { orderId: o.orderId }); await load(); }
+      catch (e) { $('msg').textContent = e.message; b.disabled = false; b.textContent = label; armed = false; }
+    });
+    return b;
+  }
+  async function load(){
+    $('msg').textContent = '';
+    try { orders = (await api('/api/admin/orders')).orders || []; render(); }
+    catch (e) { if (e.status === 403) return out(e.message); $('msg').textContent = e.message; }
+  }
+  function enter(){ $('f-login').hidden = true; $('panel').hidden = false; $('btn-refresh').hidden = $('btn-out').hidden = false; load(); }
+  function out(message){
+    token = ''; try { sessionStorage.removeItem(KEY); } catch (e) {}
+    $('panel').hidden = true; $('btn-refresh').hidden = $('btn-out').hidden = true; $('f-login').hidden = false;
+    $('login-msg').textContent = message || ''; $('tok').value = ''; $('tok').focus();
+  }
+  $('f-login').addEventListener('submit', async function(e){
+    e.preventDefault(); token = $('tok').value.trim(); if (!token) return;
+    try { await api('/api/admin/orders'); try { sessionStorage.setItem(KEY, token); } catch (er) {} $('login-msg').textContent = ''; enter(); }
+    catch (er) { $('login-msg').textContent = er.message; }
+  });
+  [].forEach.call(document.querySelectorAll('.tabs button'), function(b){
+    b.addEventListener('click', function(){ filter = b.dataset.f;
+      [].forEach.call(document.querySelectorAll('.tabs button'), function(x){ x.setAttribute('aria-pressed', String(x === b)); }); render(); });
+  });
+  $('btn-refresh').addEventListener('click', load);
+  $('btn-out').addEventListener('click', function(){ out(''); });
+  if (token) enter(); else $('tok').focus();
+})();
+</script>
+<style>.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}</style>
+</body>
+</html>

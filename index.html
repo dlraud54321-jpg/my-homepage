@@ -503,6 +503,7 @@ fieldset.box legend{padding:0;margin:0 0 8px;font:400 20px/1.2 var(--disp)}
 .notice svg{flex:none;color:var(--orange)}
 .notice a{flex:none;margin-left:auto;font-weight:700}
 @media (max-width:600px){.notice{align-items:flex-start}.notice svg{margin-top:2px}}
+.pay-note{margin:0 0 12px;font-size:14px;line-height:1.6}
 </style>
 </head>
 <body>
@@ -805,7 +806,7 @@ fieldset.box legend{padding:0;margin:0 0 8px;font:400 20px/1.2 var(--disp)}
         <li><span>2겹 카드 포켓</span><span>1개</span></li>
         <li><span>문구 카드</span><span>6장</span></li>
       </ul>
-      <p class="fine">쉐이커·물병은 포함되지 않아요. 일회용 생수병에는 권장하지 않아요. 카드 결제, 계좌이체, 무통장 입금으로 살 수 있어요.</p>
+      <p class="fine">쉐이커·물병은 포함되지 않아요. 일회용 생수병에는 권장하지 않아요. 결제는 계좌이체로만 받아요.</p>
       <button class="btn btn-n" type="button" data-buy>주문하기</button>
       <!-- TODO: 추가 팩 가격(3,900원)과 단체 주문 조건은 임시 값이에요. 실제 정책으로 바꾸세요. 가격의 기준은 server.mjs의 CATALOG예요. -->
       <div class="extra" style="margin-top:32px">
@@ -831,8 +832,8 @@ fieldset.box legend{padding:0;margin:0 0 8px;font:400 20px/1.2 var(--disp)}
       <div class="ans"><p>앞 칸에 1장, 뒤 칸에 1장이에요. 지금 상태 카드는 앞에, 다음에 쓸 카드는 뒤에 두면 돼요. 나머지 카드는 가방에 보관하세요.</p></div></details>
     <details><summary>회원가입 없이 살 수 있나요?<svg width="22" height="22" viewBox="0 0 22 22" stroke="currentColor" stroke-width="3" aria-hidden="true"><path d="M11 2v18M2 11h18"/></svg></summary>
       <div class="ans"><p>주문 내역과 배송을 안전하게 관리하려고 회원 주문만 받아요. 만 14세 이상이면 이메일 인증만으로 가입할 수 있어요.</p></div></details>
-    <details><summary>결제는 안전한가요?<svg width="22" height="22" viewBox="0 0 22 22" stroke="currentColor" stroke-width="3" aria-hidden="true"><path d="M11 2v18M2 11h18"/></svg></summary>
-      <div class="ans"><p>결제는 토스페이먼츠 결제창에서 진행되고, 카드 정보는 SETSIGN 서버에 저장되지 않아요. 결제 금액은 서버에서 주문 금액과 다시 대조한 뒤에만 승인해요.</p></div></details>
+    <details><summary>결제는 어떻게 하나요?<svg width="22" height="22" viewBox="0 0 22 22" stroke="currentColor" stroke-width="3" aria-hidden="true"><path d="M11 2v18M2 11h18"/></svg></summary>
+      <div class="ans"><p>결제는 주문 후 안내되는 사업자 계좌로 직접 이체하는 방식이라, 카드 정보를 받지 않아요. 주문 금액은 서버가 계산하고, 판매자가 통장에서 입금자명과 금액을 확인한 뒤 주문을 확정해요.</p><p>주문 후 3일 안에 입금하지 않으면 주문이 자동으로 취소돼요.</p></div></details>
     <details><summary>배송과 교환·환불은요?<svg width="22" height="22" viewBox="0 0 22 22" stroke="currentColor" stroke-width="3" aria-hidden="true"><path d="M11 2v18M2 11h18"/></svg></summary>
       <div class="ans"><p>배송 기간: [배송 기간을 입력하세요]</p><p>상품을 받은 날부터 7일 이내에 청약철회(반품)를 신청할 수 있어요. 자세한 기준은 <a href="#refund" data-doc="refund">교환·환불 정책</a>을 확인해 주세요.</p></div></details>
   </div>
@@ -866,7 +867,7 @@ fieldset.box legend{padding:0;margin:0 0 8px;font:400 20px/1.2 var(--disp)}
     <li><a href="#refund" data-doc="refund">교환·환불 정책</a></li>
   </ul>
   <p>이 페이지의 3D 물병, 카드 디자인, 사이즈 일러스트는 AI로 만든 그래픽이에요(AI 생성). 실제 제품과 다를 수 있어요.</p>
-  <p>© <span id="yr">2026</span> SETSIGN. 결제 서비스: 토스페이먼츠</p>
+  <p>© <span id="yr">2026</span> SETSIGN. 결제: 계좌이체</p>
   <div class="ft-giant" aria-hidden="true">SETSIGN</div>
 </footer>
 
@@ -933,13 +934,9 @@ fieldset.box legend{padding:0;margin:0 0 8px;font:400 20px/1.2 var(--disp)}
             <div class="qty" data-size="cards"><button type="button" data-d="-1" aria-label="추가 팩 수량 줄이기">−</button><output aria-live="polite">0</output><button type="button" data-d="1" aria-label="추가 팩 수량 늘리기">+</button></div></div>
           <p class="warn-s" role="note">일회용 플라스틱 생수병에는 권장하지 않아요. 물이 줄어들수록 밴드를 유지하기 어렵고 물병이 쓰러질 수 있어요. 단단한 다회용 물병·텀블러에 써 주세요.</p>
         </fieldset>
-        <fieldset class="box"><legend>결제 수단</legend>
-          <div class="pay-opts">
-            <label><input type="radio" name="payMethod" value="CARD" checked>카드<small>토스페이먼츠</small></label>
-            <label><input type="radio" name="payMethod" value="TRANSFER">계좌이체<small>토스페이먼츠 · 바로 이체</small></label>
-            <label><input type="radio" name="payMethod" value="DEPOSIT">무통장 입금<small>안내 계좌로 직접 이체</small></label>
-          </div>
-          <label class="field" id="depositor-f" hidden style="margin-top:14px">입금자명 <small>(통장에 찍히는 이름)</small><input name="depositor" maxlength="20" autocomplete="off"></label>
+        <fieldset class="box"><legend>결제 방법 · 계좌이체</legend>
+          <p class="pay-note">주문을 마치면 입금할 계좌가 바로 안내돼요. 입금이 확인되면 주문이 확정되고 발송을 준비해요.</p>
+          <label class="field">입금자명 <small>(통장에 찍히는 이름)</small><input name="depositor" maxlength="20" autocomplete="name" required></label>
         </fieldset>
         <fieldset class="box"><legend>배송 정보</legend>
           <label class="field">받는 분<input name="name" autocomplete="name" maxlength="40" required></label>
@@ -957,15 +954,15 @@ fieldset.box legend{padding:0;margin:0 0 8px;font:400 20px/1.2 var(--disp)}
           <div class="tot"><span>결제 예정 금액</span><b id="sum-total">9,900원</b></div>
           <p class="fine">최종 결제 금액은 서버에서 다시 계산해 확인해요.</p>
         </div>
-        <label class="chk"><input type="checkbox" name="agree"> 주문 내용을 확인했고 결제 진행에 동의해요 (필수)</label>
+        <label class="chk"><input type="checkbox" name="agree"> 주문 내용을 확인했고, 안내받은 계좌로 입금할게요 (필수)</label>
         <p class="msg" role="alert"></p>
-        <button class="btn btn-o w100" type="submit">결제하기</button>
+        <button class="btn btn-o w100" type="submit">주문하고 입금 계좌 받기</button>
       </form>
     </section>
 
     <section class="view" data-view="deposit" hidden>
       <h2 tabindex="-1">입금 안내</h2>
-      <p class="sub">주문이 접수됐어요. 아래 계좌로 입금하면 확인 뒤 결제 완료로 바뀌어요.</p>
+      <p class="sub">주문이 접수됐어요. 아래 계좌로 <b>입금자명 그대로</b> 입금해 주세요. 입금이 확인되면 ‘결제 완료’로 바뀌고 발송을 준비해요. 기한이 지나면 주문이 자동으로 취소돼요.</p>
       <div class="bankbox">
         <div><span>은행</span><b id="dp-bank"></b></div>
         <div class="acct"><span>계좌번호</span><b id="dp-acct"></b></div>
@@ -976,14 +973,6 @@ fieldset.box legend{padding:0;margin:0 0 8px;font:400 20px/1.2 var(--disp)}
       </div>
       <p class="msg" role="status"></p>
       <div class="btn-row"><button class="btn btn-o" type="button" id="btn-copy-acct">계좌번호 복사</button><button class="btn btn-n" type="button" data-go="orders">주문 내역 보기</button></div>
-    </section>
-
-    <section class="view" data-view="paydemo" hidden>
-      <h2 tabindex="-1">결제 (데모)</h2>
-      <p class="sub">실제 운영에서는 이 단계에서 토스페이먼츠 결제창이 열려요. 데모에서는 승인만 흉내 내요.</p>
-      <div class="sum"><div><span>주문번호</span><b id="pd-id"></b></div><div class="tot"><span>결제 금액</span><b id="pd-amt"></b></div></div>
-      <p class="msg" role="alert"></p>
-      <div class="btn-row"><button class="btn btn-o" type="button" id="btn-demo-pay">결제 승인 (데모)</button><button class="btn btn-ghost" type="button" data-go="order">주문서로</button></div>
     </section>
 
     <section class="view" data-view="result" hidden>
@@ -1055,16 +1044,16 @@ fieldset.box legend{padding:0;margin:0 0 8px;font:400 20px/1.2 var(--disp)}
   <p class="todo">초안이에요. 공개 전에 실제 약관으로 바꿔 주세요.</p>
   <h3>제1조 목적</h3><p>이 약관은 [상호명](이하 “회사”)이 운영하는 SETSIGN 온라인 스토어에서 제공하는 서비스 이용 조건을 정해요.</p>
   <h3>제2조 회원가입</h3><p>만 14세 이상인 사람만 가입할 수 있어요. 이메일 인증을 마쳐야 가입이 완료돼요.</p>
-  <h3>제3조 주문과 결제</h3><p>결제는 토스페이먼츠를 통해 이뤄지며, 회사는 결제 승인 전에 주문 금액을 서버에서 다시 확인해요.</p>
+  <h3>제3조 주문과 결제</h3><p>결제는 주문 후 안내되는 회사 계좌로 이체하는 방식으로만 받아요. 주문 후 3일 안에 입금이 확인되지 않으면 주문은 자동으로 취소돼요.</p>
   <h3>제4조 청약철회</h3><p>상품을 받은 날부터 7일 이내에 청약철회를 할 수 있어요. 자세한 기준은 교환·환불 정책을 따라요.</p>
   <h3>제5조 기타</h3><p>[분쟁 해결, 관할 법원 등 나머지 조항을 채워 주세요.]</p>
 </template>
 <template id="t-privacy" data-title="개인정보처리방침">
   <p class="todo">초안이에요. 공개 전에 실제 방침으로 바꿔 주세요.</p>
-  <h3>수집하는 항목</h3><ul><li>회원가입: 이름, 이메일, 비밀번호(암호화 저장), 약관 동의 기록</li><li>주문: 받는 분, 휴대폰 번호, 배송 주소, 배송 메모</li><li>결제: 결제 승인 정보(카드 번호는 저장하지 않아요)</li></ul>
+  <h3>수집하는 항목</h3><ul><li>회원가입: 이름, 이메일, 비밀번호(암호화 저장), 약관 동의 기록</li><li>주문: 받는 분, 휴대폰 번호, 배송 주소, 배송 메모</li><li>결제: 입금자명, 입금 확인 일시</li></ul>
   <h3>이용 목적</h3><p>회원 확인, 주문 처리와 배송, 고객 문의 응대</p>
   <h3>보유 기간</h3><p>회원 탈퇴 시 바로 삭제해요. 단, 전자상거래법에 따라 계약·청약철회 기록과 대금 결제·공급 기록은 5년, 소비자 불만·분쟁 처리 기록은 3년 보관해요.</p>
-  <h3>처리 위탁</h3><p>결제 처리: 토스페이먼츠 · 배송: [택배사] · 이메일 발송: [메일 서비스]</p>
+  <h3>처리 위탁</h3><p>배송: [택배사] · 이메일 발송: [메일 서비스]</p>
   <h3>문의</h3><p>개인정보 보호책임자: [이름] · hello@example.com</p>
 </template>
 <template id="t-refund" data-title="교환·환불 정책">
@@ -1779,12 +1768,12 @@ function frame(now) {
 requestAnimationFrame(frame);
 </script>
 
-<!-- 구매: 회원가입 · 이메일 인증 · 로그인 · 주문서 · 토스페이먼츠 결제 · 주문 내역 -->
+<!-- 구매: 회원가입 · 이메일 인증 · 로그인 · 주문서 · 계좌이체 입금 안내 · 주문 내역 -->
 <script type="module">
 /*
   서버(/api/*)가 있으면 실서버 모드, 없으면(파일로 열기, GitHub Pages 등) 데모 모드로 동작해요.
-  - 비밀 키(시크릿 키)는 이 파일에 없어요. 토스 클라이언트 키도 서버의 /api/config 에서 받아와요.
-  - 결제 금액은 서버가 주문 수량으로 다시 계산하고, 승인(/api/payments/confirm) 때 한 번 더 대조해요.
+  - 결제는 서버에 설정된 계좌로 직접 이체(무통장 입금)만 받아요. 계좌번호는 이 파일에 없고 서버가 주문 때 내려줘요.
+  - 결제 금액은 서버가 주문 수량으로 계산하고, 판매자가 /admin.html 에서 입금을 확인하면 주문이 확정돼요.
 */
 const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];
 const won = n => Number(n).toLocaleString('ko-KR') + '원';
@@ -1792,7 +1781,7 @@ const UNIT = 9900;
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 const PW_RE = /^(?=.*[A-Za-z])(?=.*\d).{8,64}$/;
 const PHONE_RE = /^01[016789]-?\d{3,4}-?\d{4}$/;
-const STATUS = { WAITING_DEPOSIT:['입금 대기','ready'], CONFIRMING:['승인 중','ready'], READY:['결제 대기','ready'], DONE:['결제 완료','done'], FAILED:['결제 실패','failed'], CANCELED:['취소','failed'] };
+const STATUS = { WAITING_DEPOSIT:['입금 대기','ready'], EXPIRED:['입금 기한 지남','failed'], READY:['결제 대기','ready'], DONE:['결제 완료','done'], FAILED:['결제 실패','failed'], CANCELED:['취소','failed'] };
 
 class ApiError extends Error { constructor(m, code) { super(m); this.code = code; } }
 async function req(path, { method = 'GET', body } = {}) {
@@ -1804,9 +1793,6 @@ async function req(path, { method = 'GET', body } = {}) {
 }
 const ADDON = 3900; // 화면 표시용 임시 가격. 실제 금액은 서버가 계산합니다.
 const orderName = (S, L, C) => `SETSIGN (${[S && `밴드 S ${S}개`, L && `밴드 L ${L}개`, C && `카드 추가 팩 ${C}개`].filter(Boolean).join(', ')})`;
-function loadScript(src) {
-  return new Promise((ok, no) => { const s = document.createElement('script'); s.src = src; s.onload = ok; s.onerror = () => no(new ApiError('결제 모듈을 불러오지 못했어요.')); document.head.appendChild(s); });
-}
 
 /* ----- 실서버 ----- */
 const Live = {
@@ -1824,21 +1810,8 @@ const Live = {
   login: b => req('/api/auth/login', { method:'POST', body:b }),
   logout: () => req('/api/auth/logout', { method:'POST', body:{} }),
   createOrder: b => req('/api/orders', { method:'POST', body:b }),
-  confirm: b => req('/api/payments/confirm', { method:'POST', body:b }),
   orders: () => req('/api/orders'),
   fit: b => req('/api/fit', { method:'POST', body:b }),
-  async pay(order) {
-    if (!this.cfg?.tossClientKey) throw new ApiError('결제 설정(클라이언트 키)이 서버에 없어요.');
-    if (!window.TossPayments) await loadScript('https://js.tosspayments.com/v2/standard');
-    const payment = window.TossPayments(this.cfg.tossClientKey).payment({ customerKey: order.customerKey });
-    const base = location.origin + location.pathname;
-    await payment.requestPayment({
-      method: order.payMethod === 'TRANSFER' ? 'TRANSFER' : 'CARD', amount:{ currency:'KRW', value: order.amount },
-      orderId: order.orderId, orderName: order.orderName,
-      successUrl: base + '?pay=success', failUrl: base + '?pay=fail',
-      customerEmail: order.email, customerName: order.name,
-    });
-  }
 };
 
 /* ----- 데모 (이 브라우저에만 저장) ----- */
@@ -1877,27 +1850,19 @@ const Demo = (() => {
       s.session = u.email; save(s); return { user: pub(u) };
     },
     async logout() { const s = load(); s.session = null; save(s); return { ok:true }; },
-    async createOrder({ items, shipping, payMethod, depositor }) {
+    async createOrder({ items, shipping, depositor }) {
       await wait(); const s = load(); if (!s.session) throw new ApiError('로그인이 필요해요.', 'AUTH');
       const n = v => Math.max(0, Math.min(10, v | 0)), S = n(items.S), L = n(items.L), C = n(items.cards);
       if (S + L + C < 1) throw new ApiError('수량을 1개 이상 골라 주세요.');
-      const dep = payMethod === 'DEPOSIT';
-      if (dep && !(depositor || '').trim()) throw new ApiError('입금자명을 입력해 주세요.');
+      if (!(depositor || '').trim()) throw new ApiError('입금자명을 입력해 주세요.');
       const o = { orderId: 'DEMO' + Date.now().toString(36).toUpperCase() + Math.random().toString(36).slice(2, 6).toUpperCase(),
         orderName: orderName(S, L, C), amount: (S + L) * UNIT + C * ADDON + this.cfg.shippingFee, items:{ S, L, cards:C }, shipping,
-        payMethod: dep ? 'DEPOSIT' : payMethod === 'TRANSFER' ? 'TRANSFER' : 'CARD',
-        status: dep ? 'WAITING_DEPOSIT' : 'READY', createdAt: new Date().toISOString(), email: s.session, name: shipping.name };
-      if (dep) Object.assign(o, { depositor: depositor.trim(), depositDue: new Date(Date.now() + 3 * 864e5).toISOString(),
-        bank:{ bank:'[은행명]', account:'[계좌번호]', holder:'[예금주]' } });   // 실제 계좌는 서버 환경 변수에서 내려와요
+        payMethod: 'DEPOSIT', status: 'WAITING_DEPOSIT', createdAt: new Date().toISOString(), email: s.session, name: shipping.name,
+        depositor: depositor.trim(), depositDue: new Date(Date.now() + 3 * 864e5).toISOString(),
+        bank:{ bank:'[은행명]', account:'[계좌번호]', holder:'[예금주]' } };   // 데모용 자리표시. 실제 계좌는 서버 환경 변수에서 내려와요
       s.orders.push(o); save(s); return o;
     },
     async fit() { await wait(200); throw new ApiError('물병 검색은 서버에 연결됐을 때만 동작해요. 아래에서 둘레를 재서 바로 계산할 수 있어요.', 'FIT_OFF'); },
-    async confirm({ paymentKey, orderId, amount }) {
-      await wait(600); const s = load(); const o = s.orders.find(x => x.orderId === orderId && x.email === s.session);
-      if (!o) throw new ApiError('주문을 찾을 수 없어요.');
-      if (Number(amount) !== o.amount) { o.status = 'FAILED'; save(s); throw new ApiError('결제 금액이 주문 금액과 달라 승인하지 않았어요.'); }
-      Object.assign(o, { status:'DONE', paymentKey, method:'데모', approvedAt: new Date().toISOString() }); save(s); return o;
-    },
     async orders() { const s = load(); return { orders: s.orders.filter(o => o.email === s.session).reverse() }; },
   };
 })();
@@ -2021,12 +1986,10 @@ function startOrder() {
 function openOrder() {
   if (!user) return startOrder();
   const f = $('#f-order'); if (!f.name.value && user.name) f.name.value = user.name;
-  const dep = f.querySelector('[name=payMethod][value=DEPOSIT]');
-  if (B.mode === 'live' && !B.cfg?.bankEnabled) { dep.disabled = true; if (dep.checked) f.querySelector('[name=payMethod][value=CARD]').checked = true; }
-  syncPay(); renderSum(); view('order');
+  if (!f.depositor.value && user.name) f.depositor.value = user.name;
+  renderSum(); view('order');
+  if (B.mode === 'live' && !B.cfg?.bankEnabled) say(f, '지금은 주문을 받을 수 없어요. 판매자가 입금 계좌를 준비 중이에요.');
 }
-function syncPay() { const f = $('#f-order'); $('#depositor-f').hidden = f.payMethod.value !== 'DEPOSIT'; }
-$$('#f-order [name=payMethod]').forEach(r => r.addEventListener('change', syncPay));
 function showDeposit(o) {
   $('#dp-bank').textContent = o.bank?.bank || ''; $('#dp-acct').textContent = o.bank?.account || ''; $('#dp-holder').textContent = o.bank?.holder || '';
   $('#dp-amt').textContent = won(o.amount); $('#dp-name').textContent = o.depositor || '';
@@ -2040,8 +2003,8 @@ $('#btn-copy-acct').addEventListener('click', async () => {
 $('#f-order').addEventListener('submit', async e => {
   e.preventDefault(); const f = e.currentTarget, d = Object.fromEntries(new FormData(f));
   if (qty.S + qty.L + qty.cards < 1) return say(f, '수량을 1개 이상 골라 주세요.');
-  const payMethod = f.payMethod.value, depositor = (d.depositor || '').trim();
-  if (payMethod === 'DEPOSIT' && !depositor) return say(f, '입금자명을 입력해 주세요.');
+  const depositor = (d.depositor || '').trim();
+  if (!depositor) return say(f, '입금자명을 입력해 주세요.');
   if (!(d.name || '').trim()) return say(f, '받는 분 이름을 입력해 주세요.');
   if (!PHONE_RE.test((d.phone || '').trim())) return say(f, '휴대폰 번호를 확인해 주세요. 예: 010-1234-5678');
   if (!/^\d{5}$/.test((d.zip || '').trim())) return say(f, '우편번호 5자리를 입력해 주세요.');
@@ -2050,26 +2013,14 @@ $('#f-order').addEventListener('submit', async e => {
   const shipping = { name: d.name.trim(), phone: d.phone.trim(), zip: d.zip.trim(), addr1: d.addr1.trim(), addr2: (d.addr2 || '').trim(), memo: (d.memo || '').trim() };
   await busy(f.querySelector('[type=submit]'), async () => {
     try {
-      lastOrder = await B.createOrder({ items:{ S: qty.S, L: qty.L, cards: qty.cards }, shipping, payMethod, depositor });
-      if (lastOrder.payMethod === 'DEPOSIT') showDeposit(lastOrder);
-      else if (B.mode === 'demo') { $('#pd-id').textContent = lastOrder.orderId; $('#pd-amt').textContent = won(lastOrder.amount); view('paydemo'); }
-      else await B.pay(lastOrder); // 토스페이먼츠 결제창으로 이동
+      lastOrder = await B.createOrder({ items:{ S: qty.S, L: qty.L, cards: qty.cards }, shipping, depositor });
+      showDeposit(lastOrder);
     } catch (err) {
-      say(f, err.code === 'USER_CANCEL' || err.code === 'PAY_PROCESS_CANCELED' ? '결제를 취소했어요.' : err.message);
+      say(f, err.message);
       if (err.code === 'AUTH') { user = null; await refreshMe(); }
     }
   });
 });
-$('#btn-demo-pay').addEventListener('click', async e => {
-  const box = $('[data-view="paydemo"]', shop);
-  await busy(e.currentTarget, async () => {
-    try {
-      const o = await B.confirm({ paymentKey: 'demo_' + Math.random().toString(36).slice(2), orderId: lastOrder.orderId, amount: lastOrder.amount });
-      result('결제 완료', `${o.orderName} · ${won(o.amount)} 결제가 승인됐어요. (데모)`);
-    } catch (err) { say(box, err.message); }
-  });
-});
-
 // 주문 내역
 async function openOrders() {
   if (!user) { pendingOrder = false; view('login'); return; }
@@ -2146,23 +2097,10 @@ if (SR) {
   });
 }
 
-/* ----- 시작: 서버 확인 → 결제 후 돌아온 경우 승인 ----- */
+/* ----- 시작: 서버가 있으면 실서버, 없으면 데모 ----- */
 try { await Live.init(); B = Live; } catch { B = Demo; }
 $$('.demo-banner', shop).forEach(el => { if (el.id !== 'demo-code-box') el.hidden = B.mode !== 'demo'; });
 await refreshMe();
-const qs = new URLSearchParams(location.search);
-if (qs.get('pay')) {
-  history.replaceState(null, '', location.pathname + location.hash);
-  if (qs.get('pay') === 'success') {
-    result('결제 확인 중…', '서버에서 결제 금액을 확인하고 있어요. 창을 닫지 말아 주세요.');
-    try {
-      const o = await B.confirm({ paymentKey: qs.get('paymentKey'), orderId: qs.get('orderId'), amount: Number(qs.get('amount')) });
-      result('결제 완료', `${o.orderName} · ${won(o.amount)} 결제가 승인됐어요. 주문 내역에서 확인할 수 있어요.`);
-    } catch (err) { result('결제를 완료하지 못했어요', err.message); }
-  } else {
-    result('결제가 취소되었거나 실패했어요', qs.get('message') || '다시 시도해 주세요.');
-  }
-}
 </script>
 </body>
 </html>

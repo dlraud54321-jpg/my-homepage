@@ -1,15 +1,13 @@
 // SETSIGN 참고용 백엔드 — Node.js 18+ / 외부 패키지 없음
 //
 // 실행 예:
-//   TOSS_CLIENT_KEY=test_ck_xxx TOSS_SECRET_KEY=test_sk_xxx \
 //   BANK_NAME=○○은행 BANK_ACCOUNT=000-000-000000 BANK_HOLDER=상호명 ADMIN_TOKEN=긴-임의-문자열 \
 //   ANTHROPIC_API_KEY=sk-ant-xxx node server.mjs
 //   → http://localhost:8080  (index.html을 같은 출처로 서빙하므로 실서버 모드로 동작)
 //
 // 환경 변수
-//   TOSS_CLIENT_KEY / TOSS_SECRET_KEY   카드·계좌이체 결제 (토스페이먼츠)
-//   BANK_NAME / BANK_ACCOUNT / BANK_HOLDER  무통장 입금 계좌. 사업자 계좌를 쓰세요
-//   ADMIN_TOKEN                         입금 확인 처리용 관리자 토큰
+//   BANK_NAME / BANK_ACCOUNT / BANK_HOLDER  주문 대금을 받을 계좌 (결제는 이 계좌로 직접 이체만 받아요). 사업자 계좌를 쓰세요
+//   ADMIN_TOKEN                         주문 관리 페이지(/admin.html) 비밀번호. 길고 추측하기 어렵게
 //   SHOW_VERIFY_CODE=1                  테스트 전용. 메일 발송 없이 인증 코드를 화면에 보여 줘요
 //   ANTHROPIC_API_KEY                   물병 사이즈 찾기(웹 검색). 없으면 그 기능만 꺼져요
 //
@@ -29,8 +27,6 @@ import { promisify } from 'node:util';
 const scrypt = promisify(_scrypt);
 const env = process.env;
 const PORT = Number(env.PORT || 8080);
-const TOSS_CLIENT_KEY = env.TOSS_CLIENT_KEY || '';
-const TOSS_SECRET_KEY = env.TOSS_SECRET_KEY || '';
 const BANK = { bank: env.BANK_NAME || '', account: env.BANK_ACCOUNT || '', holder: env.BANK_HOLDER || '' };
 const BANK_ON = Boolean(BANK.bank && BANK.account && BANK.holder);
 const ADMIN_TOKEN = env.ADMIN_TOKEN || '';
@@ -49,8 +45,8 @@ const CATALOG = {
 const SIZES = { S: [75, 90], L: [90, 105] };                  // 몸통 지름(mm). 시중 쉐이커 규격 기준 임시값. TODO: 실측 후 확정
 const DEPOSIT_DAYS = 3;
 
-if (!TOSS_CLIENT_KEY || !TOSS_SECRET_KEY) console.warn('[경고] TOSS_CLIENT_KEY / TOSS_SECRET_KEY가 비어 있어요. 카드·계좌이체 결제가 동작하지 않아요.');
-if (!BANK_ON) console.warn('[안내] BANK_* 가 비어 있어 무통장 입금이 꺼져 있어요.');
+if (!BANK_ON) console.warn('[경고] BANK_NAME / BANK_ACCOUNT / BANK_HOLDER 가 비어 있어 주문을 받을 수 없어요.');
+if (!ADMIN_TOKEN) console.warn('[경고] ADMIN_TOKEN 이 비어 있어 주문 관리 페이지(/admin.html)를 쓸 수 없어요.');
 if (!ANTHROPIC_API_KEY) console.warn('[안내] ANTHROPIC_API_KEY가 없어 물병 사이즈 검색이 꺼져 있어요.');
 if (SHOW_VERIFY_CODE) console.warn('[주의] SHOW_VERIFY_CODE=1: 인증 코드를 화면에 보여 줘요. 테스트가 끝나면 꼭 끄세요.');
 
@@ -105,11 +101,20 @@ function startSession(res, email) {
   res.setHeader('Set-Cookie', `sid=${token}; HttpOnly; Path=/; SameSite=Lax; Max-Age=604800${SECURE_COOKIE ? '; Secure' : ''}`);
 }
 const pubUser = u => ({ email: u.email, name: u.name });
+// 입금 기한이 지난 주문은 '기한 지남'으로 바꿔요 (조회할 때마다 확인)
+function expire(o) {
+  if (o.status === 'WAITING_DEPOSIT' && Date.parse(o.depositDue) < Date.now()) { o.status = 'EXPIRED'; return true; }
+  return false;
+}
 const pubOrder = o => ({
-  orderId: o.orderId, orderName: o.orderName, amount: o.amount, items: o.items, status: o.status, payMethod: o.payMethod,
-  createdAt: o.createdAt, approvedAt: o.approvedAt, method: o.method,
-  ...(o.payMethod === 'DEPOSIT' ? { depositor: o.depositor, depositDue: o.depositDue, bank: o.status === 'WAITING_DEPOSIT' ? BANK : undefined } : {}),
+  orderId: o.orderId, orderName: o.orderName, amount: o.amount, items: o.items, status: o.status, payMethod: 'DEPOSIT',
+  createdAt: o.createdAt, approvedAt: o.approvedAt, depositor: o.depositor, depositDue: o.depositDue,
+  bank: o.status === 'WAITING_DEPOSIT' ? BANK : undefined,
 });
+const adminOrder = o => ({ ...pubOrder(o), email: o.email, shipping: o.shipping, canceledAt: o.canceledAt });
+function requireAdmin(req) {
+  if (!ADMIN_TOKEN || !sameToken(req.headers['x-admin-token'] || '', ADMIN_TOKEN)) throw new HttpError(403, '관리자 비밀번호가 맞지 않아요.');
+}
 const orderName = (S, L, C) => `SETSIGN (${[S && `밴드 S ${S}개`, L && `밴드 L ${L}개`, C && `카드 추가 팩 ${C}개`].filter(Boolean).join(', ')})`;
 function qty(v) { const n = Number(v ?? 0); if (!Number.isInteger(n) || n < 0 || n > 10) throw new HttpError(400, '수량을 확인해 주세요.'); return n; }
 
@@ -174,7 +179,7 @@ const routes = {
   'GET /api/health': async () => ({ ok: true, service: 'setsign' }),
   // 공개해도 되는 값만 내려줘요. 시크릿 키·관리자 토큰·API 키는 절대 응답에 넣지 않아요.
   'GET /api/config': async () => ({
-    tossClientKey: TOSS_CLIENT_KEY, unitPrice: CATALOG.band.price, addonPrice: CATALOG.cards.price, shippingFee: SHIPPING_FEE,
+    payMethod: 'DEPOSIT', unitPrice: CATALOG.band.price, addonPrice: CATALOG.cards.price, shippingFee: SHIPPING_FEE,
     bankEnabled: BANK_ON, fitEnabled: Boolean(ANTHROPIC_API_KEY), sizes: SIZES,
   }),
   'GET /api/me': async req => { const u = currentUser(req); return { user: u ? pubUser(u) : null }; },
@@ -232,17 +237,14 @@ const routes = {
     return { ok: true };
   },
 
-  // 주문 생성: 금액은 여기서만 계산해요
+  // 주문 생성: 금액은 여기서만 계산해요. 결제는 설정된 계좌로 직접 이체(무통장 입금)만 받아요
   'POST /api/orders': async req => {
     const u = requireUser(req), b = await readJson(req);
+    if (!BANK_ON) throw new HttpError(503, '지금은 주문을 받을 수 없어요. 입금 계좌가 설정되지 않았어요.');
     const S = qty(b.items?.S), L = qty(b.items?.L), C = qty(b.items?.cards);
     if (S + L + C < 1) throw new HttpError(400, '수량을 1개 이상 골라 주세요.');
-    const payMethod = ['CARD', 'TRANSFER', 'DEPOSIT'].includes(b.payMethod) ? b.payMethod : 'CARD';
     const depositor = clip(b.depositor, 20);
-    if (payMethod === 'DEPOSIT') {
-      if (!BANK_ON) throw new HttpError(400, '지금은 무통장 입금을 받을 수 없어요.');
-      if (!depositor) throw new HttpError(400, '입금자명을 입력해 주세요.');
-    }
+    if (!depositor) throw new HttpError(400, '입금자명을 입력해 주세요.');
     const sh = b.shipping || {};
     const shipping = { name: clip(sh.name, 40), phone: clip(sh.phone, 20), zip: clip(sh.zip, 5), addr1: clip(sh.addr1, 120), addr2: clip(sh.addr2, 120), memo: clip(sh.memo, 100) };
     if (!shipping.name || !PHONE_RE.test(shipping.phone) || !/^\d{5}$/.test(shipping.zip) || !shipping.addr1) throw new HttpError(400, '배송 정보를 확인해 주세요.');
@@ -250,66 +252,45 @@ const routes = {
       orderId: `SS${Date.now().toString(36)}${randomBytes(5).toString('hex')}`.toUpperCase(),
       orderName: orderName(S, L, C), items: { S, L, cards: C },
       amount: (S + L) * CATALOG.band.price + C * CATALOG.cards.price + SHIPPING_FEE,
-      shipping, email: u.email, payMethod, createdAt: new Date().toISOString(),
-      status: payMethod === 'DEPOSIT' ? 'WAITING_DEPOSIT' : 'READY',
-      ...(payMethod === 'DEPOSIT' ? { depositor, depositDue: new Date(Date.now() + DEPOSIT_DAYS * 864e5).toISOString() } : {}),
+      shipping, email: u.email, depositor, createdAt: new Date().toISOString(),
+      status: 'WAITING_DEPOSIT', depositDue: new Date(Date.now() + DEPOSIT_DAYS * 864e5).toISOString(),
     };
     db.orders[order.orderId] = order; await save();
-    return { ...pubOrder(order), customerKey: u.customerKey, email: u.email, name: shipping.name };
+    return { ...pubOrder(order), email: u.email, name: shipping.name };
   },
   'GET /api/orders': async req => {
     const u = requireUser(req);
-    const orders = Object.values(db.orders).filter(o => o.email === u.email).sort((a, b) => b.createdAt.localeCompare(a.createdAt)).map(pubOrder);
-    return { orders };
+    const mine = Object.values(db.orders).filter(o => o.email === u.email);
+    if (mine.map(expire).some(Boolean)) await save();
+    return { orders: mine.sort((a, b) => b.createdAt.localeCompare(a.createdAt)).map(pubOrder) };
   },
 
-  // 결제 승인(카드·계좌이체): 결제창에서 돌아온 금액을 저장된 주문 금액과 대조한 뒤에만 토스에 승인 요청
-  'POST /api/payments/confirm': async req => {
-    const u = requireUser(req), b = await readJson(req);
-    const order = db.orders[clip(b.orderId, 64)];
-    if (!order || order.email !== u.email) throw new HttpError(404, '주문을 찾을 수 없어요.');
-    if (order.payMethod === 'DEPOSIT') throw new HttpError(400, '무통장 입금 주문은 입금 확인으로 처리돼요.');
-    if (order.status === 'DONE') return pubOrder(order);
-    if (order.status !== 'READY') throw new HttpError(409, '이미 처리된 주문이에요.');
-    if (Number(b.amount) !== order.amount) {
-      order.status = 'FAILED'; order.failReason = 'AMOUNT_MISMATCH'; await save();
-      throw new HttpError(400, '결제 금액이 주문 금액과 달라 승인하지 않았어요.', 'AMOUNT_MISMATCH');
-    }
-    order.status = 'CONFIRMING'; await save();
-    let r;
-    try { r = await fetch('https://api.tosspayments.com/v1/payments/confirm', {
-      method: 'POST',
-      headers: {
-        Authorization: 'Basic ' + Buffer.from(TOSS_SECRET_KEY + ':').toString('base64'),
-        'Content-Type': 'application/json',
-        'Idempotency-Key': order.orderId,
-      },
-      body: JSON.stringify({ paymentKey: clip(b.paymentKey, 200), orderId: order.orderId, amount: order.amount }),
-    }); } catch {
-      order.status = 'READY'; await save(); // 네트워크 오류: 같은 결제로 다시 승인 시도 가능
-      throw new HttpError(502, '결제사와 연결하지 못했어요. 잠시 뒤 다시 시도해 주세요.');
-    }
-    const data = await r.json().catch(() => ({}));
-    if (!r.ok || data.totalAmount !== order.amount) {
-      order.status = 'FAILED'; order.failReason = data.code || 'CONFIRM_FAILED'; await save();
-      throw new HttpError(400, data.message || '결제 승인에 실패했어요.', data.code);
-    }
-    Object.assign(order, { status: 'DONE', paymentKey: data.paymentKey, method: data.method, approvedAt: data.approvedAt });
-    await save();
-    return pubOrder(order);
+  // ── 주문 관리 (판매자용, /admin.html 에서 사용). x-admin-token 헤더로 확인해요 ──
+  'GET /api/admin/orders': async req => {
+    requireAdmin(req);
+    const all = Object.values(db.orders);
+    if (all.map(expire).some(Boolean)) await save();
+    return { orders: all.sort((a, b) => b.createdAt.localeCompare(a.createdAt)).map(adminOrder) };
   },
-
-  // 무통장 입금 확인 (관리자). 통장에서 입금자명·금액을 확인한 뒤 호출하세요.
-  //   curl -X POST localhost:8080/api/admin/deposit -H 'content-type: application/json' -H 'x-admin-token: …' -d '{"orderId":"SS…"}'
+  // 통장에서 입금자명·금액을 확인한 뒤 입금 확인. 기한이 지난 뒤 늦게 들어온 입금도 확인할 수 있어요
   'POST /api/admin/deposit': async req => {
-    if (!ADMIN_TOKEN || !sameToken(req.headers['x-admin-token'] || '', ADMIN_TOKEN)) throw new HttpError(403, '권한이 없어요.');
+    requireAdmin(req);
     const order = db.orders[clip((await readJson(req)).orderId, 64)];
-    if (!order || order.payMethod !== 'DEPOSIT') throw new HttpError(404, '무통장 입금 주문을 찾을 수 없어요.');
-    if (order.status === 'DONE') return pubOrder(order);
-    if (order.status !== 'WAITING_DEPOSIT') throw new HttpError(409, '입금 대기 상태가 아니에요.');
-    Object.assign(order, { status: 'DONE', method: '무통장 입금', approvedAt: new Date().toISOString() });
+    if (!order) throw new HttpError(404, '주문을 찾을 수 없어요.');
+    if (order.status === 'DONE') return adminOrder(order);
+    if (!['WAITING_DEPOSIT', 'EXPIRED'].includes(order.status)) throw new HttpError(409, '입금을 확인할 수 없는 상태예요.');
+    Object.assign(order, { status: 'DONE', approvedAt: new Date().toISOString() });
     await save();
-    return pubOrder(order);
+    return adminOrder(order);
+  },
+  'POST /api/admin/cancel': async req => {
+    requireAdmin(req);
+    const order = db.orders[clip((await readJson(req)).orderId, 64)];
+    if (!order) throw new HttpError(404, '주문을 찾을 수 없어요.');
+    if (order.status === 'DONE') throw new HttpError(409, '입금 확인된 주문은 여기서 취소할 수 없어요. 환불 후 따로 처리해 주세요.');
+    Object.assign(order, { status: 'CANCELED', canceledAt: new Date().toISOString() });
+    await save();
+    return adminOrder(order);
   },
 
   // 물병 사이즈 찾기. 검색 한 번마다 비용이 들어서 횟수를 제한하고 결과를 30일 동안 기억해요.
@@ -333,6 +314,7 @@ const here = name => new URL('./' + name, import.meta.url);
 const STATIC = {
   '/manifest.webmanifest': ['manifest.webmanifest', 'application/manifest+json; charset=utf-8'],
   '/sw.js': ['sw.js', 'text/javascript; charset=utf-8'],
+  '/admin.html': ['admin.html', 'text/html; charset=utf-8'],
   '/icon-192.png': ['icon-192.png', 'image/png'], '/icon-512.png': ['icon-512.png', 'image/png'],
 };
 const send = (res, status, data) => {

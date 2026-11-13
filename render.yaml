@@ -1,5 +1,5 @@
 # Render 배포 설정 (Blueprint). Render 대시보드에서 New → Blueprint → 이 저장소를 고르면 아래대로 만들어져요.
-# 키 값(sync: false)은 이 파일에 적지 않고, 배포할 때 Render 화면에서 직접 입력해요.
+# sync: false 인 값은 이 파일에 적지 않고, 배포할 때 Render 화면에서 직접 입력해요.
 services:
   - type: web
     name: setsign
@@ -12,17 +12,13 @@ services:
     envVars:
       - key: NODE_ENV
         value: production
-      - key: TOSS_CLIENT_KEY      # 토스페이먼츠 개발자 센터의 test_ck_… 키
+      - key: BANK_NAME            # 입금받을 은행 이름 (예: ○○은행)
         sync: false
-      - key: TOSS_SECRET_KEY      # 토스페이먼츠 개발자 센터의 test_sk_… 키
+      - key: BANK_ACCOUNT         # 계좌번호
         sync: false
-      - key: SHOW_VERIFY_CODE     # 테스트용: 인증 코드를 화면에 표시. 실제 운영 전에 지우세요
+      - key: BANK_HOLDER          # 예금주
+        sync: false
+      - key: ADMIN_TOKEN          # 주문 관리 페이지(/admin.html) 비밀번호. 길고 추측하기 어렵게
+        sync: false
+      - key: SHOW_VERIFY_CODE     # 테스트용: 인증 코드를 메일 대신 화면에 표시. 실제 운영 전에 지우세요
         value: "1"
-      - key: BANK_NAME            # 무통장 입금 테스트용 (아무 값이나 가능)
-        value: 테스트은행
-      - key: BANK_ACCOUNT
-        value: 000-0000-0000
-      - key: BANK_HOLDER
-        value: SETSIGN
-      - key: ADMIN_TOKEN          # 입금 확인 API 토큰. Render가 임의 값을 만들어 줘요
-        generateValue: true
