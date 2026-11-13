@@ -1,0 +1,2168 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<script>document.documentElement.className='js'</script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>SETSIGN 세트사인 — 말 대신, 꽂아.</title>
+<meta name="description" content="물병에 끼우고, 카드만 바꿔 꽂으면 끝. 헬스장에서 '같이 쓰실래요?' 대신 카드로 말하는 물병 카드 밴드, SETSIGN.">
+<meta name="theme-color" content="#0E1240">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="SETSIGN">
+<meta property="og:type" content="website">
+<meta property="og:title" content="SETSIGN 세트사인 — 말 대신, 꽂아.">
+<meta property="og:description" content="나는 내향인 몇 퍼센트? 질문 10개로 알아보고, 내 물병에 맞는 사이즈도 찾아보세요.">
+<!-- TODO: 배포 주소가 정해지면 og:image 와 og:url 을 절대 주소로 넣으세요. 예: https://도메인/icon-512.png -->
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230E1240'/%3E%3Crect x='7' y='9' width='18' height='14' fill='%23FF5A1F'/%3E%3Crect x='7' y='9' width='18' height='3' fill='%23F5F5F0'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Black+Han+Sans&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
+<style>
+/* =========================================================
+   SETSIGN — 3색만 사용: 네이비 #0E1240 · 오렌지 #FF5A1F · 화이트 #F5F5F0
+   ========================================================= */
+:root{
+  --navy:#0E1240; --orange:#FF5A1F; --white:#F5F5F0;
+  --hd:60px; --gut:clamp(16px,4vw,56px);
+  --disp:'Black Han Sans','Noto Sans KR',sans-serif;
+  --en:'Anton','Black Han Sans',Impact,sans-serif;
+  --body:'Noto Sans KR',system-ui,-apple-system,'Apple SD Gothic Neo',sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;overflow-x:clip}
+body{margin:0;background:var(--navy);color:var(--white);font:400 16px/1.7 var(--body);word-break:keep-all;overflow-wrap:break-word;overflow-x:clip}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{transition-duration:.01ms!important;animation:none!important}}
+svg{display:block}
+a{color:inherit}
+button{font:inherit;color:inherit}
+h1,h2,h3{font-weight:400}
+:focus-visible{outline:3px solid var(--orange);outline-offset:3px}
+.orange :focus-visible{outline-color:var(--navy)}
+.sr{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.skip{position:fixed;left:8px;top:-80px;z-index:60;background:var(--orange);color:var(--navy);padding:12px 16px;font-weight:700;text-decoration:none}
+.skip:focus{top:8px}
+
+/* 섹션 테마 */
+.navy{background:var(--navy);color:var(--white);--sh:var(--white)}
+.white{background:var(--white);color:var(--navy);--sh:var(--navy)}
+.orange{background:var(--orange);color:var(--navy);--sh:var(--navy)}
+.sec{position:relative;overflow-x:clip;padding:clamp(80px,12vw,168px) var(--gut)}
+.eyebrow{display:flex;align-items:center;gap:12px;margin:0 0 22px;font:700 13px/1 var(--body);letter-spacing:.16em}
+.eyebrow::before{content:"";width:32px;height:3px;background:currentColor}
+.navy .eyebrow{color:var(--orange)}
+.big{font:400 clamp(44px,7.6vw,112px)/1.02 var(--disp);margin:0 0 24px;letter-spacing:-.01em}
+.lede{font-size:clamp(16px,1.5vw,19px);max-width:32em;margin:0}
+.giant-out{position:absolute;z-index:0;pointer-events:none;user-select:none;white-space:nowrap;font:400 clamp(180px,30vw,520px)/.8 var(--en);color:transparent;-webkit-text-stroke:2px var(--orange)}
+.white .giant-out{-webkit-text-stroke-color:var(--navy)}
+.ai-tag{display:inline-block;font:700 11px/1 var(--body);letter-spacing:.06em;padding:6px 8px;border:1.5px solid currentColor;white-space:nowrap}
+
+/* 버튼 */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:52px;padding:0 24px;border:2px solid currentColor;border-radius:0;background:transparent;font:700 16px/1.2 var(--body);text-decoration:none;cursor:pointer;white-space:nowrap;transition:transform .15s,box-shadow .15s,background-color .15s,color .15s}
+.btn:hover{transform:translate(-3px,-3px);box-shadow:4px 4px 0 var(--sh,currentColor)}
+.btn:active{transform:none;box-shadow:none}
+.btn[disabled]{cursor:progress;transform:none;box-shadow:none}
+.btn-o{background:var(--orange);border-color:var(--orange);color:var(--navy)}
+.btn-n{background:var(--navy);border-color:var(--navy);color:var(--white)}
+.btn-w{background:var(--white);border-color:var(--white);color:var(--navy)}
+.btn-ghost{background:transparent}
+.w100{width:100%}
+
+/* 헤더 */
+.hd{position:fixed;inset:0 0 auto;height:var(--hd);z-index:30;display:flex;align-items:center;gap:clamp(12px,3vw,36px);padding:0 var(--gut);background:var(--navy);color:var(--white);border-bottom:2px solid var(--orange);--sh:var(--white)}
+.logo{display:flex;align-items:baseline;gap:8px;text-decoration:none;font:400 26px/1 var(--en);letter-spacing:.02em}
+.logo small{font:700 12px/1 var(--body);color:var(--orange);letter-spacing:.04em}
+.hd nav{display:flex;gap:24px;margin-left:auto}
+.hd nav a{text-decoration:none;font-weight:500;font-size:15px;padding:10px 0}
+.hd nav a:hover{color:var(--orange)}
+.hd-act{display:flex;gap:8px}
+.hd .btn{min-height:40px;padding:0 14px;font-size:14px}
+@media (max-width:900px){.hd nav{display:none}.hd-act{margin-left:auto}}
+@media (max-width:420px){.logo small{display:none}.hd .btn{padding:0 10px}}
+
+/* 3D 캔버스 (화면 고정, 클릭은 아래 무대로 통과) */
+#gl{position:fixed;inset:0;z-index:5;pointer-events:none}
+#labels{position:fixed;inset:0;z-index:6;pointer-events:none;opacity:0}
+.lbl{position:absolute;left:0;top:0;translate:-8px calc(-100% - 12px);white-space:nowrap;font:700 12px/1 var(--body);padding:6px 8px;background:var(--orange);color:var(--navy)}
+.lbl::after{content:"";position:absolute;left:6px;top:100%;width:2px;height:12px;background:var(--orange)}
+#labels.on-white .lbl{background:var(--navy);color:var(--white)}
+#labels.on-white .lbl::after{background:var(--navy)}
+.stage{position:relative;z-index:1;touch-action:pan-y;cursor:grab;-webkit-user-select:none;user-select:none}
+.stage:active{cursor:grabbing}
+.stage .ring{position:absolute;left:50%;top:50%;width:min(84%,64vh);aspect-ratio:1;translate:-50% -50%;border:2px solid var(--orange);border-radius:50%}
+.stage .ai-tag{position:absolute;left:0;bottom:0}
+.stage .hint{position:absolute;right:0;bottom:0;font-size:13px;font-weight:500;display:flex;align-items:center;gap:6px}
+.no-gl .stage{cursor:default}
+.no-gl .stage::after{content:"이 기기에서는 3D 미리보기를 표시할 수 없어요.";position:absolute;inset:auto 0 50% 0;text-align:center;font-weight:700}
+
+/* 히어로 */
+.hero{position:relative;overflow:clip;min-height:100svh;padding:calc(var(--hd) + clamp(28px,6vh,72px)) var(--gut) clamp(32px,6vh,64px);display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);grid-template-areas:"title stage" "copy stage";column-gap:2vw;align-content:center}
+.hero .giant-out{right:-.2em;top:calc(var(--hd) - .04em);writing-mode:vertical-rl;font-size:clamp(200px,24vw,420px)}
+.hero-head{grid-area:title;position:relative;z-index:2}
+.hero h1{margin:0;font-family:var(--disp);line-height:.86;white-space:nowrap}
+.hero h1 .l1{display:block;font-size:min(12.5vw,19vh);margin-left:-.1em}
+.hero h1 .l2{display:block;font-size:min(25vw,36vh);color:var(--orange);margin-top:.06em}
+.hero-copy{grid-area:copy;position:relative;z-index:2;align-self:end}
+.hero-copy p{font-size:clamp(17px,1.7vw,22px);font-weight:500;margin:24px 0 28px;max-width:22em}
+.cta{display:flex;flex-wrap:wrap;gap:12px}
+.hero .stage{grid-area:stage;height:min(78vh,760px);align-self:center}
+@media (max-width:900px){
+  .hero{grid-template-columns:minmax(0,1fr);grid-template-areas:"title" "stage" "copy";align-content:start}
+  .hero h1 .l1{font-size:17vw}
+  .hero h1 .l2{font-size:33vw}
+  .hero .stage{height:clamp(300px,50svh,520px);margin-top:-4vw}
+  .hero .giant-out{font-size:46vw;right:-.24em}
+  .hero-copy p{margin-top:12px}
+}
+
+/* 문제 */
+.problem .giant-out{right:-.18em;top:.1em;font-size:clamp(320px,42vw,700px)}
+.problem .big{max-width:13em;position:relative;z-index:1}
+.stats{position:relative;z-index:1;display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:24px;margin-top:clamp(40px,7vw,96px)}
+.stat{grid-column:1 / span 6;isolation:isolate}
+.stat:nth-child(2){grid-column:7 / span 6;margin-top:clamp(48px,10vw,170px)}
+.stat-num{position:relative;display:flex;align-items:baseline;gap:.04em;margin:0;font:400 clamp(130px,19vw,300px)/.82 var(--en)}
+.stat-num small{font:400 .3em/1 var(--disp)}
+.stat-num::before{content:"";position:absolute;z-index:-1;left:-.1em;bottom:.02em;width:1.05em;height:.34em;background:var(--orange)}
+.stat .desc{margin:18px 0 0;padding-top:14px;border-top:3px solid currentColor;font-size:clamp(16px,1.5vw,19px);font-weight:500;max-width:19em}
+.note{position:relative;z-index:1;margin:48px 0 0;font-size:13px;font-weight:700}
+@media (max-width:700px){.stat,.stat:nth-child(2){grid-column:1 / -1}.stat:nth-child(2){margin-top:24px}}
+
+/* 사용법 (스크롤 연출) */
+.how{position:relative}
+.how-track{position:relative;height:460vh}
+.how-sticky{position:sticky;top:0;height:100svh;overflow:clip;padding:calc(var(--hd) + 24px) var(--gut) 28px;display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:2vw}
+.how-copy{position:relative;z-index:2;display:flex;flex-direction:column;justify-content:center}
+.how-copy h2{font:400 clamp(26px,2.6vw,36px)/1.2 var(--disp);margin:0 0 8px}
+.steps{list-style:none;margin:0;padding:0;display:grid}
+.step{grid-area:1/1;opacity:0;transform:translateY(28px);transition:opacity .45s,transform .45s}
+.step.is-on{opacity:1;transform:none}
+.step-num{display:block;font:400 clamp(130px,19vw,300px)/.8 var(--en);color:transparent;-webkit-text-stroke:2px var(--orange);margin-left:calc(-1 * var(--gut) - .1em)}
+.step h3{font:400 clamp(40px,5vw,76px)/1.05 var(--disp);margin:14px 0 12px}
+.step p{margin:0;max-width:24em;font-size:clamp(16px,1.4vw,18px)}
+.how-bar{display:flex;gap:6px;margin-top:32px;max-width:360px}
+.how-bar i{flex:1;height:8px;border:1.5px solid var(--white)}
+.how-bar i.on{background:var(--orange);border-color:var(--orange)}
+.how .stage{height:100%;min-height:0}
+@media (max-width:900px){
+  .how-sticky{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr) auto;padding-bottom:20px}
+  .how .stage{order:-1}
+  .how-copy h2{display:none}
+  .step{position:relative}
+  .step-num{position:absolute;right:calc(-1 * var(--gut) - .1em);top:-.42em;margin:0;font-size:24vw;z-index:-1}
+  .step h3{font-size:clamp(32px,9vw,44px);margin-top:0}
+  .how-bar{margin-top:16px}
+}
+
+/* 직접 해 보기 */
+.try .giant-out{right:-.12em;bottom:-.2em;font-size:clamp(220px,30vw,520px)}
+.try-grid{position:relative;z-index:1;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:3vw;align-items:center}
+.try .stage{height:min(76vh,720px)}
+.ctrl{display:flex;flex-wrap:wrap;gap:10px;margin:28px 0 22px}
+.seg{display:flex;border:2px solid var(--navy)}
+.seg button{min-width:56px;min-height:48px;border:0;background:transparent;font:400 22px/1 var(--en);cursor:pointer;color:var(--navy)}
+.seg button[aria-pressed="true"]{background:var(--navy);color:var(--white)}
+.btn[aria-pressed="true"].btn-ghost{background:var(--navy);color:var(--white);border-color:var(--navy)}
+.now{margin:0 0 20px;font-size:15px}
+.now b{font:400 21px/1 var(--disp)}
+.chips-label{margin:0 0 10px;font-size:14px;font-weight:700}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{min-height:44px;padding:0 14px;border:2px solid var(--navy);background:var(--white);color:var(--navy);font:700 14px/1 var(--body);cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--navy);color:var(--white)}
+@media (max-width:900px){.try-grid{grid-template-columns:minmax(0,1fr)}.try .stage{order:-1;height:clamp(320px,54svh,520px)}}
+
+/* 사이즈 */
+.size-grid{position:relative;z-index:1;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(20px,4vw,64px);margin-top:clamp(40px,6vw,80px)}
+.size-card{position:relative;isolation:isolate;border:2px solid var(--white);padding:clamp(20px,3vw,40px);display:grid;grid-template-columns:minmax(0,.75fr) minmax(0,1fr);gap:clamp(16px,2.4vw,32px);align-items:end}
+.size-card:nth-child(2){margin-top:clamp(0px,9vw,140px)}
+.size-letter{position:absolute;z-index:-1;top:-.16em;font:400 clamp(220px,28vw,440px)/.75 var(--en);color:transparent;-webkit-text-stroke:2px var(--orange);pointer-events:none}
+.size-card:first-child .size-letter{left:calc(-1 * var(--gut) - .14em)}
+.size-card:nth-child(2) .size-letter{right:calc(-1 * var(--gut) - .14em)}
+.size-card svg{width:100%;height:auto;max-width:220px}
+.size-card h3{font:400 clamp(30px,3.2vw,44px)/1.05 var(--disp);margin:0 0 6px}
+.size-card .dim{font:400 clamp(22px,2.2vw,30px)/1.1 var(--disp);color:var(--orange);margin:0 0 12px}
+.size-card ul{margin:0 0 20px;padding-left:18px}
+.size-foot{position:relative;z-index:1;display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between;margin-top:40px}
+.size-foot p{margin:0;max-width:40em}
+@media (max-width:900px){.size-grid{grid-template-columns:minmax(0,1fr)}.size-card:nth-child(2){margin-top:0}}
+@media (max-width:480px){.size-card{grid-template-columns:minmax(0,1fr)}.size-card svg{max-width:150px}}
+
+/* 카드 6장 */
+.cards .giant-out{left:-.1em;top:-.08em;font-size:clamp(300px,40vw,640px)}
+.cards-head{position:relative;z-index:1;margin-left:auto;max-width:760px}
+.card-grid{position:relative;z-index:1;list-style:none;margin:clamp(48px,6vw,88px) 0 0;padding:0 0 48px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(14px,2.4vw,36px)}
+.card-grid li:nth-child(3n+2){transform:translateY(48px)}
+.card-grid li:nth-child(3n){transform:translateY(-16px)}
+.ss-card{position:relative;width:100%;aspect-ratio:3/2;border:2px solid var(--navy);display:flex;flex-direction:column;justify-content:space-between;padding:clamp(12px,2vw,24px) clamp(12px,2vw,24px) clamp(20px,2.6vw,32px);text-align:left;cursor:pointer;overflow:hidden;transition:transform .2s,box-shadow .2s}
+.ss-card:hover{transform:translate(-4px,-4px) rotate(-1deg);box-shadow:8px 8px 0 var(--navy)}
+.ss-card .cn{display:flex;justify-content:space-between;font:400 clamp(13px,1.3vw,18px)/1 var(--en);letter-spacing:.04em}
+.ss-card b{display:block;font:400 clamp(26px,3.6vw,56px)/1 var(--disp)}
+.ss-card .cs{display:block;margin-top:6px;font-weight:700;font-size:clamp(12px,1.1vw,15px)}
+.ss-card .bar{position:absolute;left:0;right:0;bottom:0;height:clamp(8px,1vw,12px)}
+.c-orange{background:var(--orange);color:var(--navy)}
+.c-navy{background:var(--navy);color:var(--white)}
+.c-navyo{background:var(--navy);color:var(--orange)}
+.c-white{background:var(--white);color:var(--navy)}
+.cards-foot{position:relative;z-index:1;display:flex;justify-content:flex-end}
+@media (max-width:900px){
+  .card-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .card-grid li:nth-child(n){transform:none}
+  .card-grid li:nth-child(2n){transform:translateY(28px)}
+}
+
+/* 가격 */
+.price{padding-top:clamp(64px,8vw,120px)}
+.price-big{margin:0;display:flex;align-items:flex-end;white-space:nowrap;line-height:.8}
+.price-big .num{font:400 clamp(130px,27vw,470px)/.8 var(--en);letter-spacing:-.01em}
+.price-big .won{font:400 clamp(130px,27vw,470px)/.8 var(--disp);color:transparent;-webkit-text-stroke:3px var(--navy);margin-right:-.5em}
+.price-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(24px,4vw,64px);margin-top:clamp(36px,5vw,64px);align-items:end}
+.price h2{font:400 clamp(30px,3.6vw,52px)/1.1 var(--disp);margin:0}
+.incl{list-style:none;margin:0 0 12px;padding:0;border-top:3px solid var(--navy)}
+.incl li{display:flex;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1.5px solid var(--navy);font-weight:700}
+.price .fine{margin:0 0 24px;font-size:14px;font-weight:500}
+@media (max-width:760px){.price-grid{grid-template-columns:minmax(0,1fr)}}
+
+/* FAQ */
+.faq .giant-out{left:-.08em;top:.05em;font-size:clamp(300px,36vw,600px)}
+.faq-wrap{position:relative;z-index:1;max-width:900px;margin-left:auto}
+.faq details{border-top:2px solid var(--navy)}
+.faq details:last-child{border-bottom:2px solid var(--navy)}
+.faq summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:16px;padding:22px 0;font:700 clamp(17px,1.8vw,21px)/1.45 var(--body)}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary svg{flex:none;transition:rotate .2s}
+.faq details[open] summary svg{rotate:45deg}
+.faq .ans{padding:0 0 26px;max-width:40em}
+.faq .ans p{margin:0 0 8px}
+
+/* 연락처 + 푸터 */
+.contact h2{font:400 clamp(56px,11vw,190px)/.92 var(--disp);margin:0 0 36px;margin-left:-.07em;white-space:nowrap}
+.contact h2 span{color:var(--orange)}
+.mail{display:inline-block;font:400 clamp(26px,5vw,68px)/1.1 var(--en);color:var(--orange);text-decoration:none;border-bottom:4px solid var(--orange);word-break:break-all}
+.mail:hover{color:var(--white);border-color:var(--white)}
+.contact p{max-width:34em}
+.ft{padding:40px var(--gut) 56px;border-top:2px solid var(--orange);font-size:13px;line-height:1.8}
+.biz{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:4px 24px;margin:0 0 20px}
+.biz div{display:flex;gap:10px}
+.biz dt{font-weight:700;flex:none}
+.biz dd{margin:0}
+.legal{display:flex;flex-wrap:wrap;gap:4px 20px;margin:0 0 20px;padding:0;list-style:none}
+.legal a{font-weight:700;padding:8px 0;display:inline-block}
+.ft p{margin:0 0 6px}
+
+/* 다이얼로그 (구매) */
+.dlg{border:0;padding:0;width:min(560px,calc(100vw - 24px));max-width:none;max-height:calc(100svh - 24px);background:var(--white);color:var(--navy);box-shadow:10px 10px 0 var(--orange);--sh:var(--navy)}
+.dlg::backdrop{background:rgba(14,18,64,.8)}
+.dlg-in{padding:0 clamp(18px,4vw,36px) 32px}
+.dlg-hd{position:sticky;top:0;z-index:1;display:flex;justify-content:space-between;align-items:center;gap:12px;margin:0 0 22px;padding:16px 0;background:var(--white);border-bottom:2px solid var(--navy)}
+.dlg-title{margin:0;font:400 22px/1 var(--en);letter-spacing:.03em}
+.x{width:44px;height:44px;display:grid;place-items:center;border:2px solid var(--navy);background:transparent;cursor:pointer;flex:none}
+.view h2{font:400 clamp(28px,6vw,36px)/1.1 var(--disp);margin:0 0 16px;outline:none}
+.view .sub{margin:-6px 0 18px;font-size:15px}
+.field{display:block;margin:0 0 14px;font-size:14px;font-weight:700}
+.field small{font-weight:500}
+.field input,.field textarea{display:block;width:100%;margin-top:6px;min-height:48px;padding:10px 12px;border:2px solid var(--navy);border-radius:0;background:var(--white);color:var(--navy);font:500 16px/1.4 var(--body)}
+.field textarea{min-height:72px;resize:vertical}
+.field input:focus-visible,.field textarea:focus-visible{outline:3px solid var(--orange);outline-offset:1px}
+.row2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);gap:10px}
+.chk{display:flex;gap:10px;align-items:flex-start;padding:7px 0;font-size:15px;line-height:1.5}
+.chk input{flex:none;width:22px;height:22px;margin:0;accent-color:var(--navy)}
+.chk a{font-weight:700;margin-left:auto;white-space:nowrap;font-size:13px}
+.chk.all{border-bottom:2px solid var(--navy);padding-bottom:12px;margin-bottom:6px;font-weight:700}
+.agree{border:0;margin:6px 0 14px;padding:0}
+.msg{margin:10px 0 14px;padding:10px 12px;background:var(--orange);color:var(--navy);font-weight:700;font-size:14px}
+.msg:empty{display:none}
+.demo-banner{margin:0 0 18px;padding:10px 12px;background:var(--navy);color:var(--white);font-size:13px;line-height:1.6}
+.demo-code{display:inline-block;margin-left:6px;padding:2px 8px;background:var(--orange);color:var(--navy);font:400 18px/1.2 var(--en);letter-spacing:.12em}
+.alt{margin:18px 0 0;font-size:14px;text-align:center}
+.link{background:none;border:0;padding:4px 2px;font-weight:700;text-decoration:underline;cursor:pointer;color:inherit}
+fieldset.box{border:0;margin:0 0 22px;padding:0}
+fieldset.box legend{padding:0;margin:0 0 8px;font:400 20px/1.2 var(--disp)}
+.qty-row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 0;border-bottom:1.5px solid var(--navy)}
+.qty-row span{font-weight:700}
+.qty-row small{display:block;font-weight:500;font-size:13px}
+.qty{display:flex;align-items:center;border:2px solid var(--navy)}
+.qty button{width:44px;height:44px;border:0;background:transparent;font-size:22px;line-height:1;cursor:pointer}
+.qty output{min-width:34px;text-align:center;font:400 20px/1 var(--en)}
+.sum{margin:18px 0 14px;padding:16px;background:var(--navy);color:var(--white)}
+.sum div{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:3px 0}
+.sum .tot{margin-top:8px;padding-top:10px;border-top:1.5px solid var(--white)}
+.sum .tot b{font:400 32px/1 var(--en);color:var(--orange)}
+.sum .fine{margin:10px 0 0;font-size:12px}
+.order-list{list-style:none;margin:0;padding:0}
+.order-list li{padding:14px 0;border-bottom:1.5px solid var(--navy);display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 12px}
+.order-list .oid{font-size:12px;word-break:break-all}
+.order-list .amt{font:400 22px/1 var(--en);text-align:right}
+.badge{display:inline-block;padding:3px 8px;font-size:12px;font-weight:700;border:1.5px solid var(--navy);justify-self:end}
+.badge.done{background:var(--navy);color:var(--white)}
+.badge.ready{background:var(--white)}
+.badge.failed{background:var(--orange)}
+.btn-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}
+.doc h3{font:400 20px/1.3 var(--disp);margin:22px 0 6px}
+.doc p,.doc li{font-size:14px}
+.doc .todo{padding:10px 12px;background:var(--orange);font-weight:700;font-size:13px}
+@media (max-width:600px){
+  .dlg{width:100vw;max-height:100svh;height:100svh;margin:0;box-shadow:none}
+  .row2{grid-template-columns:minmax(0,1fr)}
+}
+
+/* ===== 구경하는 재미: 등장, 흐르는 띠, 커서, 카드 갤러리 ===== */
+:root{--ease:cubic-bezier(.22,1,.36,1)}
+.js .rvh,.js .rv > .rvi{clip-path:inset(0 -100vw 100% -100vw);transform:translateY(.3em);transition:clip-path 1.1s var(--ease),transform 1.1s var(--ease);transition-delay:var(--d,0s)}
+.js .rvh.in,.js .rv.in > .rvi{clip-path:inset(-12% -100vw -28% -100vw);transform:none}
+.rv > .rvi{display:block}
+.price-big > .rvi{display:flex;align-items:flex-end}
+.js .up{opacity:0;transform:translateY(36px);transition:opacity .8s var(--ease),transform .8s var(--ease);transition-delay:var(--d,0s)}
+.js .up.in{opacity:1;transform:none}
+.giant-out{will-change:transform}
+/* 흐르는 띠 */
+.mq{position:relative;z-index:2;overflow:clip;background:var(--orange);color:var(--navy);padding:.14em 0 .2em;font:400 clamp(48px,8.4vw,136px)/1 var(--disp);white-space:nowrap}
+.mq-t{display:inline-flex;align-items:center;gap:.45em;padding-right:.45em;min-width:max-content;animation:mq 36s linear infinite;will-change:transform}
+.mq-t i{flex:none;width:.3em;height:.3em;background:currentColor}
+.mq.alt{background:var(--navy);color:transparent;-webkit-text-stroke:2px var(--white);border-top:2px solid var(--orange)}
+.mq.alt .mq-t{animation-direction:reverse;animation-duration:44s}
+.mq.alt i{background:var(--orange)}
+@keyframes mq{to{transform:translateX(-50%)}}
+/* 바닥 테이프 띠 */
+.tape{height:20px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='20'%3E%3Crect width='40' height='20' fill='%23FF5A1F'/%3E%3Cpath d='M0 20 10 0h10L10 20zM20 20 30 0h10L30 20z' fill='%230E1240'/%3E%3C/svg%3E") repeat-x}
+/* 따라다니는 커서 (마우스가 있을 때만) */
+#cur{position:fixed;left:0;top:0;z-index:40;width:14px;height:14px;margin:-7px 0 0 -7px;border-radius:50%;background:var(--orange);color:var(--navy);pointer-events:none;display:none;align-items:center;justify-content:center;opacity:0;font:400 14px/1 var(--en);letter-spacing:.08em;transition:width .3s var(--ease),height .3s var(--ease),margin .3s var(--ease),background-color .2s,box-shadow .2s,opacity .2s}
+#cur span{opacity:0;transition:opacity .2s}
+@media (hover:hover) and (pointer:fine){#cur{display:flex}}
+#cur.is-link{width:48px;height:48px;margin:-24px 0 0 -24px;background:transparent;box-shadow:inset 0 0 0 2px var(--orange)}
+#cur.is-drag{width:76px;height:76px;margin:-38px 0 0 -38px}
+#cur.is-drag span{opacity:1}
+#cur.on-o{background:var(--navy);color:var(--orange)}
+#cur.on-o.is-link{background:transparent;box-shadow:inset 0 0 0 2px var(--navy)}
+/* 카드 갤러리: 세로 스크롤이 가로 이동으로 바뀜 */
+.cards{position:relative}
+.cg-track{position:relative;height:440vh}
+.cg-sticky{position:sticky;top:0;height:100svh;overflow:clip;padding:calc(var(--hd) + 32px) 0 32px var(--gut);display:grid;grid-template-columns:minmax(0,.75fr) minmax(0,1.25fr);grid-template-rows:auto minmax(0,1fr);column-gap:2vw;row-gap:16px}
+.cg-sticky .cards-head{grid-column:1 / -1;display:flex;justify-content:space-between;align-items:flex-end;gap:24px;margin:0;max-width:none;padding-right:var(--gut)}
+.cards .big{font-size:clamp(34px,5vw,76px);margin:0}
+.cg-count{margin:0;font:400 clamp(56px,9vw,150px)/.8 var(--en);white-space:nowrap}
+.cg-count span{color:transparent;-webkit-text-stroke:2px var(--navy)}
+.cards .stage{height:100%;min-height:0}
+.cg-view{align-self:center;overflow-x:clip;min-width:0}
+.cg-rail{list-style:none;margin:0;padding:0;display:flex;gap:3vw;will-change:transform}
+.cg-rail li{flex:none;width:min(46vw,62vh);transform:scale(.82);transform-origin:left center;transition:transform .7s var(--ease)}
+.cg-rail li.on{transform:none}
+.cg-rail .ss-card{cursor:default;padding:clamp(16px,2.4vw,36px) clamp(16px,2.4vw,36px) clamp(28px,3.4vw,48px)}
+.cg-rail .ss-card:hover{transform:none;box-shadow:none}
+.cg-rail .ss-card .cn{font-size:clamp(14px,1.6vw,24px)}
+.cg-rail .ss-card b{font-size:clamp(40px,6.6vw,112px)}
+.cg-rail .ss-card .cs{font-size:clamp(14px,1.5vw,22px);margin-top:.5em}
+.cg-rail .ss-card .bar{height:clamp(10px,1.4vw,20px)}
+.cg-view .ai-tag{margin-top:20px}
+@media (max-width:900px){
+  .cg-sticky{grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(0,1fr) auto;padding:calc(var(--hd) + 20px) 0 20px var(--gut)}
+  .cg-rail{gap:5vw}
+  .cg-rail li{width:74vw}
+  .cg-view .ai-tag{margin-top:12px}
+}
+/* 푸터 대형 워드마크 */
+.ft{padding-bottom:0;overflow:clip}
+.ft-giant{height:.6em;margin:48px 0 0 calc(-1 * var(--gut) - .03em);font:400 27.5vw/.74 var(--en);color:var(--orange);white-space:nowrap;overflow:clip;user-select:none}
+
+/* ===== 내향인 테스트 안내, 사이즈 찾기, 앱 설치, 결제 수단, 단체 주문 ===== */
+.teaser{overflow:clip}
+.teaser .giant-out{right:-.06em;top:-.04em;font-size:clamp(300px,44vw,720px);-webkit-text-stroke-color:var(--navy)}
+.teaser > *:not(.giant-out){position:relative;z-index:1}
+.teaser .lede{margin-bottom:32px}
+.fit{position:relative;z-index:1;margin-top:clamp(48px,7vw,96px);border:2px solid var(--orange);padding:clamp(20px,3vw,40px);display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:clamp(24px,4vw,64px)}
+.fit h3{font:400 clamp(32px,4.4vw,64px)/1.05 var(--disp);margin:0 0 16px}
+.fit h3 span{color:var(--orange)}
+.fit p{margin:0}
+.fit-form{display:flex;gap:8px;margin:0 0 16px}
+.fit-form input{flex:1;min-width:0;height:56px;padding:0 16px;border:2px solid var(--white);border-radius:0;background:transparent;color:var(--white);font:500 17px/1 var(--body)}
+.fit-form input::placeholder{color:var(--white);opacity:.6}
+.fit-form input:focus-visible{outline:3px solid var(--orange);outline-offset:2px}
+.fit-form .btn{min-height:56px}
+.icon-btn{flex:none;width:56px;height:56px;display:grid;place-items:center;border:2px solid var(--white);background:transparent;color:var(--white);cursor:pointer}
+.icon-btn[aria-pressed="true"]{background:var(--orange);border-color:var(--orange);color:var(--navy)}
+.fit-out:empty{display:none}
+.fit-out{margin:0 0 16px;padding:20px;background:var(--white);color:var(--navy)}
+.fit-out .rec{display:flex;align-items:baseline;gap:16px;flex-wrap:wrap;margin:0 0 8px}
+.fit-out .rec b{font:400 clamp(72px,9vw,128px)/.8 var(--en)}
+.fit-out .rec span{font:400 clamp(22px,2.4vw,30px)/1.2 var(--disp)}
+.fit-out p{font-size:15px;margin:0 0 4px}
+.fit-out a{font-weight:700;word-break:break-all}
+.fit-out .btn{margin-top:16px}
+.fit-out.wait{background:transparent;color:var(--white);border:2px dashed var(--white);font-weight:700}
+.fit-manual{border-top:1.5px solid var(--white);padding-top:16px}
+.fit-manual summary{cursor:pointer;font-weight:700;list-style:none}
+.fit-manual summary::-webkit-details-marker{display:none}
+.fit-manual summary::before{content:"+ "}
+.fit-manual[open] summary::before{content:"− "}
+.fit-manual .fit-form{margin-top:16px}
+.app-row{margin-top:24px;padding-top:20px;border-top:1.5px solid var(--white);display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center}
+.app-row p{flex:1;min-width:220px;font-size:15px}
+@media (max-width:900px){.fit{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:480px){.fit-form{flex-wrap:wrap}.fit-form input{flex-basis:100%}.fit-form .btn{flex:1}}
+.extra{margin:0 0 24px;padding:16px 0 0;border-top:3px solid var(--navy)}
+.extra h3{font:400 22px/1.2 var(--disp);margin:0 0 8px}
+.extra p{margin:0 0 8px;font-weight:500}
+.extra a{font-weight:700}
+.pay-opts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.pay-opts label{position:relative;display:flex;flex-direction:column;justify-content:center;gap:4px;min-height:64px;padding:8px 12px;border:2px solid var(--navy);cursor:pointer;font-weight:700;font-size:15px;line-height:1.3}
+.pay-opts small{font-weight:500;font-size:12px}
+.pay-opts input{position:absolute;opacity:0;inset:0;width:100%;height:100%;margin:0;cursor:pointer}
+.pay-opts label:has(input:checked){background:var(--navy);color:var(--white)}
+.pay-opts label:has(input:focus-visible){outline:3px solid var(--orange);outline-offset:2px}
+.pay-opts label:has(input:disabled){opacity:.45;cursor:not-allowed}
+.bankbox{margin:0 0 16px;padding:16px;background:var(--navy);color:var(--white)}
+.bankbox div{display:flex;justify-content:space-between;gap:12px;padding:4px 0}
+.bankbox b{text-align:right;word-break:break-all}
+.bankbox .acct b{font:400 24px/1.1 var(--en);color:var(--orange);letter-spacing:.04em}
+.order-list .bank{grid-column:1 / -1;font-size:13px;font-weight:700}
+@media (max-width:480px){.pay-opts{grid-template-columns:minmax(0,1fr)}.pay-opts label{min-height:52px}}
+/* ===== 내향인 테스트 창 ===== */
+.quiz{border:0;padding:0;margin:0;width:100vw;max-width:none;height:100dvh;max-height:none;background:var(--navy);color:var(--white);--sh:var(--white);overflow:hidden}
+.quiz::backdrop{background:var(--navy)}
+.qz{position:relative;height:100%;display:grid;grid-template-rows:auto minmax(0,1fr);overflow:hidden}
+.qz-top{display:flex;align-items:center;gap:16px;padding:16px var(--gut);border-bottom:2px solid var(--orange)}
+.qz-top .logo{margin-right:auto}
+.qz-top .x{border-color:var(--white);color:var(--white)}
+.qz-bar{flex:1;max-width:420px;display:flex;gap:4px}
+.qz-bar i{flex:1;height:8px;border:1.5px solid var(--white)}
+.qz-bar i.on{background:var(--orange);border-color:var(--orange)}
+.qz-body{position:relative;overflow-y:auto;padding:clamp(24px,5vh,56px) var(--gut) 40px}
+.qz-pane{max-width:1080px;margin:0 auto}
+[hidden]{display:none!important}
+.qz-no{font:400 clamp(96px,17vw,260px)/.8 var(--en);color:transparent;-webkit-text-stroke:2px var(--orange);margin:0 0 0 -.04em;user-select:none}
+.qz-no b{font-weight:400;color:var(--orange);-webkit-text-stroke:0}
+.qz-q{font:400 clamp(30px,4.6vw,64px)/1.12 var(--disp);margin:16px 0 8px;outline:none}
+.qz-hint{margin:0 0 28px;font-size:15px}
+.qz-opts{display:grid;gap:12px;margin:0;padding:0;list-style:none}
+.qz-opts button{width:100%;min-height:64px;padding:14px 20px;display:flex;align-items:center;gap:16px;text-align:left;border:2px solid var(--white);background:transparent;color:var(--white);font:500 clamp(16px,1.6vw,20px)/1.4 var(--body);cursor:pointer;transition:background-color .15s,color .15s,transform .15s}
+.qz-opts button::before{content:attr(data-k);flex:none;font:400 22px/1 var(--en);color:var(--orange)}
+.qz-opts button:hover,.qz-opts button[aria-pressed="true"]{background:var(--white);color:var(--navy)}
+.qz-opts button:active{transform:scale(.99)}
+.qz-nav{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:24px;font-size:14px}
+.qz-friend{display:inline-block;margin:0 0 20px;padding:8px 12px;background:var(--orange);color:var(--navy);font-weight:700}
+.qz-pane.in > *{animation:qzin .5s var(--ease) both}
+.qz-pane.in > *:nth-child(2){animation-delay:.05s}.qz-pane.in > *:nth-child(3){animation-delay:.1s}.qz-pane.in > *:nth-child(4){animation-delay:.15s}.qz-pane.in > *:nth-child(n+5){animation-delay:.2s}
+@keyframes qzin{from{opacity:0;transform:translateY(24px)}}
+.qz-start h2{font:400 clamp(56px,11vw,180px)/.92 var(--disp);margin:0 0 24px;margin-left:-.05em}
+.qz-start h2 span{color:var(--orange)}
+.qz-start p{max-width:32em;margin:0 0 28px;font-size:clamp(16px,1.6vw,19px)}
+.qz-res{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(24px,5vw,80px);align-items:end}
+.qz-pct{margin:.14em 0 0;font:400 clamp(140px,21vw,330px)/.76 var(--en);color:var(--orange);white-space:nowrap;margin-left:-.04em}
+.qz-pct small{font-size:.36em;color:var(--white)}
+.qz-meter{height:20px;border:2px solid var(--white);margin:24px 0 8px}
+.qz-meter i{display:block;height:100%;width:0;background:var(--orange);transition:width 1.4s var(--ease)}
+.qz-ends{display:flex;justify-content:space-between;font-size:13px;font-weight:700}
+.qz-res h2{font:400 clamp(36px,5vw,72px)/1.05 var(--disp);margin:0 0 16px;outline:none}
+.qz-verdict{display:inline-block;margin:0 0 16px;padding:8px 12px;background:var(--white);color:var(--navy);font:400 20px/1.2 var(--disp)}
+.qz-res p{margin:0 0 12px;max-width:30em}
+.qz-res .fine{font-size:13px}
+.qz-res .cta{margin-top:24px}
+@media (max-width:820px){.qz-res{grid-template-columns:minmax(0,1fr);align-items:start}.qz-bar{display:none}}
+
+/* ===== 일회용 생수병 비권장 안내 ===== */
+.warn{position:relative;z-index:1;margin-top:clamp(32px,5vw,64px);padding:clamp(20px,3vw,40px);background:var(--orange);color:var(--navy);display:grid;grid-template-columns:auto minmax(0,1fr);gap:clamp(16px,3vw,40px);align-items:center}
+.warn svg{width:clamp(56px,8vw,112px);height:auto}
+.warn h3{font:400 clamp(30px,4.4vw,64px)/1.08 var(--disp);margin:0 0 12px}
+.warn p{margin:0;font-size:clamp(17px,1.7vw,21px);font-weight:500;line-height:1.6;max-width:36em}
+.warn p + p{margin-top:8px}
+.warn p:last-child{font-weight:700}
+.warn-s{margin:12px 0 0;padding:12px;background:var(--orange);color:var(--navy);font-size:14px;font-weight:700;line-height:1.5}
+.fit-out .caution{margin-top:12px;padding:10px 12px;background:var(--orange);font-weight:700}
+@media (max-width:560px){.warn{grid-template-columns:minmax(0,1fr)}}
+
+/* ===== 물 양 슬라이더 · 무게 설계 ===== */
+.water{margin:0 0 24px;padding:16px 0 0;border-top:2px solid var(--navy)}
+.water-l{display:flex;justify-content:space-between;align-items:baseline;gap:12px;font-weight:700;font-size:15px}
+.water-l b{font:400 24px/1 var(--en);letter-spacing:.02em}
+.water input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:44px;margin:4px 0;background:transparent;cursor:pointer}
+.water input[type=range]::-webkit-slider-runnable-track{height:8px;background:var(--navy)}
+.water input[type=range]::-moz-range-track{height:8px;background:var(--navy)}
+.water input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:28px;height:28px;margin-top:-10px;background:var(--orange);border:2px solid var(--navy)}
+.water input[type=range]::-moz-range-thumb{width:24px;height:24px;border-radius:0;background:var(--orange);border:2px solid var(--navy)}
+.water input[type=range]:focus-visible{outline:3px solid var(--orange);outline-offset:2px}
+.stab{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:0}
+.stab div{padding:12px;background:var(--navy);color:var(--white)}
+.stab small{display:block;font-size:12px;font-weight:700;color:var(--orange)}
+.stab b{display:block;font:400 clamp(26px,2.6vw,36px)/1.1 var(--en);margin-top:4px}
+.stab span{display:block;font-size:12px;margin-top:2px}
+.water .fine{margin:8px 0 0;font-size:12px}
+.spec{position:relative;z-index:1;margin-top:clamp(40px,6vw,80px);display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:clamp(24px,4vw,64px);align-items:start}
+.spec h3{font:400 clamp(30px,4vw,56px)/1.08 var(--disp);margin:0 0 16px}
+.spec h3 span{color:var(--orange)}
+.spec > div > p{margin:0 0 12px;max-width:30em}
+.spec svg{width:100%;max-width:420px;height:auto;margin-top:12px}
+.spec-list{margin:0;display:grid;gap:0;border-top:2px solid var(--white)}
+.spec-list div{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 16px;padding:14px 0;border-bottom:1.5px solid var(--white)}
+.spec-list dt{font-weight:700}
+.spec-list dd{margin:0;font:400 clamp(24px,2.4vw,34px)/1 var(--en);color:var(--orange);text-align:right}
+.spec-list small{grid-column:1 / -1;font-size:13px;line-height:1.6}
+.spec .fine{font-size:13px;margin-top:12px}
+@media (max-width:900px){.spec{grid-template-columns:minmax(0,1fr)}}
+.notice{position:relative;z-index:2;margin:0;display:flex;align-items:center;gap:12px;padding:14px var(--gut);background:var(--white);color:var(--navy);font-size:clamp(14px,1.4vw,17px);line-height:1.5;border-top:4px solid var(--orange)}
+.notice svg{flex:none;color:var(--orange)}
+.notice a{flex:none;margin-left:auto;font-weight:700}
+@media (max-width:600px){.notice{align-items:flex-start}.notice svg{margin-top:2px}}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">본문 바로가기</a>
+
+<header class="hd">
+  <a class="logo" href="#top" aria-label="SETSIGN 세트사인 처음으로">SETSIGN <small>세트사인</small></a>
+  <nav aria-label="주요 메뉴">
+    <a href="#how">사용법</a><a href="#test" data-quiz>내향인 테스트</a><a href="#fit">사이즈 찾기</a><a href="#cards">카드</a><a href="#price">가격</a><a href="#faq">FAQ</a>
+  </nav>
+  <div class="hd-act">
+    <button class="btn btn-ghost" id="btn-account" type="button">로그인</button>
+    <button class="btn btn-o" type="button" data-buy>주문하기</button>
+  </div>
+</header>
+
+<canvas id="gl" aria-hidden="true"></canvas>
+<div id="labels" aria-hidden="true"></div>
+<div id="cur" aria-hidden="true"><span>DRAG</span></div>
+
+<main id="main">
+
+<!-- 1. 소개 (히어로) -->
+<section class="hero navy" id="top" aria-labelledby="hero-h">
+  <div class="giant-out" aria-hidden="true" data-drift="-320" data-axis="y">SETSIGN</div>
+  <div class="hero-head">
+    <p class="eyebrow">SETSIGN 세트사인 · 물병 카드 밴드</p>
+    <h1 id="hero-h"><span class="l1 rvh">말 대신,</span><span class="l2 rvh" style="--d:.12s">꽂아.</span></h1>
+  </div>
+  <div class="stage" id="a-hero" data-stage data-bg="navy" tabindex="0" role="img" aria-label="SETSIGN 물병 카드 밴드 3D 미리보기(AI 생성). 좌우로 드래그하거나 화살표 키로 돌려 볼 수 있어요.">
+    <span class="ring" aria-hidden="true"></span>
+    <span class="ai-tag">AI 생성 3D</span>
+    <span class="hint" aria-hidden="true"><svg width="18" height="10" viewBox="0 0 18 10" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 1 1 5l4 4M13 1l4 4-4 4M1 5h16"/></svg>드래그해서 돌려 보기</span>
+  </div>
+  <div class="hero-copy">
+    <p>물병에 끼우고, 카드만 바꿔 꽂으면 끝.<br>“같이 쓰실래요?”는 카드가 대신 말해요.</p>
+    <div class="cta">
+      <button class="btn btn-o" type="button" data-buy>9,900원 · 주문하기</button>
+      <a class="btn btn-ghost" href="#try">직접 해 보기</a>
+    </div>
+  </div>
+</section>
+
+<p class="notice"><svg width="22" height="22" viewBox="0 0 96 96" fill="none" stroke="currentColor" stroke-width="9" aria-hidden="true"><path d="M48 10 90 84H6z" stroke-linejoin="round"/><path d="M48 38v24M48 71v4" stroke-linecap="round"/></svg><span><b>일회용 생수병에는 권장하지 않아요.</b> 물이 줄면 밴드가 헐거워지고 쓰러질 수 있어요. 프로틴 쉐이커·텀블러에 써 주세요.</span> <a href="#size">자세히</a></p>
+<div class="mq" aria-hidden="true"><div class="mq-t"><span>같이 써요</span><i></i><span>세트 중</span><i></i><span>2세트 남음</span><i></i><span>마지막 세트</span><i></i><span>잠깐 비움</span><i></i><span>스팟 가능</span><i></i><span>같이 써요</span><i></i><span>세트 중</span><i></i><span>2세트 남음</span><i></i><span>마지막 세트</span><i></i><span>잠깐 비움</span><i></i><span>스팟 가능</span><i></i></div></div>
+
+<!-- 2. 문제 -->
+<section class="sec white problem" id="problem" aria-labelledby="problem-h">
+  <div class="giant-out" aria-hidden="true" data-drift="180">?</div>
+  <p class="eyebrow">문제</p>
+  <h2 class="big" id="problem-h">“같이 쓰실래요?”<br>그 한마디가 제일 무거워요.</h2>
+  <div class="stats">
+    <!-- TODO: 아래 두 수치는 예시예요. 실제 설문·조사 결과와 출처로 바꾼 뒤 공개하세요. -->
+    <div class="stat">
+      <p class="stat-num"><span data-count="7">7</span><small>/10명</small></p>
+      <p class="desc">기구를 같이 쓰자는 말을 먼저 꺼내기 어렵다고 답한 20~30대 헬스러</p>
+    </div>
+    <div class="stat">
+      <p class="stat-num"><span data-count="4">4</span><small>분</small></p>
+      <p class="desc">쉬는 중인지 묻지 못하고 기구 앞에서 서성인 평균 시간</p>
+    </div>
+  </div>
+  <p class="note">※ 예시 수치예요. 실제 조사 결과와 출처로 바꿔 주세요.</p>
+</section>
+
+<!-- 2-1. 내향인 테스트: 홈페이지에 들어올 계기 (결과를 공유하면 이 페이지로 돌아와요) -->
+<section class="sec orange teaser" id="test-teaser" aria-labelledby="teaser-h">
+  <div class="giant-out" aria-hidden="true" data-drift="-200">%</div>
+  <p class="eyebrow">내향인 테스트</p>
+  <h2 class="big" id="teaser-h">나는 내향인<br>몇 퍼센트?</h2>
+  <p class="lede">질문 300개 중 매번 다른 10개, 1분이면 끝나요. 내가 SETSIGN을 살 만한 사람인지 숫자로 알려 드려요. 재미로 보는 테스트라 정답도, 나쁜 결과도 없어요.</p>
+  <div class="cta"><button class="btn btn-n" type="button" data-quiz>테스트 시작</button></div>
+</section>
+
+<div class="tape" aria-hidden="true"></div>
+<!-- 3. 사용법 4단계 (스크롤 연출) -->
+<section class="how navy" id="how" aria-labelledby="how-h">
+  <div class="how-track">
+    <div class="how-sticky">
+      <div class="how-copy">
+        <p class="eyebrow">사용법 4단계</p>
+        <h2 id="how-h">스크롤하면 물병이 직접 보여줘요</h2>
+        <ol class="steps">
+          <li class="step is-on"><span class="step-num" aria-hidden="true">01</span><h3>끼운다</h3><p>실리콘 밴드를 물병 가운데에 쭉 끼워요. 카드 포켓이 앞으로 오게 한 바퀴 돌려 맞추면 준비 끝.</p></li>
+          <li class="step"><span class="step-num" aria-hidden="true">02</span><h3>뽑는다</h3><p>상태가 바뀌면 앞 칸 카드를 옆 입구로 쓱 밀어 빼요. 뚜껑 열 필요도, 말 걸 필요도 없어요.</p></li>
+          <li class="step"><span class="step-num" aria-hidden="true">03</span><h3>바꿔 꽂는다</h3><p>뒤 칸에 넣어 둔 카드는 앞 칸으로, 뺀 카드는 뒤 칸으로. 2겹 포켓이라 다음 카드가 늘 대기 중이에요.</p></li>
+          <li class="step"><span class="step-num" aria-hidden="true">04</span><h3>두면 끝</h3><p>벤치 옆에 세워 두세요. 실리콘 밴드, 2겹 포켓, 카드. 구조는 이게 전부예요.</p></li>
+        </ol>
+        <div class="how-bar" aria-hidden="true"><i class="on"></i><i></i><i></i><i></i></div>
+      </div>
+      <div class="stage" id="a-story" data-stage data-bg="navy" tabindex="0" role="img" aria-label="사용법을 보여주는 3D 물병(AI 생성). 스크롤에 따라 돌고, 카드를 바꿔 꽂고, 분해돼요.">
+        <span class="ai-tag">AI 생성 3D</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 4. 직접 해 보기 -->
+<section class="sec white try" id="try" aria-labelledby="try-h">
+  <div class="giant-out" aria-hidden="true" data-drift="-260">TRY</div>
+  <div class="try-grid">
+    <div class="try-copy">
+      <p class="eyebrow">직접 해 보기</p>
+      <h2 class="big" id="try-h">눌러 봐요.<br>말은 필요 없어요.</h2>
+      <p class="lede">버튼을 누르면 스크롤 때와 같은 모션이 나와요. 물병은 좌우로 드래그해서 돌려 볼 수 있어요.</p>
+      <div class="ctrl" role="group" aria-label="3D 물병 조작">
+        <button class="btn btn-n" type="button" data-act="pull" aria-pressed="false">카드 뽑기</button>
+        <button class="btn btn-o" type="button" data-act="swap">바꿔 꽂기</button>
+        <div class="seg" role="group" aria-label="밴드 사이즈">
+          <button type="button" data-size="0" aria-pressed="true" aria-label="S 사이즈, 캡슐형 쉐이커">S</button>
+          <button type="button" data-size="1" aria-pressed="false" aria-label="L 사이즈, 기본형 쉐이커">L</button>
+        </div>
+        <button class="btn btn-ghost" type="button" data-act="explode" aria-pressed="false">분해 보기</button>
+      </div>
+      <div class="water">
+        <label class="water-l" for="water-r"><span>쉐이커 속 물</span><b id="water-v">250mL</b></label>
+        <input type="range" id="water-r" min="0" max="700" step="10" value="250" aria-describedby="stab">
+        <div class="stab" id="stab" aria-live="polite">
+          <div><small>무게중심 치우침</small><b id="stab-x">0.0mm</b><span id="stab-x2">균형 패드가 없으면 0.0mm</span></div>
+          <div><small>버티는 기울기</small><b id="stab-t">0°</b><span id="stab-t2">균형 패드가 없으면 0°</span></div>
+        </div>
+        <p class="fine"><b id="stab-basis"></b><br>물을 빼 보세요. 거의 비어도 포켓 쪽으로 쏠리지 않아요. 설계값으로 계산한 추정치예요.</p>
+        <p class="warn-s">일회용 생수병은 계산과 달리 벽이 얇아 찌그러지고 밴드가 미끄러져요. 쉐이커·텀블러에 써 주세요.</p>
+      </div>
+      <p class="now" aria-live="polite">앞 칸 <b id="now-front">같이 써요</b> · 뒤 칸 <b id="now-back">세트 중</b></p>
+      <p class="chips-label" id="chips-l">앞 칸에 꽂을 카드 고르기</p>
+      <div class="chips" role="group" aria-labelledby="chips-l">
+        <button class="chip" type="button" data-card="together" aria-pressed="true">같이 써요</button>
+        <button class="chip" type="button" data-card="set" aria-pressed="false">세트 중</button>
+        <button class="chip" type="button" data-card="left2" aria-pressed="false">2세트 남음</button>
+        <button class="chip" type="button" data-card="last" aria-pressed="false">마지막 세트</button>
+        <button class="chip" type="button" data-card="away" aria-pressed="false">잠깐 비움</button>
+        <button class="chip" type="button" data-card="spot" aria-pressed="false">스팟 가능</button>
+      </div>
+    </div>
+    <div class="stage" id="a-try" data-stage data-bg="white" tabindex="0" role="img" aria-label="조작할 수 있는 3D 물병(AI 생성). 좌우로 드래그하거나 화살표 키로 돌려 볼 수 있어요.">
+      <span class="ring" aria-hidden="true"></span>
+      <span class="ai-tag">AI 생성 3D</span>
+      <span class="hint" aria-hidden="true"><svg width="18" height="10" viewBox="0 0 18 10" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 1 1 5l4 4M13 1l4 4-4 4M1 5h16"/></svg>드래그</span>
+    </div>
+  </div>
+</section>
+
+<!-- 5. 사이즈 -->
+<section class="sec navy size" id="size" aria-labelledby="size-h">
+  <p class="eyebrow">사이즈 S · L</p>
+  <h2 class="big" id="size-h">쉐이커 굵기만<br>보면 돼요.</h2>
+  <!-- TODO: 지름 범위는 시중 쉐이커 규격(700mL급 지름 약 9.6~10cm) 기준 임시값이에요. 시제품으로 실측 후 확정하세요. -->
+  <div class="size-grid">
+    <article class="size-card">
+      <span class="size-letter" aria-hidden="true">S</span>
+      <svg viewBox="0 0 200 310" role="img" aria-label="S 사이즈 밴드를 끼운 캡슐형 쉐이커 일러스트(AI 생성)">
+        <path d="M58 104V226Q58 290 100 290Q142 290 142 226V104Z" fill="none" stroke="#F5F5F0" stroke-width="3"/>
+        <path d="M66 124h14M67 144h8M67 164h14M67 184h8" stroke="#F5F5F0" stroke-width="2"/>
+        <rect x="53" y="76" width="94" height="28" rx="4" fill="#FF5A1F"/>
+        <path d="M60 76Q62 34 100 30Q138 34 140 76Z" fill="#F5F5F0"/>
+        <rect x="82" y="22" width="36" height="12" rx="3" fill="#0E1240" stroke="#F5F5F0" stroke-width="2"/>
+        <rect x="53" y="176" width="94" height="40" fill="#FF5A1F"/>
+        <rect x="76" y="170" width="48" height="52" fill="#0E1240" stroke="#F5F5F0" stroke-width="3"/>
+        <rect x="82" y="182" width="34" height="28" fill="#FF5A1F"/>
+        <path d="M58 304H142M58 297V311M142 297V311" stroke="#FF5A1F" stroke-width="3"/>
+      </svg>
+      <div>
+        <h3>S · 슬림·캡슐</h3>
+        <p class="dim">지름 약 7.5–9cm</p>
+        <ul><li>위아래가 둥근 캡슐형 쉐이커</li><li>400~600mL급 쉐이커·슬림 텀블러</li></ul>
+        <p class="fine" style="margin:0 0 16px;font-size:13px">캡슐형은 몸통 가운데 곧은 부분에 끼워 주세요.</p>
+        <button class="btn btn-ghost" type="button" data-size-go="0">3D로 S 보기</button>
+      </div>
+    </article>
+    <article class="size-card">
+      <span class="size-letter" aria-hidden="true">L</span>
+      <svg viewBox="0 0 200 310" role="img" aria-label="L 사이즈 밴드를 끼운 700mL급 쉐이커 일러스트(AI 생성)">
+        <path d="M46 76L54 268Q54 280 64 280H136Q146 280 146 268L154 76Z" fill="none" stroke="#F5F5F0" stroke-width="3"/>
+        <path d="M54 120h14M55 140h8M56 160h14M57 180h8" stroke="#F5F5F0" stroke-width="2"/>
+        <rect x="43" y="34" width="114" height="42" rx="3" fill="#FF5A1F"/>
+        <rect x="78" y="24" width="44" height="12" rx="3" fill="#0E1240" stroke="#F5F5F0" stroke-width="2"/>
+        <path d="M130 36a14 14 0 0 1 28 0" fill="none" stroke="#FF5A1F" stroke-width="6"/>
+        <rect x="49" y="182" width="102" height="40" fill="#FF5A1F"/>
+        <rect x="76" y="176" width="48" height="52" fill="#0E1240" stroke="#F5F5F0" stroke-width="3"/>
+        <rect x="82" y="188" width="34" height="28" fill="#FF5A1F"/>
+        <path d="M46 300H154M46 293V307M154 293V307" stroke="#FF5A1F" stroke-width="3"/>
+      </svg>
+      <div>
+        <h3>L · 와이드</h3>
+        <p class="dim">지름 약 9–10.5cm</p>
+        <ul><li>700~900mL급 프로틴 쉐이커</li><li>대용량 텀블러·보틀</li></ul>
+        <button class="btn btn-ghost" type="button" data-size-go="1">3D로 L 보기</button>
+      </div>
+    </article>
+  </div>
+  <!-- 무게 설계: 숫자는 공용 스크립트의 stability() 와 같은 식으로 계산한 값 -->
+  <div class="spec up" aria-labelledby="spec-h">
+    <div>
+      <h3 id="spec-h">거의 빈 쉐이커도<br><span>안 쓰러지게.</span></h3>
+      <p>카드 포켓은 한쪽에만 달려 있어서, 그대로 두면 무게중심이 포켓 쪽으로 쏠려요. 물이 줄어 쉐이커가 가벼워질수록 더 그래요.</p>
+      <p>그래서 밴드 뒤쪽에 같은 실리콘으로 균형 패드를 덧대 포켓 무게를 맞받쳤어요. 밴드와 한 금형에서 한 번에 찍어 내서 추가 부품도, 조립도 없어요.</p>
+      <svg viewBox="0 0 420 220" role="img" aria-label="위에서 본 단면 그림. 앞쪽 포켓 16그램과 뒤쪽 균형 패드 20그램이 쉐이커 중심을 기준으로 무게를 맞받쳐요 (AI 생성)">
+        <circle cx="210" cy="110" r="72" fill="none" stroke="#F5F5F0" stroke-width="3"/>
+        <circle cx="210" cy="110" r="80" fill="none" stroke="#FF5A1F" stroke-width="10"/>
+        <path d="M141 70A80 80 0 0 0 141 150" fill="none" stroke="#FF5A1F" stroke-width="24"/>
+        <rect x="292" y="62" width="22" height="96" fill="#0E1240" stroke="#F5F5F0" stroke-width="3"/>
+        <circle cx="210" cy="110" r="5" fill="#F5F5F0"/>
+        <path d="M40 110H128M302 110H392" stroke="#F5F5F0" stroke-width="2" stroke-dasharray="4 5"/>
+        <text x="303" y="190" fill="#F5F5F0" font-size="15" font-weight="700" text-anchor="middle" font-family="Noto Sans KR, sans-serif">포켓 + 카드 16g</text>
+        <text x="118" y="190" fill="#F5F5F0" font-size="15" font-weight="700" text-anchor="middle" font-family="Noto Sans KR, sans-serif">균형 패드 20g</text>
+        <text x="210" y="30" fill="#FF5A1F" font-size="14" font-weight="700" text-anchor="middle" font-family="Noto Sans KR, sans-serif">위에서 본 단면</text>
+      </svg>
+    </div>
+    <div>
+      <dl class="spec-list">
+        <div><dt>포켓 + 카드 2장</dt><dd>16g</dd><small>TPU 포켓(0.8mm 2겹) 약 11.5g, PP 카드(신용카드 규격 85.6×54mm, 0.5mm) 장당 약 2.1g</small></div>
+        <div><dt>뒷면 균형 패드</dt><dd>20g</dd><small>밴드 뒤쪽 120° 구간만 4mm 두껍게. 손에 쥘 때 미끄럼 방지 그립 역할도 해요</small></div>
+        <div><dt>실리콘 밴드 본체</dt><dd>18g</dd><small>두께 1.3mm, 높이 5cm. 위아래 테두리를 도톰하게 해 쉐이커에 단단히 물려요</small></div>
+        <div><dt>빈 쉐이커의 무게중심 치우침</dt><dd>0mm</dd><small>균형 패드가 없으면 약 5mm 쏠려요</small></div>
+        <div><dt>빈 쉐이커가 버티는 기울기</dt><dd>24°</dd><small>균형 패드가 없으면 21°, 아무것도 안 끼운 빈 쉐이커는 23°. 키트를 끼워도 오히려 조금 더 안정적이에요</small></div>
+      </dl>
+      <p class="fine">700mL급 쉐이커(빈 무게 130g, 바닥 지름 8.4cm)를 기준으로 계산한 설계 목표값이에요. 금형 전에 시제품으로 무게와 기울기를 실측해 확인해야 해요.</p>
+    </div>
+  </div>
+  <div class="warn up" role="note" aria-labelledby="warn-h">
+    <svg viewBox="0 0 96 96" fill="none" stroke="currentColor" stroke-width="6" aria-hidden="true"><path d="M48 10 90 84H6z" stroke-linejoin="round"/><path d="M48 38v24M48 71v4" stroke-linecap="round"/></svg>
+    <div>
+      <h3 id="warn-h">편의점 일회용 생수병에는<br>권장하지 않아요</h3>
+      <p>얇은 일회용 플라스틱 생수병은 물이 줄어들수록 밴드를 제자리에 유지하기 어렵고, 가벼워진 물병이 쓰러질 수 있어요.</p>
+      <p>빈 500mL 생수병은 10~15g 안팎인데 키트는 약 54g이라, 물이 다 떨어지면 물병보다 키트가 4배 넘게 무거워져요. 얇은 벽은 쥐면 찌그러져 밴드도 미끄러지기 쉬워요.</p>
+      <p>프로틴 쉐이커나 텀블러처럼 단단한 다회용 물병에 써 주세요.</p>
+    </div>
+  </div>
+  <div class="size-foot">
+    <p><b>헷갈리면 이렇게 재요.</b> 종이띠로 물병의 가장 굵은 곳을 한 바퀴 감아 길이를 잰 뒤 3.14로 나누면 지름이에요.</p>
+    <span class="ai-tag">AI 생성 일러스트</span>
+  </div>
+
+  <!-- 내 물병 사이즈 찾기: 제품명을 서버가 인터넷에서 검색해 지름을 찾고 S·L을 추천 -->
+  <div class="fit" id="fit">
+    <div>
+      <h3>쉐이커 이름만<br><span>알려 주세요.</span></h3>
+      <p>쓰는 프로틴 쉐이커나 텀블러의 제품명을 적거나 말하면, 인터넷에서 규격을 찾아 지름을 계산하고 S·L 중 맞는 사이즈를 알려 드려요.</p>
+      <div class="app-row">
+        <p><b>앱으로 설치하기.</b> <span id="app-hint">브라우저 메뉴에서 ‘앱 설치’ 또는 ‘홈 화면에 추가’를 누르면 사이즈 찾기와 주문 내역을 홈 화면에서 바로 열 수 있어요.</span></p>
+        <button class="btn btn-o" type="button" id="btn-install" hidden>앱 설치</button>
+      </div>
+    </div>
+    <div>
+      <form class="fit-form" id="f-fit" novalidate>
+        <label class="sr" for="fit-q">물병 제품명</label>
+        <input id="fit-q" name="q" maxlength="60" autocomplete="off" placeholder="예: 쓰는 쉐이커·텀블러 제품명과 용량" required>
+        <button class="icon-btn" type="button" id="fit-mic" aria-label="말로 입력하기" aria-pressed="false" hidden><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></button>
+        <button class="btn btn-o" type="submit">사이즈 찾기</button>
+      </form>
+      <div class="fit-out" id="fit-out" aria-live="polite"></div>
+      <details class="fit-manual" id="fit-manual">
+        <summary>검색이 안 되면 직접 재서 계산하기</summary>
+        <form class="fit-form" id="f-fit-manual" novalidate>
+          <label class="sr" for="fit-c">물병 둘레 (cm)</label>
+          <input id="fit-c" name="c" inputmode="decimal" placeholder="가장 굵은 곳의 둘레 (cm) 예: 30">
+          <button class="btn btn-ghost" type="submit">계산</button>
+        </form>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- 6. 카드 종류 6장 (스크롤하면 가로로 넘어가고, 물병 앞 칸 카드가 따라 바뀜) -->
+<section class="white cards" id="cards" aria-labelledby="cards-h">
+  <div class="cg-track">
+    <div class="cg-sticky">
+      <div class="cards-head">
+        <div><p class="eyebrow">카드 종류</p><h2 class="big" id="cards-h">카드 6장,<br>상황마다 한 장씩.</h2></div>
+        <p class="cg-count" aria-hidden="true"><b id="cg-n">01</b><span>/06</span></p>
+      </div>
+      <div class="stage" id="a-cards" data-stage data-bg="white" tabindex="0" role="img" aria-label="지금 보고 있는 카드를 앞 칸에 꽂은 3D 물병(AI 생성)">
+        <span class="ai-tag">AI 생성 3D</span>
+      </div>
+      <div class="cg-view">
+        <ul class="cg-rail">
+        <li data-key="together" class="on"><div class="ss-card c-orange"><span class="cn"><span>SETSIGN</span><span>01</span></span><span><b>같이 써요</b><span class="cs">교대로 쓰셔도 돼요</span></span><span class="bar" style="background:var(--navy)"></span></div></li>
+        <li data-key="set"><div class="ss-card c-navy"><span class="cn"><span>SETSIGN</span><span>02</span></span><span><b>세트 중</b><span class="cs">지금 운동 중이에요</span></span><span class="bar" style="background:var(--orange)"></span></div></li>
+        <li data-key="left2"><div class="ss-card c-white"><span class="cn"><span>SETSIGN</span><span>03</span></span><span><b>2세트 남음</b><span class="cs">조금만 기다려 주세요</span></span><span class="bar" style="background:var(--orange)"></span></div></li>
+        <li data-key="last"><div class="ss-card c-orange"><span class="cn"><span>SETSIGN</span><span>04</span></span><span><b>마지막 세트</b><span class="cs">곧 자리 비워요</span></span><span class="bar" style="background:var(--white)"></span></div></li>
+        <li data-key="away"><div class="ss-card c-navyo"><span class="cn"><span>SETSIGN</span><span>05</span></span><span><b>잠깐 비움</b><span class="cs">물 마시고 올게요</span></span><span class="bar" style="background:var(--white)"></span></div></li>
+        <li data-key="spot"><div class="ss-card c-white"><span class="cn"><span>SETSIGN</span><span>06</span></span><span><b>스팟 가능</b><span class="cs">보조 필요하면 불러 주세요</span></span><span class="bar" style="background:var(--navy)"></span></div></li>
+        </ul>
+        <span class="ai-tag">AI 생성 카드 디자인</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 7. 가격 -->
+<section class="sec orange price" id="price" aria-labelledby="price-h">
+  <p class="eyebrow">가격</p>
+  <p class="price-big" role="img" aria-label="9,900원"><span class="num" aria-hidden="true" data-count="9900">9,900</span><span class="won" aria-hidden="true">원</span></p>
+  <div class="price-grid">
+    <h2 id="price-h">밴드 + 2겹 포켓 + 카드 6장,<br>한 번에 9,900원.</h2>
+    <div>
+      <ul class="incl">
+        <li><span>실리콘 밴드</span><span>1개 (S 또는 L)</span></li>
+        <li><span>2겹 카드 포켓</span><span>1개</span></li>
+        <li><span>문구 카드</span><span>6장</span></li>
+      </ul>
+      <p class="fine">쉐이커·물병은 포함되지 않아요. 일회용 생수병에는 권장하지 않아요. 카드 결제, 계좌이체, 무통장 입금으로 살 수 있어요.</p>
+      <button class="btn btn-n" type="button" data-buy>주문하기</button>
+      <!-- TODO: 추가 팩 가격(3,900원)과 단체 주문 조건은 임시 값이에요. 실제 정책으로 바꾸세요. 가격의 기준은 server.mjs의 CATALOG예요. -->
+      <div class="extra" style="margin-top:32px">
+        <h3>더 필요할 때</h3>
+        <p>문구 카드 추가 팩 (6장) · 3,900원. 주문서에서 함께 담을 수 있어요.</p>
+        <p>헬스장·크루 단체 주문(10개 이상)은 <a href="mailto:hello@example.com?subject=SETSIGN%20단체%20주문%20문의">메일로 문의</a>해 주세요.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 8. 자주 묻는 질문 -->
+<section class="sec white faq" id="faq" aria-labelledby="faq-h">
+  <div class="giant-out" aria-hidden="true" data-drift="160">Q</div>
+  <div class="faq-wrap">
+    <p class="eyebrow">자주 묻는 질문</p>
+    <h2 class="big" id="faq-h">물어보기 전에.</h2>
+    <details><summary>어떤 물병에 맞나요?<svg width="22" height="22" viewBox="0 0 22 22" stroke="currentColor" stroke-width="3" aria-hidden="true"><path d="M11 2v18M2 11h18"/></svg></summary>
+      <div class="ans"><p>S는 지름 약 7.5–9cm(캡슐형 쉐이커, 400~600mL급 쉐이커, 슬림 텀블러), L은 지름 약 9–10.5cm(700~900mL급 쉐이커, 대용량 텀블러)에 맞춰요. 실리콘이라 조금 늘어나지만, 둘레를 재서 고르는 게 가장 정확해요.</p><p><b>일회용 플라스틱 생수병에는 권장하지 않아요.</b> 물이 줄어들수록 밴드를 유지하기 어렵고 물병이 쓰러질 수 있어요.</p></div></details>
+    <details><summary>카드는 어떻게 바꿔 꽂아요?<svg width="22" height="22" viewBox="0 0 22 22" stroke="currentColor" stroke-width="3" aria-hidden="true"><path d="M11 2v18M2 11h18"/></svg></summary>
+      <div class="ans"><p>포켓 옆쪽이 열려 있어요. 앞 칸 카드를 옆으로 밀어 빼고, 뒤 칸 카드를 앞 칸으로 옮긴 뒤, 뺀 카드를 뒤 칸에 넣으면 끝이에요.</p></div></details>
+    <details><summary>포켓에는 카드가 몇 장 들어가요?<svg width="22" height="22" viewBox="0 0 22 22" stroke="currentColor" stroke-width="3" aria-hidden="true"><path d="M11 2v18M2 11h18"/></svg></summary>
+      <div class="ans"><p>앞 칸에 1장, 뒤 칸에 1장이에요. 지금 상태 카드는 앞에, 다음에 쓸 카드는 뒤에 두면 돼요. 나머지 카드는 가방에 보관하세요.</p></div></details>
+    <details><summary>회원가입 없이 살 수 있나요?<svg width="22" height="22" viewBox="0 0 22 22" stroke="currentColor" stroke-width="3" aria-hidden="true"><path d="M11 2v18M2 11h18"/></svg></summary>
+      <div class="ans"><p>주문 내역과 배송을 안전하게 관리하려고 회원 주문만 받아요. 만 14세 이상이면 이메일 인증만으로 가입할 수 있어요.</p></div></details>
+    <details><summary>결제는 안전한가요?<svg width="22" height="22" viewBox="0 0 22 22" stroke="currentColor" stroke-width="3" aria-hidden="true"><path d="M11 2v18M2 11h18"/></svg></summary>
+      <div class="ans"><p>결제는 토스페이먼츠 결제창에서 진행되고, 카드 정보는 SETSIGN 서버에 저장되지 않아요. 결제 금액은 서버에서 주문 금액과 다시 대조한 뒤에만 승인해요.</p></div></details>
+    <details><summary>배송과 교환·환불은요?<svg width="22" height="22" viewBox="0 0 22 22" stroke="currentColor" stroke-width="3" aria-hidden="true"><path d="M11 2v18M2 11h18"/></svg></summary>
+      <div class="ans"><p>배송 기간: [배송 기간을 입력하세요]</p><p>상품을 받은 날부터 7일 이내에 청약철회(반품)를 신청할 수 있어요. 자세한 기준은 <a href="#refund" data-doc="refund">교환·환불 정책</a>을 확인해 주세요.</p></div></details>
+  </div>
+</section>
+
+<div class="mq alt" aria-hidden="true"><div class="mq-t"><span>같이 써요</span><i></i><span>세트 중</span><i></i><span>2세트 남음</span><i></i><span>마지막 세트</span><i></i><span>잠깐 비움</span><i></i><span>스팟 가능</span><i></i><span>같이 써요</span><i></i><span>세트 중</span><i></i><span>2세트 남음</span><i></i><span>마지막 세트</span><i></i><span>잠깐 비움</span><i></i><span>스팟 가능</span><i></i></div></div>
+<!-- 9. 연락처 -->
+<section class="sec navy contact" id="contact" aria-labelledby="contact-h">
+  <p class="eyebrow">연락처</p>
+  <h2 id="contact-h">할 말은<br><span>메일로.</span></h2>
+  <!-- TODO: 공개용 문의 이메일로 바꾸세요. 개인 전화번호·집 주소는 넣지 마세요. -->
+  <a class="mail" href="mailto:hello@example.com">hello@example.com</a>
+  <p>주문·배송·제휴 문의 모두 이메일로 받아요. 주문 문의는 주문번호를 함께 적어 주세요.</p>
+</section>
+</main>
+
+<div class="tape" aria-hidden="true"></div>
+<footer class="ft navy">
+  <!-- TODO: 실제 사업자 정보로 바꾸세요. (요청에 따라 전화번호·주소는 넣지 않았어요) -->
+  <dl class="biz">
+    <div><dt>상호</dt><dd>[상호명]</dd></div>
+    <div><dt>대표자</dt><dd>[대표자명]</dd></div>
+    <div><dt>사업자등록번호</dt><dd>[000-00-00000]</dd></div>
+    <div><dt>통신판매업 신고</dt><dd>[제0000-지역-0000호]</dd></div>
+    <div><dt>이메일</dt><dd>hello@example.com</dd></div>
+    <div><dt>호스팅 서비스</dt><dd>[호스팅 업체]</dd></div>
+  </dl>
+  <ul class="legal">
+    <li><a href="#terms" data-doc="terms">이용약관</a></li>
+    <li><a href="#privacy" data-doc="privacy"><b>개인정보처리방침</b></a></li>
+    <li><a href="#refund" data-doc="refund">교환·환불 정책</a></li>
+  </ul>
+  <p>이 페이지의 3D 물병, 카드 디자인, 사이즈 일러스트는 AI로 만든 그래픽이에요(AI 생성). 실제 제품과 다를 수 있어요.</p>
+  <p>© <span id="yr">2026</span> SETSIGN. 결제 서비스: 토스페이먼츠</p>
+  <div class="ft-giant" aria-hidden="true">SETSIGN</div>
+</footer>
+
+<!-- 구매 다이얼로그 -->
+<dialog class="dlg" id="shop" aria-labelledby="shop-title">
+  <div class="dlg-in">
+    <div class="dlg-hd"><p class="dlg-title" id="shop-title">SETSIGN</p><button class="x" type="button" data-close aria-label="닫기"><svg width="18" height="18" viewBox="0 0 18 18" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M2 2l14 14M16 2 2 16"/></svg></button></div>
+    <p class="demo-banner" hidden>데모 모드 — 서버 없이 이 브라우저에만 저장돼요. 실제 메일 발송·결제는 일어나지 않아요.</p>
+
+    <section class="view" data-view="login" hidden>
+      <h2 tabindex="-1">로그인</h2>
+      <p class="sub" data-need-login hidden>주문하려면 로그인이 필요해요.</p>
+      <form id="f-login" novalidate>
+        <label class="field">이메일<input name="email" type="email" autocomplete="email" required></label>
+        <label class="field">비밀번호<input name="password" type="password" autocomplete="current-password" required></label>
+        <p class="msg" role="alert"></p>
+        <button class="btn btn-o w100" type="submit">로그인</button>
+      </form>
+      <p class="alt">처음이에요? <button class="link" type="button" data-go="signup">회원가입</button></p>
+    </section>
+
+    <section class="view" data-view="signup" hidden>
+      <h2 tabindex="-1">회원가입</h2>
+      <form id="f-signup" novalidate>
+        <label class="field">이름<input name="name" autocomplete="name" maxlength="40" required></label>
+        <label class="field">이메일 <small>(인증 코드를 보내 드려요)</small><input name="email" type="email" autocomplete="email" required></label>
+        <label class="field">비밀번호 <small>(영문·숫자 포함 8자 이상)</small><input name="password" type="password" autocomplete="new-password" minlength="8" required></label>
+        <label class="field">비밀번호 확인<input name="password2" type="password" autocomplete="new-password" required></label>
+        <fieldset class="agree">
+          <legend class="sr">약관 동의</legend>
+          <label class="chk all"><input type="checkbox" id="agree-all"> 전체 동의</label>
+          <label class="chk"><input type="checkbox" name="agreeAge" data-req> 만 14세 이상이에요 (필수)</label>
+          <label class="chk"><input type="checkbox" name="agreeTerms" data-req> 이용약관 동의 (필수)<a href="#terms" data-doc="terms">보기</a></label>
+          <label class="chk"><input type="checkbox" name="agreePrivacy" data-req> 개인정보 수집·이용 동의 (필수)<a href="#privacy" data-doc="privacy">보기</a></label>
+          <label class="chk"><input type="checkbox" name="agreeMarketing"> 이벤트·신상품 소식 받기 (선택)</label>
+        </fieldset>
+        <p class="msg" role="alert"></p>
+        <button class="btn btn-o w100" type="submit">가입하고 인증 코드 받기</button>
+      </form>
+      <p class="alt">이미 회원이에요? <button class="link" type="button" data-go="login">로그인</button></p>
+    </section>
+
+    <section class="view" data-view="verify" hidden>
+      <h2 tabindex="-1">이메일 인증</h2>
+      <p class="sub"><b id="verify-email"></b>로 보낸 6자리 코드를 입력해 주세요. 코드는 10분 동안 유효해요.</p>
+      <p class="demo-banner" id="demo-code-box" hidden>데모 모드라 메일 대신 여기에 보여 드려요: <span class="demo-code" id="demo-code"></span></p>
+      <form id="f-verify" novalidate>
+        <label class="field">인증 코드<input name="code" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6" required></label>
+        <p class="msg" role="alert"></p>
+        <button class="btn btn-o w100" type="submit">인증하기</button>
+      </form>
+      <p class="alt">메일이 안 왔나요? <button class="link" type="button" id="btn-resend">코드 다시 받기</button></p>
+    </section>
+
+    <section class="view" data-view="order" hidden>
+      <h2 tabindex="-1">주문서</h2>
+      <form id="f-order" novalidate>
+        <fieldset class="box"><legend>상품 · 개당 9,900원</legend>
+          <div class="qty-row"><span>S 사이즈<small>지름 약 7.5–9cm 쉐이커·텀블러</small></span>
+            <div class="qty" data-size="S"><button type="button" data-d="-1" aria-label="S 수량 줄이기">−</button><output aria-live="polite">1</output><button type="button" data-d="1" aria-label="S 수량 늘리기">+</button></div></div>
+          <div class="qty-row"><span>L 사이즈<small>지름 약 9–10.5cm 쉐이커·텀블러</small></span>
+            <div class="qty" data-size="L"><button type="button" data-d="-1" aria-label="L 수량 줄이기">−</button><output aria-live="polite">0</output><button type="button" data-d="1" aria-label="L 수량 늘리기">+</button></div></div>
+          <div class="qty-row"><span>문구 카드 추가 팩<small>6장 · 3,900원</small></span>
+            <div class="qty" data-size="cards"><button type="button" data-d="-1" aria-label="추가 팩 수량 줄이기">−</button><output aria-live="polite">0</output><button type="button" data-d="1" aria-label="추가 팩 수량 늘리기">+</button></div></div>
+          <p class="warn-s" role="note">일회용 플라스틱 생수병에는 권장하지 않아요. 물이 줄어들수록 밴드를 유지하기 어렵고 물병이 쓰러질 수 있어요. 단단한 다회용 물병·텀블러에 써 주세요.</p>
+        </fieldset>
+        <fieldset class="box"><legend>결제 수단</legend>
+          <div class="pay-opts">
+            <label><input type="radio" name="payMethod" value="CARD" checked>카드<small>토스페이먼츠</small></label>
+            <label><input type="radio" name="payMethod" value="TRANSFER">계좌이체<small>토스페이먼츠 · 바로 이체</small></label>
+            <label><input type="radio" name="payMethod" value="DEPOSIT">무통장 입금<small>안내 계좌로 직접 이체</small></label>
+          </div>
+          <label class="field" id="depositor-f" hidden style="margin-top:14px">입금자명 <small>(통장에 찍히는 이름)</small><input name="depositor" maxlength="20" autocomplete="off"></label>
+        </fieldset>
+        <fieldset class="box"><legend>배송 정보</legend>
+          <label class="field">받는 분<input name="name" autocomplete="name" maxlength="40" required></label>
+          <label class="field">휴대폰 번호<input name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="010-0000-0000" required></label>
+          <div class="row2">
+            <label class="field">우편번호<input name="zip" inputmode="numeric" autocomplete="postal-code" maxlength="5" required></label>
+            <label class="field">주소<input name="addr1" autocomplete="address-line1" maxlength="120" required></label>
+          </div>
+          <label class="field">상세 주소<input name="addr2" autocomplete="address-line2" maxlength="120"></label>
+          <label class="field">배송 메모 <small>(선택)</small><textarea name="memo" maxlength="100"></textarea></label>
+        </fieldset>
+        <div class="sum" aria-live="polite">
+          <div><span>상품 금액</span><b id="sum-goods">9,900원</b></div>
+          <div><span>배송비</span><b id="sum-ship">0원</b></div>
+          <div class="tot"><span>결제 예정 금액</span><b id="sum-total">9,900원</b></div>
+          <p class="fine">최종 결제 금액은 서버에서 다시 계산해 확인해요.</p>
+        </div>
+        <label class="chk"><input type="checkbox" name="agree"> 주문 내용을 확인했고 결제 진행에 동의해요 (필수)</label>
+        <p class="msg" role="alert"></p>
+        <button class="btn btn-o w100" type="submit">결제하기</button>
+      </form>
+    </section>
+
+    <section class="view" data-view="deposit" hidden>
+      <h2 tabindex="-1">입금 안내</h2>
+      <p class="sub">주문이 접수됐어요. 아래 계좌로 입금하면 확인 뒤 결제 완료로 바뀌어요.</p>
+      <div class="bankbox">
+        <div><span>은행</span><b id="dp-bank"></b></div>
+        <div class="acct"><span>계좌번호</span><b id="dp-acct"></b></div>
+        <div><span>예금주</span><b id="dp-holder"></b></div>
+        <div><span>입금액</span><b id="dp-amt"></b></div>
+        <div><span>입금자명</span><b id="dp-name"></b></div>
+        <div><span>입금 기한</span><b id="dp-due"></b></div>
+      </div>
+      <p class="msg" role="status"></p>
+      <div class="btn-row"><button class="btn btn-o" type="button" id="btn-copy-acct">계좌번호 복사</button><button class="btn btn-n" type="button" data-go="orders">주문 내역 보기</button></div>
+    </section>
+
+    <section class="view" data-view="paydemo" hidden>
+      <h2 tabindex="-1">결제 (데모)</h2>
+      <p class="sub">실제 운영에서는 이 단계에서 토스페이먼츠 결제창이 열려요. 데모에서는 승인만 흉내 내요.</p>
+      <div class="sum"><div><span>주문번호</span><b id="pd-id"></b></div><div class="tot"><span>결제 금액</span><b id="pd-amt"></b></div></div>
+      <p class="msg" role="alert"></p>
+      <div class="btn-row"><button class="btn btn-o" type="button" id="btn-demo-pay">결제 승인 (데모)</button><button class="btn btn-ghost" type="button" data-go="order">주문서로</button></div>
+    </section>
+
+    <section class="view" data-view="result" hidden>
+      <h2 tabindex="-1" id="res-title"></h2>
+      <p id="res-body"></p>
+      <div class="btn-row"><button class="btn btn-n" type="button" data-go="orders">주문 내역 보기</button><button class="btn btn-ghost" type="button" data-close>닫기</button></div>
+    </section>
+
+    <section class="view" data-view="orders" hidden>
+      <h2 tabindex="-1">주문 내역</h2>
+      <p class="sub" id="me-line"></p>
+      <ul class="order-list" id="order-list"></ul>
+      <div class="btn-row"><button class="btn btn-o" type="button" data-buy>새로 주문하기</button><button class="btn btn-ghost" type="button" id="btn-logout">로그아웃</button></div>
+    </section>
+  </div>
+</dialog>
+
+<!-- 내향인 테스트 창 (주소 끝에 #test 를 붙이면 바로 열려요) -->
+<dialog class="quiz" id="quiz" aria-labelledby="quiz-title">
+  <div class="qz">
+    <div class="qz-top">
+      <p class="logo" id="quiz-title">SETSIGN <small>내향인 테스트</small></p>
+      <div class="qz-bar" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      <button class="x" type="button" data-quiz-close aria-label="테스트 닫기"><svg width="18" height="18" viewBox="0 0 18 18" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M2 2l14 14M16 2 2 16"/></svg></button>
+    </div>
+    <div class="qz-body">
+      <div class="qz-pane qz-start" data-pane="start">
+        <p class="qz-friend" id="qz-friend" hidden></p>
+        <h2>나는 내향인<br><span>몇 퍼센트?</span></h2>
+        <p>질문 300개 중에서 매번 다른 10개가 나와요. 깊이 생각하지 말고, 평소의 나와 더 가까운 쪽을 고르세요. 재미로 보는 테스트라 정답은 없고, 답은 어디에도 보내지 않아요.</p>
+        <div class="cta"><button class="btn btn-o" type="button" id="qz-go">시작하기</button></div>
+      </div>
+      <div class="qz-pane" data-pane="q" hidden>
+        <p class="qz-no" aria-hidden="true"><b id="qz-n">01</b>/<span id="qz-tot">10</span></p>
+        <h2 class="qz-q" id="qz-q" tabindex="-1"></h2>
+        <p class="qz-hint" id="qz-hint"></p>
+        <ul class="qz-opts" id="qz-opts"></ul>
+        <div class="qz-nav"><button class="link" type="button" id="qz-back">← 이전 질문</button><span id="qz-count" class="sr" aria-live="polite"></span></div>
+      </div>
+      <div class="qz-pane qz-res" data-pane="res" hidden>
+        <div>
+          <p class="eyebrow">내향인 지수</p>
+          <p class="qz-pct" role="img" id="qz-pct-wrap"><span id="qz-pct">0</span><small>%</small></p>
+          <div class="qz-meter" aria-hidden="true"><i id="qz-fill"></i></div>
+          <div class="qz-ends" aria-hidden="true"><span>말이 곧 카드</span><span>눈빛으로 대화</span></div>
+        </div>
+        <div>
+          <h2 id="qz-title" tabindex="-1"></h2>
+          <p class="qz-verdict" id="qz-verdict"></p>
+          <p id="qz-desc"></p>
+          <p id="qz-card"></p>
+          <div class="cta"><button class="btn btn-o" type="button" data-buy id="qz-buy">주문하기</button><button class="btn btn-ghost" type="button" id="qz-share">결과 공유하기</button><button class="btn btn-ghost" type="button" id="qz-again">다시 하기</button></div>
+          <p class="fine" id="qz-msg" role="status" style="margin-top:16px">재미로 보는 테스트예요. 심리 검사가 아니에요.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+<!-- 약관 다이얼로그 -->
+<dialog class="dlg" id="doc" aria-labelledby="doc-title">
+  <div class="dlg-in">
+    <div class="dlg-hd"><p class="dlg-title" id="doc-title"></p><button class="x" type="button" data-close aria-label="닫기"><svg width="18" height="18" viewBox="0 0 18 18" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M2 2l14 14M16 2 2 16"/></svg></button></div>
+    <div class="doc" id="doc-body"></div>
+  </div>
+</dialog>
+
+<template id="t-terms" data-title="이용약관">
+  <p class="todo">초안이에요. 공개 전에 실제 약관으로 바꿔 주세요.</p>
+  <h3>제1조 목적</h3><p>이 약관은 [상호명](이하 “회사”)이 운영하는 SETSIGN 온라인 스토어에서 제공하는 서비스 이용 조건을 정해요.</p>
+  <h3>제2조 회원가입</h3><p>만 14세 이상인 사람만 가입할 수 있어요. 이메일 인증을 마쳐야 가입이 완료돼요.</p>
+  <h3>제3조 주문과 결제</h3><p>결제는 토스페이먼츠를 통해 이뤄지며, 회사는 결제 승인 전에 주문 금액을 서버에서 다시 확인해요.</p>
+  <h3>제4조 청약철회</h3><p>상품을 받은 날부터 7일 이내에 청약철회를 할 수 있어요. 자세한 기준은 교환·환불 정책을 따라요.</p>
+  <h3>제5조 기타</h3><p>[분쟁 해결, 관할 법원 등 나머지 조항을 채워 주세요.]</p>
+</template>
+<template id="t-privacy" data-title="개인정보처리방침">
+  <p class="todo">초안이에요. 공개 전에 실제 방침으로 바꿔 주세요.</p>
+  <h3>수집하는 항목</h3><ul><li>회원가입: 이름, 이메일, 비밀번호(암호화 저장), 약관 동의 기록</li><li>주문: 받는 분, 휴대폰 번호, 배송 주소, 배송 메모</li><li>결제: 결제 승인 정보(카드 번호는 저장하지 않아요)</li></ul>
+  <h3>이용 목적</h3><p>회원 확인, 주문 처리와 배송, 고객 문의 응대</p>
+  <h3>보유 기간</h3><p>회원 탈퇴 시 바로 삭제해요. 단, 전자상거래법에 따라 계약·청약철회 기록과 대금 결제·공급 기록은 5년, 소비자 불만·분쟁 처리 기록은 3년 보관해요.</p>
+  <h3>처리 위탁</h3><p>결제 처리: 토스페이먼츠 · 배송: [택배사] · 이메일 발송: [메일 서비스]</p>
+  <h3>문의</h3><p>개인정보 보호책임자: [이름] · hello@example.com</p>
+</template>
+<template id="t-refund" data-title="교환·환불 정책">
+  <p class="todo">초안이에요. 공개 전에 실제 정책으로 바꿔 주세요.</p>
+  <h3>단순 변심</h3><p>상품을 받은 날부터 7일 이내에 신청할 수 있어요. 왕복 배송비 [금액]은 구매자가 부담해요.</p>
+  <h3>불량·오배송</h3><p>상품이 표시·광고와 다르거나 불량이면 받은 날부터 3개월 이내, 그 사실을 안 날부터 30일 이내에 신청할 수 있고 배송비는 판매자가 부담해요.</p>
+  <h3>신청 방법</h3><p>hello@example.com 으로 주문번호와 사유를 보내 주세요.</p>
+</template>
+
+<noscript><p style="position:fixed;bottom:0;left:0;right:0;z-index:40;margin:0;padding:12px;background:#FF5A1F;color:#0E1240;font-weight:700;text-align:center">3D 미리보기와 주문 기능은 자바스크립트가 필요해요.</p></noscript>
+
+<!-- 공용 데이터 + 스크롤 단계 표시 (3D와 무관하게 동작) -->
+<script>
+window.SETSIGN_CARDS = [
+  {key:'together', n:'01', t:'같이 써요',  s:'교대로 쓰셔도 돼요',     bg:'orange', fg:'navy',   ac:'navy'},
+  {key:'set',      n:'02', t:'세트 중',    s:'지금 운동 중이에요',     bg:'navy',   fg:'white',  ac:'orange'},
+  {key:'left2',    n:'03', t:'2세트 남음', s:'조금만 기다려 주세요',   bg:'white',  fg:'navy',   ac:'orange'},
+  {key:'last',     n:'04', t:'마지막 세트', s:'곧 자리 비워요',         bg:'orange', fg:'navy',   ac:'white'},
+  {key:'away',     n:'05', t:'잠깐 비움',  s:'물 마시고 올게요',       bg:'navy',   fg:'orange', ac:'white'},
+  {key:'spot',     n:'06', t:'스팟 가능',  s:'보조 필요하면 불러 주세요', bg:'white', fg:'navy',   ac:'navy'}
+];
+(function(){
+  document.getElementById('yr').textContent = new Date().getFullYear();
+  var track = document.querySelector('.how-track');
+  var steps = [].slice.call(document.querySelectorAll('.step'));
+  var bars = [].slice.call(document.querySelectorAll('.how-bar i'));
+  var cur = -1;
+  function upd(){
+    var r = track.getBoundingClientRect();
+    var P = Math.min(1, Math.max(0, -r.top / (r.height - innerHeight)));
+    var i = P < .24 ? 0 : P < .5 ? 1 : P < .74 ? 2 : 3;
+    if (i === cur) return; cur = i;
+    steps.forEach(function(s,k){ s.classList.toggle('is-on', k === i); });
+    bars.forEach(function(b,k){ b.classList.toggle('on', k <= i); });
+  }
+  var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // 카드 갤러리: 세로 스크롤 → 가로 이동, 가운데 온 카드를 3D 물병에 꽂기
+  var cgT = document.querySelector('.cg-track'), rail = document.querySelector('.cg-rail');
+  var items = [].slice.call(rail.children), cgN = document.getElementById('cg-n'), ci = 0;
+  function gal(){
+    var r = cgT.getBoundingClientRect();
+    var P = Math.min(1, Math.max(0, -r.top / (r.height - innerHeight)));
+    var pos = P * (items.length - 1), fl = Math.floor(pos), f = pos - fl;
+    pos = fl + f * f * (3 - 2 * f);                       // 카드마다 살짝 멈칫하게
+    rail.style.transform = 'translate3d(' + (-pos * (items[1].offsetLeft - items[0].offsetLeft)) + 'px,0,0)';
+    var i = Math.round(pos); if (i === ci) return; ci = i;
+    items.forEach(function(li,k){ li.classList.toggle('on', k === i); });
+    cgN.textContent = '0' + (i + 1);
+    document.dispatchEvent(new CustomEvent('ss:card', { detail: items[i].dataset.key }));
+  }
+  // 윤곽선 대형 글자가 스크롤에 따라 미끄러짐
+  var drifts = [].slice.call(document.querySelectorAll('[data-drift]'));
+  function drift(){
+    if (reduce) return;
+    drifts.forEach(function(el){
+      var r = el.parentElement.getBoundingClientRect(); if (r.bottom < 0 || r.top > innerHeight) return;
+      var d = ((innerHeight - r.top) / (innerHeight + r.height) - .5) * parseFloat(el.dataset.drift);
+      el.style.transform = el.dataset.axis === 'y' ? 'translate3d(0,' + d.toFixed(1) + 'px,0)' : 'translate3d(' + d.toFixed(1) + 'px,0,0)';
+    });
+  }
+  var tick = false;
+  function onScroll(){ if (tick) return; tick = true; requestAnimationFrame(function(){ tick = false; upd(); gal(); drift(); }); }
+  addEventListener('scroll', onScroll, {passive:true}); addEventListener('resize', onScroll); upd(); gal(); drift();
+
+  // 등장: 제목은 아래에서 밀려 올라오고, 블록은 떠오름. 숫자는 세어 올라감
+  [].forEach.call(document.querySelectorAll('.big, .contact h2, .price h2, .price-big'), function(el){ var w = document.createElement('span'); w.className = 'rvi'; while (el.firstChild) w.appendChild(el.firstChild); el.appendChild(w); el.classList.add('rv'); });
+  [].forEach.call(document.querySelectorAll('.stat, .size-card, .faq details, .incl li, .ctrl, .chips'), function(el,i){ el.classList.add('up'); el.style.setProperty('--d', (i % 6) * .07 + 's'); });
+  function count(el){
+    var to = +el.dataset.count, t0 = performance.now();
+    if (reduce) return;
+    (function f(n){ var p = Math.min(1, (n - t0) / 1400), e = 1 - Math.pow(1 - p, 4);
+      el.textContent = Math.round(to * e).toLocaleString('ko-KR'); if (p < 1) requestAnimationFrame(f); })(t0);
+  }
+  var io = new IntersectionObserver(function(es){ es.forEach(function(e){
+    if (!e.isIntersecting) return; io.unobserve(e.target); e.target.classList.add('in');
+    [].forEach.call(e.target.querySelectorAll('[data-count]'), count);
+  }); }, { threshold: 0, rootMargin: '0px 0px -18% 0px' });
+  [].forEach.call(document.querySelectorAll('.rv, .up'), function(el){ io.observe(el); });
+  var heroIn = function(){ [].forEach.call(document.querySelectorAll('.hero .rvh'), function(el){ el.classList.add('in'); }); };
+  (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(function(){ setTimeout(heroIn, 80); });
+  setTimeout(heroIn, 1500);
+
+  // 따라다니는 커서
+  if (matchMedia('(hover:hover) and (pointer:fine)').matches) {
+    var cz = document.getElementById('cur'), cx = 0, cy = 0, tx = 0, ty = 0, seen = false;
+    addEventListener('pointermove', function(e){
+      tx = e.clientX; ty = e.clientY; var t = e.target; if (!t.closest) return;
+      if (!seen) { seen = true; cx = tx; cy = ty; }
+      var st = t.closest('.stage');
+      cz.style.opacity = t.closest('dialog') ? 0 : 1;
+      cz.classList.toggle('is-drag', !!st && !(e.buttons & 1));
+      cz.classList.toggle('is-link', !st && !!t.closest('a,button,summary,label'));
+      cz.classList.toggle('on-o', !!t.closest('.orange,.btn-o,.c-orange,.mq:not(.alt)'));
+    }, {passive:true});
+    document.addEventListener('pointerleave', function(){ cz.style.opacity = 0; });
+    (function loop(){ cx += (tx - cx) * .22; cy += (ty - cy) * .22; cz.style.transform = 'translate3d(' + cx.toFixed(1) + 'px,' + cy.toFixed(1) + 'px,0)'; requestAnimationFrame(loop); })();
+  }
+
+  // ── 쉐이커 안정성 계산 (정적 평형, 단위 g·cm). 화면의 숫자와 무게 설계 표가 같은 식을 씁니다 ──
+  var SHAKER = { 0:{ max:700, m:130, rb:2.6, rin:4.1, R:4.3, ycg:9.0, yk:8.0, name:'캡슐형 700mL(바닥 지름 약 5cm)' },   // S: 캡슐형, 바닥이 좁음
+                 1:{ max:700, m:130, rb:4.2, rin:4.5, R:4.85, ycg:10.0, yk:8.0, name:'기본형 700mL(바닥 지름 8.4cm)' } };  // L: 기본형
+  var KIT = { band:18, pocket:16, arc:Math.PI * 2 / 3 };                              // 밴드 18g, 포켓+카드 2장 16g, 패드 120°
+  function stability(sz, V, withPad){
+    var P = SHAKER[sz], d = P.R + .43, rp = P.R + .33, cm = rp * Math.sin(KIT.arc / 2) / (KIT.arc / 2);
+    var mc = withPad ? KIT.pocket * d / cm : 0, h = V / (Math.PI * P.rin * P.rin), yw = .4 + h / 2;
+    var M = P.m + KIT.band + KIT.pocket + mc + V;
+    var x = (KIT.pocket * d - mc * cm) / M, y = (P.m * P.ycg + (KIT.band + KIT.pocket + mc) * P.yk + V * yw) / M;
+    return { x: x * 10, tilt: Math.atan((P.rb - x) / y) * 180 / Math.PI, pad: mc };
+  }
+  window.SETSIGN_STAB = stability;
+  var wr = document.getElementById('water-r'), sz = 0;
+  function stab(){
+    var max = SHAKER[sz].max, V = Math.min(+wr.value, max);
+    wr.max = max; wr.value = V;
+    var a = stability(sz, V, true), b = stability(sz, V, false);
+    document.getElementById('water-v').textContent = V + 'mL';
+    document.getElementById('stab-x').textContent = Math.abs(a.x).toFixed(1) + 'mm';
+    document.getElementById('stab-x2').textContent = '균형 패드가 없으면 ' + b.x.toFixed(1) + 'mm';
+    document.getElementById('stab-t').textContent = Math.round(a.tilt) + '°';
+    document.getElementById('stab-t2').textContent = '균형 패드가 없으면 ' + Math.round(b.tilt) + '°';
+    document.getElementById('stab-basis').textContent = SHAKER[sz].name + ' 기준' + (sz === 0 ? ' · 캡슐형은 바닥이 좁아 기본형보다 덜 버텨요' : '');
+    document.dispatchEvent(new CustomEvent('ss:water', { detail: V / 700 }));   // 3D 눈금은 0~700mL
+  }
+  wr.addEventListener('input', stab);
+  [].forEach.call(document.querySelectorAll('.seg [data-size], [data-size-go]'), function(b){
+    b.addEventListener('click', function(){ sz = +(b.dataset.size || b.dataset.sizeGo); stab(); });
+  });
+  stab();
+  // three.js를 못 불러오면 안내 문구 표시
+  setTimeout(function(){ if(!window.__ss3d) document.documentElement.classList.add('no-gl'); }, 8000);
+})();
+</script>
+
+<!-- 내향인 테스트 · 앱 설치 -->
+<script>
+(function(){
+  // 점수: 0(말로 해결) ~ 3(조용히 해결). 어느 쪽을 골라도 놀리지 않는 문장만 씁니다.
+  // 질문 300개 (분류, 질문, 힌트, [선택지, 점수]). 점수 0 = 말로 해결 … 3 = 조용히 해결.
+  // 어느 쪽을 골라도 놀리지 않는 문장만 씁니다. 분류: g 헬스장, c 카페·식당, m 메신저·SNS, s 모임·약속,
+  // w 학교·회사, b 쇼핑·배달, n 이웃·거리, h 미용실·병원, t 여행, a 혼자만의 시간
+  var QBANK = [["g","쓰려던 기구에 누가 앉아 있다","헬스장 입장 3분 만에 찾아온 시련",[["“몇 세트 남으셨어요?” 바로 물어본다",0],["근처에서 스트레칭하며 눈치를 살핀다",2],["오늘은 원래 다른 운동 하는 날이었던 걸로 한다",3]]],["g","운동 중에 트레이너가 다가온다","눈이 마주칠 것 같다",[["이어폰 볼륨을 한 칸 올린다",3],["가볍게 목례한다",1],["마침 잘됐다, 자세를 봐 달라고 한다",0]]],["g","옆 사람 덤벨을 내가 써야 한다","그분은 쉬는 중인 것 같다",[["“이거 써도 될까요?” 바로 묻는다",0],["덤벨을 가리키며 눈빛으로 묻는다",2],["조금 무거운 다른 덤벨로 타협한다",3]]],["g","헬스장에서 아는 사람을 마주쳤다","아직 나를 못 본 것 같다",[["먼저 다가가 인사한다",0],["눈이 마주치면 인사하려고 기다린다",2],["마주치지 않는 동선으로 운동 루트를 바꾼다",3]]],["g","PT 무료 체험권이 생겼다","1회 무료로 받을 수 있다",[["바로 예약한다, 공짜는 못 참지",0],["예약은 하는데 전날부터 대화 시뮬레이션을 한다",2],["쿠폰함에서 조용히 만료되게 둔다",3]]],["g","거울 앞 자리가 딱 한 칸 비었다","양옆에 사람이 있다",[["당당하게 그 사이로 들어간다",0],["근처를 한 바퀴 돌고 다시 와 본다",2],["거울 없는 구석에서 감으로 운동한다",3]]],["g","GX 수업에 처음 가 봤다","강사님이 앞줄로 오라고 한다",[["“네!” 하고 앞줄로 간다",0],["한 줄만 앞으로 간다",1],["못 들은 척 맨 뒷줄을 지킨다",3]]],["g","내 물병 옆에 똑같은 물병이 놓였다","어느 게 내 건지 헷갈린다",[["“이거 혹시 그쪽 거예요?” 물어본다",0],["뚜껑 색을 열심히 기억해 내려 한다",2],["물을 포기하고 정수기를 이용한다",3]]],["g","머신 사용법을 모르겠다","옆에 고수처럼 보이는 분이 있다",[["바로 사용법을 물어본다",0],["그분이 쓰는 걸 관찰한 뒤 따라 한다",2],["집에 가서 영상으로 공부하고 다음에 쓴다",3]]],["g","누가 “같이 쓰실래요?”라고 말을 건다","교대로 세트를 하자는 제안이다",[["좋다, 오히려 반갑다",0],["좋다고는 하는데 쉬는 시간 대화가 걱정된다",2],["“곧 끝나요!” 하고 서둘러 마무리한다",3]]],["g","탈의실에서 옆 사람이 말을 건다","“여기 다닌 지 오래되셨어요?”",[["헬스장 꿀팁까지 신나게 알려 준다",0],["짧게 대답하고 미소로 마무리한다",2],["대답하면서 이미 신발을 신고 있다",3]]],["g","헬스장에 음악 신청 이벤트가 생겼다","카운터에 말하면 틀어 준다",[["바로 가서 노래를 신청한다",0],["신청서가 생기면 써 볼까 생각한다",2],["내 이어폰이 최고의 DJ다",3]]],["g","운동 끝나고 데스크 직원이 말을 건다","“오늘 운동 어떠셨어요?”",[["“최고였어요!” 하고 수다를 떤다",0],["“좋았어요” 하고 웃는다",1],["고개만 끄덕이고 문으로 향한다",3]]],["g","벤치에 수건만 두고 사람이 사라졌다","10분째 돌아오지 않는다",[["데스크에 물어보고 수건을 살짝 옆으로 둔다",0],["주인이 올 때까지 근처에서 기다린다",2],["그 벤치는 오늘 없는 벤치다",3]]],["g","헬스장 회원 단톡방에 초대됐다","공지와 잡담이 섞여 올라온다",[["자기소개부터 올린다",0],["공지만 확인하고 알림은 끈다",2],["초대 수락 버튼 앞에서 한참 고민한다",3]]],["g","스쿼트 랙 앞에 줄이 생겼다","다음 순서가 나인지 애매하다",[["“다음 저예요?” 하고 확인한다",0],["앞사람이 끝나면 슬쩍 다가간다",2],["런지로 대체한다, 다리는 다리니까",3]]],["g","매일 같은 시간에 오는 사람이 있다","운동 친구가 될 수도 있다",[["먼저 인사하고 이름을 묻는다",0],["목례하는 사이까지는 가 본다",2],["서로 존재만 아는 사이가 제일 편하다",3]]],["g","누가 내 운동 자세를 칭찬한다","“자세 진짜 좋으시네요”",[["“감사합니다! 3년 했어요” 대화가 이어진다",0],["“아 감사합니다…” 하고 다음 세트를 한다",2],["부끄러워서 그 운동을 그날 끝낸다",3]]],["g","운동 시간을 고를 수 있다면","헬스장 붐비는 정도를 생각하면",[["사람 많을 때가 활기차서 좋다",0],["적당히 있을 때가 좋다",1],["새벽 6시, 나만의 헬스장",3]]],["g","덤벨을 떨어뜨려 큰 소리가 났다","모두가 쳐다본 것 같다",[["“죄송합니다!” 크게 말하고 넘어간다",0],["살짝 고개 숙이고 다음 세트를 한다",1],["그날 운동은 거기까지다",3]]],["g","헬스장 에어컨이 너무 세다","다들 추워 보이는데 아무도 말을 안 한다",[["데스크에 가서 온도 조절을 부탁한다",0],["누군가 말해 주길 기다리며 팔을 비빈다",2],["다음부터 겉옷을 하나 더 챙겨 오기로 한다",3]]],["g","운동 영상을 촬영 중인 사람이 있다","내가 지나가야 하는 길이다",[["“지나가도 될까요?” 하고 묻는다",0],["촬영이 끝날 때까지 기다린다",2],["빙 돌아서 다른 길로 간다",3]]],["g","같은 헬스장 회원과 엘리베이터를 탔다","둘 다 운동복 차림이다",[["“오늘 하체 하셨어요?” 말을 건다",0],["눈인사 정도 한다",2],["휴대폰 화면을 갑자기 정독한다",3]]],["g","헬스장에서 인바디 대결 이벤트가 열렸다","상품은 프로틴 한 통",[["당연히 참가하고 등수까지 확인한다",0],["참가는 하는데 결과는 비밀로 한다",2],["프로틴은 사 먹기로 한다",3]]],["g","운동하다 다리에 쥐가 났다","근처에 직원이 있다",[["바로 도움을 요청한다",0],["조용히 혼자 스트레칭한다",2],["아무렇지 않은 척 화장실로 피신한다",3]]],["g","누가 내가 쓰는 기구를 기다린다","아직 2세트 남았다",[["“2세트 남았는데 같이 쓰실래요?” 제안한다",0],["“금방 끝나요”만 말하고 서두른다",2],["그냥 넘겨 드리고 다른 운동을 한다",3]]],["g","헬스장 첫날 오리엔테이션","직원이 시설을 안내해 준다",[["궁금한 걸 다 물어본다",0],["고개를 끄덕이며 잘 듣는다",1],["“괜찮아요” 하고 혼자 둘러본다",3]]],["g","매일 보던 사람이 오늘 안 왔다","은근히 신경 쓰인다",[["다음에 보면 “어제 안 오셨네요” 말해 본다",0],["속으로만 궁금해한다",2],["그 자리가 비어서 좋다",3]]],["g","운동 끝나고 샤워실 대기 줄이 길다","10분은 기다려야 한다",[["앞사람들과 수다 떨며 기다린다",0],["휴대폰 보며 기다린다",1],["집에 가서 씻는다",3]]],["g","헬스장 사장님이 내 이름을 외웠다","들어갈 때마다 이름을 불러 준다",[["친해진 것 같아 기쁘다",0],["고맙지만 약간 부끄럽다",2],["살짝 다른 지점도 알아본다",3]]],["g","모르는 사람이 플랭크 대결을 하자고 한다","유쾌해 보이는 사람이다",[["좋아요, 바로 시작",0],["웃으면서 짧게 한 판만 한다",1],["“다음에요” 하고 자리를 피한다",3]]],["g","자리에 둔 내 물건이 옆으로 옮겨져 있다","누가 옮겨 둔 것 같다",[["“이거 누가 옮기셨어요?” 묻는다",0],["다시 제자리에 두고 운동한다",2],["물건을 챙겨 다른 구역으로 이동한다",3]]],["g","헬스장에서 생일 축하 노래가 시작됐다","직원 생일인 것 같다",[["박수 치며 같이 부른다",0],["박수만 친다",1],["이어폰을 꽂는다",3]]],["g","덤벨 정리가 엉망이다","누군가 정리하면 좋겠는데",[["정리하면서 옆 사람에게도 같이 하자고 한다",0],["조용히 혼자 정리한다",2],["흩어진 대로 맞는 무게를 찾아 쓴다",3]]],["g","친구가 같이 헬스장에 다니자고 한다","매번 같이 가야 할 것 같다",[["좋다, 같이 가면 재밌다",0],["가끔만 같이 가자고 한다",2],["혼자 하는 운동이 진짜 휴식이라고 고백한다",3]]],["g","운동 기록 앱에 친구 기능이 생겼다","서로 운동량이 보인다",[["친구를 잔뜩 추가하고 경쟁한다",0],["친한 친구 한두 명만 추가한다",2],["비공개로 조용히 기록한다",3]]],["g","헬스장 오픈 기념 파티가 열렸다","회원이면 누구나 참석 가능",[["당연히 간다, 사람 사귈 기회다",0],["잠깐 들러 음료만 받아 온다",2],["그날은 쉬는 날로 한다",3]]],["g","옆에서 누가 기합을 크게 넣는다","소리가 우렁차다",[["웃으면서 “파이팅이시네요” 한다",0],["속으로만 웃는다",1],["조금 떨어진 자리로 옮긴다",3]]],["g","고장 난 사물함을 신고해야 한다","데스크 직원이 바빠 보인다",[["바로 가서 말한다",0],["직원이 한가해지길 기다린다",2],["다른 사물함을 쓰고 신고는 생략한다",3]]],["g","“같이 쓰실래요?”를 말해야 하는 순간","세트 사이 30초의 고민",[["그냥 말한다",0],["머릿속으로 세 번 연습하고 말한다",2],["그 말을 대신 해 줄 무언가가 있으면 좋겠다",3]]],["c","식당에서 반찬이 더 필요하다","벨은 없다",[["“사장님~!” 부른다",0],["눈이 마주칠 때까지 기다린다",2],["같이 간 사람이 불러 주길 조용히 바란다",3]]],["c","주문한 음료가 잘못 나왔다","아이스를 시켰는데 따뜻한 게 왔다",[["바로 말해서 바꾼다",0],["조금 고민하다 말한다",1],["이것도 운명이다, 그냥 마신다",3]]],["c","키오스크와 직원 계산대가 둘 다 비었다","어디서 주문할까",[["직원에게 주문하고 추천도 받는다",0],["먼저 보이는 쪽",1],["키오스크는 마음의 평화",3]]],["c","사장님이 “늘 드시던 걸로요?” 한다","단골이 된 것 같다",[["“네! 기억해 주셨네요” 기뻐한다",0],["쑥스럽게 웃으며 고개를 끄덕인다",2],["다음엔 다른 메뉴를 시켜 볼까 고민한다",3]]],["c","카페 콘센트 앞에 옆 사람 가방이 있다","휴대폰 배터리 12%",[["“콘센트 좀 써도 될까요?” 묻는다",0],["배터리가 버틸 때까지 버틴다",2],["보조배터리를 사기로 결심한다",3]]],["c","점심시간이다","혼밥과 같이 밥 중에",[["무조건 같이, 밥은 수다랑 먹어야 맛있다",0],["그날 기분 따라",1],["혼밥은 고요한 힐링 타임",3]]],["c","식당에서 합석을 권유받았다","자리가 하나뿐이다",[["좋아요, 오히려 재밌다",0],["괜찮다고 하고 조용히 먹는다",2],["다음에 오겠다고 한다",3]]],["c","음식에서 머리카락이 나왔다","직원은 바빠 보인다",[["정중하게 바로 말한다",0],["조용히 직원을 불러 작게 말한다",1],["그 부분만 덜어 내고 먹는다",3]]],["c","카페에서 부른 이름이 내 이름과 비슷하다","내 음료인지 애매하다",[["“이거 혹시 OO 맞아요?” 확인한다",0],["한 번 더 부를 때까지 기다린다",2],["확실해질 때까지 30분이라도 기다린다",3]]],["c","사장님이 음식 맛을 물어본다","사실 조금 짰다",[["“조금 짜요” 솔직히 말한다",0],["“맛있어요!” 하고 웃는다",2],["대답 대신 엄지를 든다",3]]],["c","단골 카페가 오늘따라 붐빈다","자리가 없어 보인다",[["합석 가능한지 물어본다",0],["포장해서 나간다",2],["붐비는 걸 보자마자 뒤돌아 나온다",3]]],["c","맛집 웨이팅 명단에 이름을 써야 한다","직원이 이름을 크게 부른다",[["본명으로 당당하게",0],["성만 쓴다",2],["웨이팅 없는 옆집에 간다",3]]],["c","카페에 오래 앉아 있었다","직원이 테이블을 치우러 왔다",[["“하나 더 주문할게요” 말을 건다",0],["미소 짓고 계속 작업한다",1],["짐을 싸서 나간다",3]]],["c","옆 테이블 손님이 말을 건다","“여기 뭐가 맛있어요?”",[["추천 메뉴를 신나게 설명한다",0],["한 가지 짧게 추천한다",1],["“저도 처음이라서요” 하고 웃는다",3]]],["c","커피 주문할 때 개인 옵션이 많다","샷 추가, 시럽 반, 얼음 적게…",[["원하는 대로 다 말한다",0],["하나 정도만 말한다",2],["기본 메뉴가 제일 편하다",3]]],["c","친구들이 메뉴를 못 정한다","다들 “아무거나”라고 한다",[["“그럼 마라탕!” 바로 정한다",0],["후보 세 개를 투표에 올린다",1],["정해지는 대로 따라간다",3]]],["c","주문한 음식이 30분째 안 나온다","배가 고프다",[["직원에게 상황을 물어본다",0],["조금 더 기다려 본다",2],["물만 마시며 인내심을 단련한다",3]]],["c","카페 사장님이 신메뉴 시음을 권한다","“한번 드셔 보세요!”",[["맛 평가까지 해 드린다",0],["받아서 마시고 웃는다",1],["“괜찮아요” 하고 사양한다",3]]],["c","테이크아웃 컵홀더를 깜빡했다","이미 문을 나왔다",[["다시 들어가서 받아 온다",0],["손 시려도 그냥 간다",2],["휴지로 감싸는 창의력을 발휘한다",3]]],["c","식당 직원이 계속 말을 건다","“어디서 오셨어요? 처음이세요?”",[["대화를 즐긴다",0],["짧게 대답한다",2],["음식에 집중하는 척 고개를 숙인다",3]]],["c","가게까지 걸어서 5분이다","배달과 포장 중에",[["직접 가서 사장님과 인사한다",0],["앱으로 주문하고 받아만 온다",2],["배달비 내고 문 앞까지",3]]],["c","핫플 브런치 카페 오픈런","줄이 길다",[["줄 서면서 앞사람과 친해진다",0],["이어폰 끼고 기다린다",2],["평일 한적한 날을 노린다",3]]],["c","각자 계산하자고 말해야 한다","분위기가 애매하다",[["“각자 할까?” 먼저 말한다",0],["누군가 말하길 기다린다",2],["내 것만 조용히 먼저 계산하고 온다",3]]],["c","단골 가게 쿠폰 도장을 다 모았다","도장 10개 완성",[["“쿠폰 쓸게요!” 바로 내민다",0],["계산하면서 슬쩍 내민다",1],["아까워서 다음에 쓰기로 한다… 매번",3]]],["c","단골 식당 사장님이 사적인 걸 묻는다","“요즘 연애는 해요?”",[["웃으면서 이야기 나눈다",0],["적당히 웃으며 넘긴다",2],["단골 가게 목록을 조용히 다시 짠다",3]]],["c","옆 사람이 노트북을 봐 달라고 한다","잠깐 화장실 다녀온다고 한다",[["“다녀오세요!” 흔쾌히",0],["좋다고 하고 계속 신경 쓴다",1],["그분이 돌아올 때까지 얼음이 된다",3]]],["c","디저트 가게에 시식 코너가 있다","직원이 바로 옆에 서 있다",[["맛보고 바로 감상을 말한다",0],["하나 먹고 고개를 끄덕인다",1],["직원 시선이 부담돼 그냥 지나간다",3]]],["c","일행 중 내 메뉴만 안 나왔다","다른 사람들은 먹기 시작했다",[["직원을 불러 확인한다",0],["일행이 대신 물어봐 주길 바란다",2],["“먼저 드세요” 하고 조용히 기다린다",3]]],["c","혼자 간 카페에서 옆 테이블 대화가 들린다","너무 재밌는 이야기다",[["맞장구치고 싶은 걸 겨우 참는다",0],["몰래 웃는다",1],["이어폰을 꽂는다",3]]],["c","계산할 때 영수증 필요하냐고 묻는다","가끔 대답 타이밍을 놓친다",[["“네, 주세요!” 또렷하게",0],["“아… 네” 반 박자 늦게",2],["고개를 젓는 걸로 대답한다",3]]],["c","셀프 정수기 앞에 사람들이 모여 있다","물을 떠야 한다",[["사이로 들어가 같이 뜬다",0],["사람들이 빠질 때까지 기다린다",2],["물 없이 먹는다",3]]],["c","친구가 소개해 준 식당 사장님이 반긴다","“OO 친구시죠?”",[["반갑게 인사하고 수다를 떤다",0],["웃으며 인사한다",1],["친구에게 “나 알아보셨어” 톡부터 보낸다",3]]],["c","직원이 “맛있게 드세요” 한다","대답이 저절로 튀어나온다",[["“감사합니다~”",0],["“네, 수고하세요”",1],["“너도요”가 나올까 봐 고개만 숙인다",3]]],["c","고깃집 직원이 고기를 구워 준다","계속 옆에 서 있다",[["직원과 이야기하며 먹는다",0],["감사하다고만 말한다",1],["직원이 갈 때까지 대화를 멈춘다",3]]],["c","카페 2층에 나 혼자 있다","조용하고 넓다",[["심심해서 1층으로 내려간다",0],["그럭저럭 괜찮다",1],["여기가 천국이다",3]]],["m","모르는 번호도 아닌데 전화가 온다","진동이 유난히 길게 느껴진다",[["일단 받는다, 전화가 제일 빠르니까",0],["심호흡 한 번 하고 받는다",2],["끊길 때까지 기다렸다 문자로 묻는다",3]]],["m","단톡방에 한마디 했는데 5분째 조용하다","1은 다 사라졌다",[["“다들 바빠?” 한 번 더 보낸다",0],["이모티콘 하나로 자연스럽게 수습한다",1],["폰을 뒤집어 놓고 다른 일을 한다",3]]],["m","배달 기사님한테 전화가 왔다","“문 앞에 놔 드릴까요?”",[["전화로 바로 대답한다",0],["받긴 받는데 목소리가 작아진다",2],["요청사항에 미리 다 적어 둔다",3]]],["m","오늘 맛있는 걸 먹었다","인스타 스토리에 올릴까",[["바로 올리고 반응을 즐긴다",0],["친한 친구 목록에만 올린다",2],["사진첩에만 고이 간직한다",3]]],["m","오랜만에 친구한테 연락이 왔다","“잘 지내? 우리 언제 봐?”",[["바로 날짜를 잡자고 한다",0],["“조만간 보자!”로 마무리한다",2],["답장 문장을 30분째 다듬고 있다",3]]],["m","1분짜리 음성 메시지를 받았다","재생 버튼이 보인다",[["바로 듣고 음성으로 답한다",0],["듣고 글로 답한다",1],["자막 기능이 생기길 기다린다",3]]],["m","단톡방에서 내 이름이 불렸다","“OO도 올 거지?”",[["“당연하지!” 바로 답한다",0],["“일정 보고 말해 줄게”",2],["읽고 나서 마음의 준비 시간을 갖는다",3]]],["m","친한 친구가 영상통화를 걸었다","화면에 이름이 떴다",[["바로 받는다, 얼굴 보는 게 좋지",0],["카메라 끄고 받는다",2],["“나중에 전화할게” 문자를 보낸다",3]]],["m","처음 보는 사람이 DM으로 칭찬을 보냈다","“사진 감성 너무 좋아요!”",[["감사 인사 하고 대화를 이어 간다",0],["하트만 누른다",2],["어떻게 답할지 고민하다 하루가 간다",3]]],["m","생일 축하 메시지가 쏟아진다","단톡, 개인톡, 스토리 멘션까지",[["하나하나 길게 답한다",0],["비슷한 문장으로 차례대로 답한다",1],["단톡에 “다들 고마워!” 한 번에 끝낸다",3]]],["m","카톡 프로필 사진을 바꿨다","친구 목록에 업데이트 표시가 뜬다",[["일부러 바꾼 거니 다들 봐 주면 좋다",0],["크게 신경 안 쓴다",1],["업데이트 알림 끄는 법을 찾아 헤맨다",3]]],["m","친구가 전화로 고민 상담을 한다","1시간째 통화 중",[["끝까지 들어 주고 다음 날 또 전화한다",0],["들어 주고 통화 끝나면 드러눕는다",2],["이어서는 문자로 하자고 제안한다",3]]],["m","새벽 1시, 친구에게 “자?”가 왔다","읽음 표시가 신경 쓰인다",[["“아니! 왜?” 바로 답한다",0],["아침에 답한다",2],["미리보기로만 읽고 아침에 처음 본 척한다",3]]],["m","단톡방에 모임 장소 투표가 올라왔다","후보가 다섯 개",[["의견까지 길게 단다",0],["투표만 한다",1],["다수결 결과에 조용히 따른다",3]]],["m","보낸 메시지에 오타가 났다","이미 1이 사라졌다",[["“ㅋㅋ 오타” 하고 넘긴다",0],["정정 메시지를 보낸다",1],["민망해서 폰을 잠시 멀리 둔다",3]]],["m","공지방에 ‘확인했습니다’를 써야 한다","아무도 아직 안 썼다",[["내가 첫 번째로 쓴다",0],["두세 명 쓰고 나면 쓴다",2],["공감 이모지로 대신한다",3]]],["m","친구들이 SNS 라이브를 해 보라고 한다","재밌겠다고 부추긴다",[["바로 켜 본다",0],["친구랑 같이라면 해 본다",2],["구경하는 쪽이 적성이다",3]]],["m","길게 답장해야 할 진지한 메시지가 왔다","천천히 읽어 봤다",[["전화로 이야기하자고 한다",0],["정성껏 길게 쓴다",2],["메모장에 초안부터 쓴다",3]]],["m","친구가 웃긴 사진을 올렸다","댓글을 달까 말까",[["드립 댓글을 단다",0],["“ㅋㅋㅋ”만 단다",1],["좋아요만 누르고 친구에게 따로 톡 보낸다",3]]],["m","톡 대신 바로 전화하는 친구가 있다","“톡 쓰기 귀찮아서 걸었어”",[["그 친구 스타일이 좋다",0],["받긴 하는데 용건만 빨리",2],["전화는 미리 예고해 달라고 부탁한다",3]]],["m","관심사 오픈채팅방에 들어갔다","대화가 활발하다",[["입장하자마자 인사한다",0],["분위기 보다가 질문 하나 한다",2],["눈팅만 3개월째",3]]],["m","모르는 번호로 부재중 전화가 3통 와 있다","문자는 없다",[["바로 다시 건다",0],["번호를 검색해 본다",2],["중요하면 문자가 올 거라 믿는다",3]]],["m","친구가 내 사진을 태그해서 올렸다","나만 눈을 감고 있다",[["웃기다, 같이 즐긴다",0],["“다른 사진 없어?” 톡을 보낸다",1],["태그를 슬쩍 해제한다",3]]],["m","평소 내 답장 속도는","메시지를 받으면",[["보자마자 바로",0],["여유 있을 때 몰아서",2],["생각이 정리될 때까지 숙성",3]]],["m","5명 그룹 통화에 초대됐다","다들 동시에 이야기한다",[["대화를 주도한다",0],["가끔 리액션한다",2],["음소거 버튼 위에 손가락을 올려 둔다",3]]],["m","친구가 단톡방에 내 흑역사 사진을 올렸다","다들 ㅋㅋㅋ 중",[["같이 웃고 다른 흑역사로 반격한다",0],["“그만해 ㅋㅋ” 한마디",1],["잠깐 폰을 내려놓는다",3]]],["m","동아리 지원에 자기소개 영상이 필요하다","1분짜리 영상",[["오히려 재밌다, 바로 찍는다",0],["열 번 찍고 제일 나은 걸 보낸다",2],["글로 대신할 수 있는지 문의한다",3]]],["m","오랜만에 올린 게시물에 반응이 별로 없다","좋아요 3개",[["하나 더 올려서 분위기를 띄운다",0],["그냥 넘긴다",1],["조용히 보관함으로 옮긴다",3]]],["m","새해 인사를 보낼 때","연락처에 200명이 있다",[["한 명씩 다른 말로 보낸다",0],["친한 사람들에게만 보낸다",2],["받은 사람에게만 답한다",3]]],["m","보이스톡 버튼을 실수로 눌렀다","이미 신호가 가고 있다",[["그냥 통화하자고 한다",0],["바로 끊고 “잘못 눌렀어 ㅋㅋ” 보낸다",1],["끊고 휴대폰을 이불 속에 숨긴다",3]]],["m","버스킹 공연이 끝나고 가수가 맞팔을 권한다","관객이 몇 명 안 된다",[["바로 맞팔하고 응원 DM까지",0],["팔로우만 한다",2],["박수 크게 치고 조용히 자리를 뜬다",3]]],["m","친구 결혼식 축가를 같이 부르자는 제안","“우리 단체로 하자!”",[["센터 자리를 맡는다",0],["화음 파트로 참여한다",2],["축가 연습 장소 예약을 맡는다",3]]],["m","메시지에 ‘ㅇㅋ’만 왔다","상대 기분이 궁금하다",[["“혹시 기분 안 좋아?” 바로 묻는다",0],["그냥 바쁜가 보다 한다",1],["대화 기록을 처음부터 다시 읽는다",3]]],["m","친구 생일 축하 영상을 모은다","“한마디씩 찍어 줘!”",[["웃긴 콘셉트로 길게 찍는다",0],["짧고 따뜻하게 찍는다",1],["글로 써서 대신 읽어 달라고 한다",3]]],["m","인스타 ‘친한 친구’ 목록에는","몇 명이 있나",[["50명 넘는다",0],["열 명 남짓",2],["세 명, 그중 하나는 부계정",3]]],["s","주말 약속이 갑자기 취소됐다","상대는 미안해하고 있다",[["아쉽다, 바로 다른 사람한테 연락한다",0],["아쉬운데 솔직히 조금 좋기도 하다",2],["“아쉽다ㅠ” 보내면서 이미 눕고 있다",3]]],["s","사람 많은 모임에 3시간째 있다","분위기는 좋다",[["이제 몸이 풀렸다, 2차 가자",0],["재밌는데 슬슬 집 생각이 난다",2],["화장실에서 5분 쉬고 와야 다시 괜찮다",3]]],["s","처음 가는 모임에서 자기소개를 한다","돌아가면서 한마디씩",[["웃긴 한마디로 분위기를 띄운다",0],["이름과 하는 일만 깔끔하게",2],["내 순서가 올 때까지 대사를 외운다",3]]],["s","친구의 친구들이 모인 자리","아는 사람은 한 명뿐",[["금방 모두와 친해진다",0],["아는 친구 옆을 지킨다",2],["일어날 핑계를 미리 준비해 간다",3]]],["s","이번 주 고생했다","금요일 밤 계획은",[["사람 만나서 풀어야 한다",0],["가볍게 한 명 정도 만난다",1],["씻고 이불 속에서 영화 한 편",3]]],["s","노래방에서 마이크가 넘어왔다","다들 기대하는 눈빛",[["일어나서 무대를 한다",0],["앉아서 무난하게 부른다",1],["“예약 안 했어” 하고 탬버린을 잡는다",3]]],["s","깜짝 생일 파티의 주인공이 됐다","문을 열자 다들 소리친다",[["감동해서 리액션이 폭발한다",0],["고마워서 웃는데 얼굴이 빨개진다",2],["기쁜데 심장이 먼저 놀란다",3]]],["s","약속 장소에 20분 일찍 도착했다","일행은 아직이다",[["근처 가게를 구경하며 기다린다",0],["카페에 들어가 기다린다",1],["혼자만의 20분이 오히려 좋다",3]]],["s","워크숍 장기자랑을 조별로 한다","하나는 해야 한다",[["기획부터 센터까지 맡는다",0],["뒷줄에서 춤을 맞춘다",2],["조명과 음악 담당을 자원한다",3]]],["s","단체 사진을 찍는다","어디에 설까",[["맨 앞 가운데",0],["적당히 가운데쯤",1],["사진 찍어 주는 역할을 자처한다",3]]],["s","친구가 연락 없이 집 앞에 왔다","“나 지금 너네 집 앞!”",[["좋다, 바로 나간다",0],["5분만 기다려 달라고 한다",2],["예고 없는 방문은 심장에 무리다",3]]],["s","모임에서 대화가 끊겼다","어색한 정적 3초",[["아무 주제나 던진다",0],["음료를 마시며 누가 말하길 기다린다",2],["정적도 나쁘지 않다",3]]],["s","10년 만에 동창회 초대장이 왔다","다들 어떻게 지낼까",[["무조건 간다",0],["친한 친구가 가면 간다",2],["단톡방 사진으로만 참석한다",3]]],["s","처음 만난 사람과 둘만 남았다","일행이 화장실에 갔다",[["질문을 연달아 던진다",0],["날씨 얘기로 버틴다",2],["알림을 확인하는 척한다",3]]],["s","파티에서 다들 춤추기 시작했다","음악이 커졌다",[["제일 먼저 나간다",0],["다들 추면 따라 춘다",1],["음료 코너를 지킨다",3]]],["s","친구가 연휴 계획을 묻는다","“이번 연휴에 뭐 해?”",[["약속이 꽉 찼다",0],["하루 정도 약속이 있다",1],["아무것도 안 하는 게 계획이다",3]]],["s","친구가 소개팅을 제안한다","괜찮은 사람이라고 한다",[["좋아, 일단 만나 본다",0],["어떤 사람인지부터 물어본다",2],["“요즘 바빠서”로 정중히",3]]],["s","모임에서 먼저 일어나야 한다","다들 한창 즐기는 중",[["“나 먼저 갈게!” 당당하게",0],["타이밍을 보다 조용히 인사한다",2],["아무도 모르게 사라진다",3]]],["s","보드게임 카페에서 옆 팀이 같이 하자고 한다","모르는 사람들이다",[["좋아요, 판이 커질수록 재밌다",0],["한 판만 같이 한다",2],["우리끼리 하자고 조용히 말한다",3]]],["s","생일 노래를 부르는데 주인공과 눈이 마주쳤다","모두 합창 중",[["같이 신나게 부른다",0],["입 모양만 맞춘다",2],["박수 타이밍만 노린다",3]]],["s","긴 테이블에서 자리를 고른다","모임 시작 전",[["가운데, 대화의 중심",0],["아는 사람 옆",1],["맨 끝, 출입문 근처",3]]],["s","친구가 자기 친구를 데려와도 되냐고 묻는다","둘이 보기로 한 약속이었다",[["좋지, 많을수록 재밌다",0],["괜찮다고 하지만 살짝 긴장된다",2],["다음에 셋이 보자고 한다",3]]],["s","올해 크리스마스 계획은","12월이 다가온다",[["파티 주최자다",0],["친한 친구 몇 명과 소소하게",1],["트리 불빛 아래 혼자 영화 정주행",3]]],["s","약속 30분 전 피곤이 몰려왔다","내가 먼저 잡은 약속이다",[["씻고 나가면 또 신난다",0],["가서 일찍 들어오기로 한다",2],["취소 문자를 썼다 지웠다 반복한다",3]]],["s","놀이공원 퍼레이드 직원이 손을 내민다","같이 춤추자는 뜻이다",[["손잡고 같이 춤춘다",0],["웃으며 잠깐 따라간다",1],["친구 등 뒤로 숨는다",3]]],["s","결혼식 뒤풀이에 신랑 친구들과 합석했다","처음 보는 사람이 대부분",[["분위기 메이커로 등극",0],["아는 사람과 이야기한다",2],["축하만 전하고 귀가한다",3]]],["s","친구 집들이에 갔다","처음 보는 사람이 반이다",[["요리부터 같이 하며 친해진다",0],["선물 전달하고 적당히 어울린다",2],["집 구경을 오래 하며 시간을 번다",3]]],["s","약속 없는 주말이 2주째다","달력이 텅 비었다",[["불안하다, 약속을 만든다",0],["가끔은 괜찮다",1],["달력이 비어 있을 때 제일 평화롭다",3]]],["s","페스티벌 앞쪽 스탠딩이 빽빽하다","공연이 곧 시작한다",[["맨 앞까지 간다",0],["중간쯤에서 즐긴다",1],["돗자리 구역에서 멀리서 본다",3]]],["s","친구가 즉흥 여행을 제안한다","“내일 바다 갈래?”",[["짐부터 싼다",0],["일정 확인하고 간다",1],["‘즉흥’이라는 단어에 이미 피곤하다",3]]],["s","6명이 영화관 좌석을 정한다","예매 화면 앞",[["가운데 앉아서 반응을 공유한다",0],["아무 데나 괜찮다",1],["맨 끝, 옆에 한 명만 있는 자리",3]]],["s","대화 중 내 얘기가 너무 길어졌다","다들 듣고 있다",[["이왕 하는 김에 끝까지 한다",0],["살짝 마무리하고 질문을 넘긴다",1],["갑자기 부끄러워 말끝을 흐린다",3]]],["s","단체 여행 방을 배정한다","4인실과 1인실(추가 요금)",[["무조건 같이 쓰는 방",0],["친한 친구랑 2인실",2],["추가 요금 내고 1인실",3]]],["s","오늘 아무도 안 만났다","지금은 밤 10시",[["좀 허전하다",0],["그런 날도 있다",1],["충전 완료 느낌이다",3]]],["s","친구들이 1시간 뒤 우리 집에 온다고 한다","갑자기 정해졌다",[["좋아, 치킨부터 시켜 둔다",0],["청소하면서 반갑게 맞을 준비",1],["우리 집 말고 밖에서 보자고 한다",3]]],["w","수업·회의에서 질문 있냐고 묻는다","사실 궁금한 게 있다",[["손 들고 바로 묻는다",0],["끝나고 따로 찾아가 묻는다",2],["나중에 검색해 본다",3]]],["w","조별 과제 역할을 나눈다","발표자를 정해야 한다",[["발표는 내가 한다",0],["자료 조사를 맡는다",2],["PPT 디자인은 나에게 맡겨",3]]],["w","엘리베이터에서 팀장님·교수님을 만났다","10층까지 둘만 간다",[["가벼운 대화를 시작한다",0],["인사 후 미소를 유지한다",2],["다음 엘리베이터를 탈 걸 그랬다",3]]],["w","점심 메뉴를 다들 못 정한다","12시 5분",[["“오늘 국밥!” 바로 정한다",0],["후보 두 개를 낸다",1],["가는 대로 따라간다",3]]],["w","행사 사회를 보라는 제안을 받았다","“목소리 좋으니까 해 봐”",[["좋아요, 해 볼게요",0],["보조 사회라면 해 본다",2],["사회 대신 대본을 써 드린다",3]]],["w","새로 온 사람이 혼자 밥을 먹는다","나도 혼자다",[["같이 먹자고 다가간다",0],["눈인사만 하고 다음에 말 걸어 본다",2],["나도 그 고요함을 존중한다",3]]],["w","회의 중 다른 의견이 생겼다","다들 한 방향으로 가고 있다",[["바로 손 들고 말한다",0],["회의 끝나고 메신저로 정리해 보낸다",2],["다음 회의를 위해 아껴 둔다",3]]],["w","출근길에 10미터 앞 동료를 발견했다","아직 나를 못 봤다",[["뛰어가서 같이 간다",0],["가다가 마주치면 인사한다",2],["걸음 속도를 조절해 거리를 유지한다",3]]],["w","동호회 가입 권유를 받았다","볼링, 등산, 풋살…",[["두 개 다 가입한다",0],["분위기 보고 하나만",2],["퇴근 후는 소중한 개인 시간",3]]],["w","발표 차례가 다가온다","앞 사람 발표가 끝나 간다",[["오히려 신난다",0],["살짝 떨리지만 할 만하다",1],["심장 소리가 마이크에 잡힐 것 같다",3]]],["w","팀원 생일 축하를 메신저로 한다","단체방이다",[["파티 이모지 잔뜩, 제일 먼저",0],["다들 쓴 다음에 짧게",2],["개인 메시지로 조용히",3]]],["w","상사·교수님이 내 이름을 잘못 불렀다","벌써 두 번째다",[["“저 OO입니다~” 웃으며 정정한다",0],["다음에 기회 보면 말한다",2],["이제 그 이름으로 살기로 한다",3]]],["w","회식에서 건배사를 하라고 한다","갑자기 지목당했다",[["준비된 사람처럼 멋지게",0],["짧게 “위하여!”",1],["잔을 들고 박수로 넘긴다",3]]],["w","새 학기·새 팀 첫날 자유석이다","어디에 앉을까",[["사람 많은 쪽",0],["중간 어딘가",1],["창가 맨 뒤 구석",3]]],["w","탕비실에서 처음 보는 동료와 커피를 내린다","추출 시간 30초",[["“어느 팀이세요?” 말을 건다",0],["목례하고 웃는다",2],["원두 설명서를 정독한다",3]]],["w","모두가 나를 보며 답을 기다린다","사실 잘 모르겠다",[["아는 만큼 자신 있게 말한다",0],["“확인해 보고 말씀드릴게요”",1],["머리가 하얘진다",3]]],["w","동기 모임 공지가 올라왔다","이번 주 금요일 저녁",[["총무를 자처한다",0],["참석한다",1],["금요일 저녁은 이미 나와의 약속이 있다",3]]],["w","재택근무와 출근 중에 고를 수 있다","일주일 중",[["매일 출근, 사람 만나야 일이 된다",0],["반반이 좋다",1],["재택, 집이 최고의 사무실",3]]],["w","화상 회의에서 카메라를 켜라고 한다","머리를 안 감았다",[["그냥 켠다, 다 이해하겠지",0],["배경 흐림을 켜고 켠다",2],["채팅으로 열심히 참여한다",3]]],["w","팀장님이 전체 메일에서 나를 칭찬했다","이름이 언급됐다",[["전체 답장으로 감사 인사",0],["개인적으로 감사 메시지를 보낸다",2],["부끄러워서 메일함을 닫는다",3]]],["w","강의실 좌석이 다 비어 있다","어디에 앉을까",[["맨 앞, 집중력 최고",0],["중간",1],["맨 뒤 구석이 마음 편하다",3]]],["w","동료가 내 자리로 와서 수다를 시작한다","업무 중이다",[["같이 수다를 즐긴다",0],["적당히 맞장구친다",2],["모니터를 진지하게 바라보며 신호를 보낸다",3]]],["w","퇴근 시간인데 다들 앉아 있다","시계는 6시 1분",[["“먼저 들어가 보겠습니다!” 당당하게",0],["10분 뒤에 나간다",2],["소리 없이 짐을 싸서 투명인간처럼",3]]],["w","학교 축제 부스에 호객 담당이 필요하다","목청이 필요한 자리",[["내가 할게",0],["계산 담당을 맡는다",2],["부스 꾸미기를 맡는다",3]]],["w","처음 연락하는 업무 상대가 있다","전화와 메일 중에",[["전화가 빠르다",0],["메일로 정리해 보낸다",2],["메일을 세 번 검토하고 예약 발송",3]]],["w","단체 생일 선물 돈을 걷어야 한다","총대가 필요하다",[["내가 걷을게",0],["누가 걷으면 바로 낸다",1],["조용히 송금만 한다",3]]],["w","팀 빌딩에서 짝을 정해 대화하는 게임","진행자가 짝을 부른다",[["제일 신나게 참여한다",0],["짝이 정해지면 성실히",2],["진행 도우미를 자원한다",3]]],["w","수업 끝나고 교수님 앞에 질문 줄이 생겼다","나도 궁금한 게 있다",[["줄 서서 기다린다",0],["메일로 질문한다",2],["다음 수업까지 혼자 고민한다",3]]],["w","동료가 점심을 같이 먹자고 했다","오늘은 혼자 먹고 싶었다",[["좋아, 같이 먹자",0],["오늘은 일이 있다고 정중히",2],["같이 먹으며 마음속으로 혼밥을 그리워한다",3]]],["w","학교·회사 홍보 영상 출연 제안","“얼굴 한 번만 나와 주세요”",[["좋다, 포즈도 연구해 온다",0],["뒷모습이면 괜찮다",2],["손만 나오는 걸로 협상한다",3]]],["b","옷 가게 직원이 다가온다","“찾으시는 거 있으세요?”",[["원하는 스타일을 자세히 말한다",0],["“그냥 둘러볼게요” 웃는다",2],["그 말이 나오기 전에 가게를 나온다",3]]],["b","피팅룸에서 입어 본 옷이 안 맞는다","직원이 밖에서 “어떠세요?” 묻는다",[["문 열고 다른 사이즈를 부탁한다",0],["“괜찮아요!” 하고 일단 나온다",2],["이건 운명이다, 그냥 산다",3]]],["b","편의점에서 포인트 적립하냐고 묻는다","뒤에 줄이 있다",[["번호를 불러 드린다",0],["앱 바코드를 내민다",1],["“괜찮아요” 하고 적립은 포기한다",3]]],["b","배달 음식에서 소스 하나가 빠졌다","제일 중요한 소스다",[["가게에 전화한다",0],["앱으로 문의를 남긴다",2],["소스 없이 먹는 법을 찾는다",3]]],["b","시장 사장님이 “얼마면 돼?” 한다","흥정 분위기다",[["신나게 흥정한다",0],["“조금만 깎아 주세요” 한 번",1],["정가 그대로 낸다",3]]],["b","‘직접 수령’ 택배가 왔다","초인종이 울렸다",[["바로 나가 받는다",0],["잠깐 뒤에 나간다",1],["문 너머로 “앞에 두세요!” 외친다",3]]],["b","환불하러 매장에 가야 한다","영수증은 있다",[["당당하게 간다",0],["할 말을 메모해서 간다",2],["택배 반품이 되는지부터 찾는다",3]]],["b","마트 시식 직원이 크게 권한다","“이거 드셔 보세요!”",[["먹고 “맛있네요!” 대화한다",0],["하나 먹고 감사 인사",1],["코너를 멀리 돌아간다",3]]],["b","옷을 산다면","쇼핑 스타일은",[["매장에서 입어 보고 직원과 상의",0],["매장 구경 후 온라인으로",2],["무조건 온라인, 후기 1000개 정독",3]]],["b","편의점 계산대에 친구가 서 있다","알바하는 줄 몰랐다",[["반갑게 수다",0],["“오 여기서 일해?” 짧게",1],["웃으며 손만 흔들고 빠르게 계산한다",3]]],["b","사고 싶은 물건이 잠긴 진열장 안에 있다","직원이 꺼내 줘야 한다",[["바로 부른다",0],["직원이 지나가길 기다린다",2],["온라인으로 같은 걸 찾는다",3]]],["b","계산 줄 뒷사람이 먼저 하라고 양보한다","내 물건은 하나뿐이다",[["“감사합니다!” 하고 먼저 한다",0],["사양했다가 결국 먼저 한다",1],["괜찮다고 끝까지 사양한다",3]]],["b","배달 요청사항 칸을 채운다","적을 게 있다",[["“맛있게 해 주세요♥” 정성껏",0],["필요한 것만 짧게",1],["“벨 X 노크 X 문 앞 O” 상세하게",3]]],["b","직원이 정성껏 도와줬는데 옷이 별로였다","사고 싶지는 않다",[["솔직하게 다음에 오겠다고 한다",0],["미안해서 양말이라도 산다",2],["그 매장 앞을 당분간 피한다",3]]],["b","중고거래 직거래 약속을 잡았다","판매자와 만나야 한다",[["만나서 물건 얘기도 좀 나눈다",0],["짧게 확인하고 거래",1],["문고리 거래를 강력 희망",3]]],["b","단골 가게 사장님이 서비스를 줬다","“이거 맛보세요”",[["감사하다고 대화를 나눈다",0],["고개 숙여 감사 인사",1],["말 대신 정성 리뷰로 보답한다",3]]],["b","편의점에서 택배를 보내야 한다","접수기가 낯설다",[["직원에게 “이거 보낼게요!” 바로",0],["직원에게 접수기 쓰는 법을 묻는다",2],["접수기 앞에서 혼자 해결한다",3]]],["b","화장품 매장 직원이 테스트해 주겠다고 한다","거울 앞 의자를 권한다",[["좋아요, 추천도 받는다",0],["손등에만 발라 본다",2],["“보고만 갈게요”",3]]],["b","온라인 주문이 잘못 왔다","고객센터에 연락해야 한다",[["전화로 바로 해결",0],["채팅 상담",2],["반품 버튼으로만 해결",3]]],["b","동네 빵집 사장님이 말을 건다","“오늘 처음 오셨죠?”",[["“네! 맛있다고 들었어요” 대화",0],["“네” 하고 웃는다",1],["“아 네…” 하며 빵을 서둘러 고른다",3]]],["b","셀프 계산대와 직원 계산대 줄이 같다","어디로 갈까",[["직원 계산대",0],["아무 데나",1],["셀프 계산대, 대화 0%",3]]],["b","마지막 하나 남은 물건을 옆 사람과 동시에 집었다","손이 닿았다",[["“먼저 보셨어요?” 웃으며 묻는다",0],["양보한다",2],["손을 거두고 다른 매장으로 간다",3]]],["b","쇼핑몰 이벤트 무대에서 참여자를 찾는다","사회자가 관객을 둘러본다",[["손 번쩍",0],["친구가 나가면 응원한다",1],["사회자와 눈이 안 마주치게 고개를 숙인다",3]]],["b","꽃집에서 꽃다발을 주문한다","사장님이 용도를 묻는다",[["사연까지 자세히 이야기한다",0],["“선물용이요” 짧게",1],["미리 찾아 둔 사진을 보여 준다",3]]],["b","카페 키오스크가 고장 났다","직원에게 주문해야 한다",[["바로 가서 주문한다",0],["메뉴를 다 정하고 간다",2],["고칠 때까지 기다린다",3]]],["b","리뷰 쓰면 음료를 준다는 이벤트","배달 앱 알림",[["사진까지 정성껏",0],["별점만",2],["음료보다 마음의 평화",3]]],["b","동네 마트 계산원이 매번 말을 건다","“오늘 날씨 춥죠?”",[["맞장구치며 수다",0],["“네 그러네요” 웃는다",1],["이어폰을 꽂고 간다",3]]],["b","큰 매장에서 원하는 코너를 못 찾겠다","10분째 헤매는 중",[["직원에게 바로 묻는다",0],["안내판을 찾아본다",2],["매장을 세 바퀴 돈다",3]]],["b","친구 선물을 사러 갔다","직원이 추천해 주겠다고 한다",[["대화하며 같이 고른다",0],["추천 하나 듣고 결정",1],["미리 정해 온 걸 바로 계산",3]]],["b","길에서 무료 샘플을 나눠 준다","직원이 다가온다",[["받고 이것저것 물어본다",0],["받고 감사 인사",1],["눈 마주치기 전에 지나간다",3]]],["n","엘리베이터에 이웃이 탔다","12층까지 함께 간다",[["인사하고 날씨 얘기까지 한다",0],["인사만 하고 층수 숫자를 정독한다",2],["멀리서 보고 다음 엘리베이터를 탄다",3]]],["n","지도 앱을 든 사람이 길을 묻는다","목적지가 근처다",[["직접 데려다준다",0],["친절하게 설명한다",1],["손으로 방향만 가리킨다",3]]],["n","버스에서 내릴 정류장을 지나쳤다","기사님께 말하면 세워 줄 수도",[["“기사님, 여기 내려 주세요!”",0],["다음 정류장에서 내린다",2],["종점까지 간다, 산책이라 생각한다",3]]],["n","택시 기사님이 말을 많이 건다","목적지까지 20분",[["대화를 즐긴다",0],["적당히 대답한다",2],["피곤한 척 눈을 감는다",3]]],["n","이웃이 이사 떡을 돌린다","초인종이 울렸다",[["반갑게 인사하고 수다",0],["감사 인사하고 받는다",1],["인터폰 화면 앞에서 잠시 고민한다",3]]],["n","지하철에서 옆 사람이 졸며 기댄다","어깨가 무겁다",[["살짝 깨운다",0],["자세를 바꿔 신호를 준다",2],["내릴 때까지 조각상이 된다",3]]],["n","길에서 설문조사를 부탁한다","“잠깐 시간 되세요?”",[["오케이, 참여한다",0],["바쁘다고 정중히",2],["이어폰 끼고 못 들은 척",3]]],["n","아파트 단지 바자회가 열렸다","주민 행사다",[["직접 부스를 연다",0],["구경 가서 하나 산다",1],["창문으로 구경한다",3]]],["n","버스에 아는 사람이 탔다","내 옆자리가 비어 있다",[["옆에 앉아 수다",0],["인사하고 근처에 선다",2],["창밖 풍경에 몰두한다",3]]],["n","관광객이 사진을 찍어 달라고 한다","휴대폰을 건넨다",[["여러 장 찍고 포즈도 추천한다",0],["두세 장 찍어 준다",1],["한 장 찍고 빠르게 돌려준다",3]]],["n","위층에서 밤마다 쿵쿵 소리가 난다","일주일째다",[["직접 올라가 정중히 말한다",0],["관리실에 부탁한다",2],["귀마개를 산다",3]]],["n","버스킹 가수가 같이 부를 사람을 찾는다","관객을 둘러본다",[["무대로 나간다",0],["박수로 호응한다",1],["조용히 반 걸음 뒤로",3]]],["n","산책 중 강아지가 다가왔다","주인이 “만져도 돼요” 한다",[["쓰다듬으며 주인과 대화한다",0],["강아지와만 인사한다",2],["마음으로만 쓰다듬는다",3]]],["n","지하철에서 어르신이 탔다","나는 앉아 있다",[["“여기 앉으세요” 바로 말한다",0],["일어나서 손짓으로 권한다",2],["조용히 일어나 문 쪽으로 이동한다",3]]],["n","이웃이 우리 택배를 대신 받아 뒀다","문 앞에 메모가 있다",[["직접 찾아가 감사 인사",0],["찾아가서 받고 짧게 감사",1],["감사 메모를 붙이고 문 앞에 두기를 부탁",3]]],["n","길에서 드라마 촬영 현장을 만났다","구경꾼이 많다",[["가까이 가서 구경한다",0],["멀리서 사진 한 장",1],["빠르게 지나간다",3]]],["n","비 오는 날 우산 없는 사람과 방향이 같다","정류장까지 100미터",[["“같이 쓰실래요?”",0],["씌워 줄까 고민하다 지나친다",2],["우산이 두 개면 좋았을 텐데 생각만 한다",3]]],["n","공원 벤치 옆자리에 누가 앉는다","벤치는 길다",[["말을 건다",0],["그냥 앉아 있는다",1],["자연스럽게 일어나 걷는다",3]]],["n","택시에서 목적지를 설명해야 한다","주소가 복잡하다",[["큰 소리로 설명한다",0],["지도 앱 화면을 보여 준다",2],["앱 호출로 말 안 해도 되게 한다",3]]],["n","골목에서 동네 분들이 모여 수다 중이다","그 앞을 지나가야 한다",[["인사하며 지나간다",0],["목례하고 빠르게",2],["다른 골목으로 돌아간다",3]]],["n","지하철에서 누가 물건을 떨어뜨렸다","모른 채 내리려 한다",[["“저기요! 떨어뜨리셨어요!” 크게",0],["주워서 쫓아가 건넨다",1],["주워서 역무원에게 맡긴다",3]]],["n","집 전등이 고장 났다","관리사무소에 알려야 한다",[["바로 전화한다",0],["앱 민원 게시판에 올린다",2],["일단 스탠드를 하나 산다",3]]],["n","처음 가는 동네에서 길을 잃었다","휴대폰 배터리 3%",[["사람들에게 길을 묻는다",0],["편의점에서 충전한다",2],["감으로 걸어 본다, 모험이다",3]]],["n","버스 안에서 큰 소리로 통화하는 사람이 있다","좀 시끄럽다",[["정중히 말한다",0],["눈빛으로 신호를 보낸다",2],["이어폰 볼륨을 올린다",3]]],["n","새로 이사 온 이웃이 짐을 옮기고 있다","복도에서 마주쳤다",[["“도와드릴까요?”",0],["“안녕하세요” 인사",1],["미소만 짓고 문을 닫는다",3]]],["n","공용 건조기에 남의 빨래가 끝난 채 있다","내 빨래를 넣어야 한다",[["주인을 기다렸다 말한다",0],["메모를 남긴다",2],["다른 세탁방을 찾는다",3]]],["n","지나가던 사람이 반갑게 인사한다","누군지 모르겠다",[["“어! 안녕하세요” 반갑게",0],["웃으며 인사만",1],["누구였는지 하루 종일 생각한다",3]]],["n","짐이 많은 이웃과 엘리베이터를 탔다","버튼이 내 쪽에 있다",[["“몇 층이세요?” 먼저 묻는다",0],["부탁하면 누른다",1],["열림 버튼을 누른 채 시선은 바닥에",3]]],["n","동네 고양이 밥 주는 모임에 초대받았다","이웃이 같이 하자고 한다",[["좋다, 단톡방에도 들어간다",0],["가끔 간식만 함께 준다",2],["멀리서 응원한다",3]]],["n","환승 통로에서 전단지를 나눠 준다","손이 다가온다",[["받고 감사 인사",0],["받고 지나간다",1],["손을 주머니에 넣고 빠르게",3]]],["h","미용실에서 “어디 불편한 데 없으세요?”","사실 물이 조금 뜨겁다",[["“조금 뜨거워요” 바로 말한다",0],["움찔거려서 알아채 주길 기다린다",2],["“네 괜찮아요” 하고 견딘다",3]]],["h","미용사가 계속 말을 건다","“오늘 뭐 하세요?”",[["대화를 즐긴다",0],["짧게 대답한다",2],["잡지를 펴 들고 신호를 보낸다",3]]],["h","머리가 생각과 다르게 잘렸다","미용사가 “어때요?” 묻는다",[["“앞머리 조금만 더요” 솔직하게",0],["“괜찮아요” 하고 집에서 고민",2],["“완벽해요!” 하고 모자를 산다",3]]],["h","병원 접수처에서 증상을 말해야 한다","대기실에 사람이 많다",[["또박또박 말한다",0],["작게 말한다",2],["메모를 써서 보여 준다",3]]],["h","네일숍에서 디자인을 고른다","직원이 추천해 준다",[["이것저것 상의하며 고른다",0],["사진 보여 주고 이대로",2],["기본 컬러 한 가지로",3]]],["h","마사지가 너무 세다","조금 아프다",[["“조금 약하게요” 바로 말한다",0],["조금 참다가 말한다",1],["끝까지 참는다, 효과 있겠지",3]]],["h","치과에서 “아프면 손 드세요”","조금 시리다",[["손 번쩍",0],["살짝 손가락만 든다",2],["눈빛으로 신호를 보낸다",3]]],["h","수리 기사님이 집에 오셨다","작업 시간 1시간",[["옆에서 이것저것 물어본다",0],["음료 드리고 방에 있다",2],["작업이 끝날 때까지 방에서 숨죽인다",3]]],["h","증명사진을 찍는다","사진사가 “웃어 보세요!”",[["활짝 웃는다",0],["어색하게 미소",2],["웃으려다 표정이 굳는다",3]]],["h","은행 창구에서 상담을 받는다","번호표를 뽑았다",[["궁금한 것까지 다 묻는다",0],["용건만 빠르게",1],["앱으로 할 수 있는지 다시 확인한다",3]]],["h","안경점에서 테를 고른다","직원이 계속 추천한다",[["다 써 보고 의견을 묻는다",0],["두세 개만 써 본다",2],["마음에 든 걸 바로 계산",3]]],["h","필라테스 상담 실장님이 등록을 권한다","할인 이벤트 중이라고 한다",[["조건을 이것저것 물어본다",0],["“생각해 볼게요”",2],["가격표만 받아 들고 나온다",3]]],["h","미용실 예약을 한다","전화와 앱 중에",[["전화가 편하다",0],["아무거나",1],["앱 예약이 없는 곳은 잘 안 간다",3]]],["h","머리 감을 때 얼굴에 수건을 덮어 준다","숨이 조금 답답하다",[["살짝 들어 달라고 말한다",0],["코로 조용히 숨 쉰다",2],["명상 시간이라 생각한다",3]]],["h","의사 선생님이 “다른 궁금한 거 있으세요?” 묻는다","사실 하나 더 있다",[["바로 묻는다",0],["짧게 묻는다",1],["“아니요” 하고 나와서 검색한다",3]]],["h","세차장 직원이 옵션을 추천한다","광택, 코팅, 실내…",[["하나하나 물어본다",0],["추천 하나 받는다",1],["“기본으로 해 주세요”",3]]],["h","피부과 상담에서 시술을 권유받았다","생각보다 비싸다",[["가격을 조율해 본다",0],["“고민해 볼게요” 하고 나온다",2],["나와서 그 건물 위치를 잊기로 한다",3]]],["h","콜센터에 전화해야 한다","ARS 버튼을 한참 눌러야 한다",[["상담원 연결까지 끝까지",0],["채팅 상담을 찾는다",2],["자주 묻는 질문을 다 읽는다",3]]],["h","미용실 디자이너를 바꾸고 싶다","지금 디자이너는 친절하다",[["솔직하게 바꾼다",0],["다른 요일에 다른 디자이너로 예약한다",2],["미용실 자체를 바꾼다",3]]],["h","동물병원 대기실에서 옆 보호자가 말을 건다","“몇 살이에요?”",[["반려동물 이야기로 대화 꽃",0],["간단히 대답한다",1],["내 반려동물만 바라본다",3]]],["t","게스트하우스 공용 공간에 여행자들이 모였다","맥주 파티 중",[["합류해서 친구를 만든다",0],["인사하고 잠깐 앉았다 들어간다",2],["방에서 쉬는 게 여행의 묘미",3]]],["t","여행지에서 현지인이 맛집을 알려 준다","친절한 분이다",[["같이 가자고 한다",0],["감사 인사 후 메모한다",1],["미리 정한 코스대로 간다",3]]],["t","비행기 옆자리 사람이 말을 건다","10시간 비행이다",[["친구가 된다",0],["몇 마디 나누고 영화를 본다",2],["기내식 시간에만 깨어 있는 사람이 된다",3]]],["t","여행 방식을 고른다면","단체 투어와 자유 여행 중",[["단체 투어, 모르는 사람과도 재밌다",0],["반나절 투어 정도",2],["자유 여행, 동선은 내가 정한다",3]]],["t","호텔 방 에어컨이 고장 났다","한여름이다",[["프런트에 바로 전화한다",0],["직접 내려가서 말한다",1],["창문을 열고 버틴다",3]]],["t","혼자 여행 중 사진이 필요하다","풍경이 예쁘다",[["지나가는 사람에게 바로 부탁",0],["삼각대를 꺼낸다",2],["셀카로 해결한다",3]]],["t","일주일 휴가가 생겼다","어떻게 보낼까",[["친구들과 해외여행",0],["가족과 가까운 여행",1],["집에서 밀린 드라마 정주행",3]]],["t","여행지 축제에서 관광객도 춤추자고 한다","무대가 열렸다",[["무대로 나간다",0],["박수 치며 즐긴다",1],["영상으로만 남긴다",3]]],["t","투어 기사님이 가이드까지 해 준다","역사 이야기가 계속된다",[["질문하며 즐긴다",0],["고개 끄덕이며 듣는다",1],["창밖 풍경에 빠져 대답이 짧아진다",3]]],["t","여행 숙소를 고른다","도미토리와 개인실 중",[["도미토리, 새 친구 기대",0],["4인실 정도",2],["개인실, 무조건",3]]],["t","외국에서 길을 잃었다","현지 말로 물어봐야 한다",[["손짓 발짓으로라도 묻는다",0],["번역 앱을 보여 준다",2],["지도 앱을 믿고 계속 걷는다",3]]],["t","캠핑장 옆 텐트가 같이 고기 굽자고 한다","분위기가 좋아 보인다",[["좋다, 음식 들고 합류",0],["잠깐 인사만",2],["감사하지만 우리끼리",3]]],["t","리조트 레크리에이션 진행자가 참여자를 모집한다","상품도 있다",[["손 들고 바로",0],["친구가 가면 따라간다",1],["선베드에서 책을 읽는다",3]]],["t","여행 단톡방에서 일정을 짠다","엑셀 파일까지 나왔다",[["내가 리더, 일정 총괄",0],["의견 몇 개 낸다",1],["정해진 대로 따라가겠다고 한다",3]]],["t","기념품 가게 주인이 흥정을 기대한다","깎는 게 당연한 분위기",[["신나게 흥정",0],["조금만 깎는다",1],["정가로 산다",3]]],["t","여행 마지막 날 밤","다들 클럽에 가자고 한다",[["무조건 간다",0],["잠깐 들렀다 숙소로",2],["숙소에서 짐 정리하며 휴식",3]]],["t","공항에서 비행기까지 2시간 남았다","어디서 기다릴까",[["면세점 돌며 구경",0],["카페에서 쉰다",1],["게이트 앞 구석 자리에서 이어폰",3]]],["t","현지 학생들이 같이 사진 찍자고 한다","해맑은 표정이다",[["좋아요! 같이 셀카",0],["한 장만",1],["웃으며 손을 젓는다",3]]],["t","혼자 여행을 가 본 적이 있나","여행 경험을 떠올리면",[["혼자는 심심해서 안 간다",0],["한두 번 있다",1],["혼자 여행이 제일 좋다",3]]],["t","패키지 여행 식사에서 다른 팀과 합석했다","원형 테이블",[["자기소개부터 한다",0],["같은 일행과 이야기한다",2],["음식 맛에 집중한다",3]]],["a","알람 없이 일어난 휴일 아침","오늘 일정은 없다",[["친구에게 연락해서 브런치 약속",0],["산책이나 하러 나간다",1],["그대로 이불 속에서 오전 끝",3]]],["a","저녁에 깨달았다, 오늘 한마디도 안 했다","하루 종일 혼자였다",[["입이 근질거린다, 친구에게 전화",0],["가끔 이런 날도 좋다",2],["이게 진정한 휴식이다",3]]],["a","힘든 일주일을 보냈다","에너지를 충전하는 방법은",[["사람들과 수다 떨기",0],["친한 친구 한 명과 산책",1],["혼자 좋아하는 걸 하기",3]]],["a","이어폰을 두고 외출했다","이미 버스를 탔다",[["별로 상관없다",0],["조금 허전하다",2],["다음 정거장에서 내려 다시 집에 간다",3]]],["a","원데이 클래스를 하나 고른다","새 취미를 만들고 싶다",[["단체 댄스 클래스",0],["소규모 쿠킹 클래스",1],["혼자 하는 그림·뜨개 키트",3]]],["a","친구가 “요즘 뭐 해?” 묻는다","사실 집에만 있었다",[["“나 엄청 바빴어!” 일정을 나열한다",0],["“그냥 쉬었어” 솔직히",1],["“집콕 모드 풀가동” 당당하게",3]]],["a","친구가 같이 보기 기능으로 영화를 보자고 한다","각자 집에서 동시에",[["채팅하며 같이 본다",0],["가끔 같이",1],["영화는 혼자 집중해서 봐야 한다",3]]],["a","카페 옆 테이블 사람이 같은 책을 읽는다","표지가 똑같다",[["“그 책 재밌죠?” 말을 건다",0],["살짝 미소",1],["책 표지를 살짝 가린다",3]]],["a","평일 낮 영화관","혼자 영화 보기",[["사람 많은 주말이 더 좋다",0],["가끔 혼영",1],["혼영이 진리, 팝콘도 독차지",3]]],["a","저녁 9시, 선택할 수 있다면","밤 모임과 밤 산책 중",[["친구들과 야식 모임",0],["친구 한 명과 산책",1],["혼자 음악 들으며 산책",3]]],["a","방에서 혼자 노래 부르다 가족이 들었다","문밖에서 박수 소리",[["앵콜 무대를 한다",0],["웃으며 넘긴다",1],["그날은 방 밖으로 안 나간다",3]]],["a","팀 게임에서 음성 채팅을 켜자고 한다","팀원들은 이미 켰다",[["마이크 켜고 작전 지시까지",0],["듣기만 한다",2],["핑 기능으로만 소통한다",3]]],["a","주말 오후, 갈 곳을 고른다","쇼핑몰과 서점 중",[["쇼핑몰 구경이 재밌다",0],["둘 다 좋다",1],["서점 구석 자리가 최고",3]]],["a","약속이 3개 연속으로 잡혔다","하루 일정이 빡빡하다",[["오히려 신난다",0],["하나는 미룰까 고민한다",2],["생각만 해도 배터리 경고등이 켜진다",3]]],["a","올해 생일을 보내는 방법","생일이 다가온다",[["큰 파티",0],["친한 친구 몇 명과 저녁",1],["나에게 선물하고 조용히",3]]],["a","친구와 둘이 30분째 각자 폰만 본다","말이 없다",[["어색하다, 말을 건다",0],["그럭저럭 괜찮다",1],["이게 진짜 친한 사이다",3]]],["a","집에 도착한 뒤 첫 행동","오늘도 수고했다",[["친구에게 오늘 있었던 일을 전화로",0],["씻고 TV",1],["불 끄고 5분간 멍 때리기",3]]],["a","혼자 할 수 있는 것","나의 혼자 놀기 레벨은",[["혼밥 정도",0],["혼밥, 혼영, 혼카페",2],["혼여행, 혼고기, 혼놀이공원까지",3]]],["a","생각 정리하는 방법","머릿속이 복잡할 때",[["친구에게 말하면서 정리한다",0],["가끔 메모한다",1],["머릿속에 탭 30개를 열어 두고 혼자 정리한다",3]]],["a","내일 집에 손님이 온다","하루 전날 밤",[["기대된다, 요리 준비",0],["청소하며 살짝 긴장",2],["손님이 간 뒤 쉴 시간까지 계획한다",3]]],["a","휴대폰 알림 설정은","지금 내 폰은",[["전부 켜 둔다",0],["중요한 것만",2],["전부 꺼 두고 필요할 때만 본다",3]]],["a","가장 편한 장소는","마음이 편해지는 곳",[["사람 북적이는 시장과 거리",0],["단골 카페",1],["내 방, 그중에서도 침대",3]]],["a","내 사회성 배터리는","사람을 만나면",[["만날수록 충전된다",0],["만나면 쓰이고 혼자 있으면 찬다",2],["혼자 있어야만 충전된다",3]]],["a","내일 처음 보는 사람들과 약속이 있다","오늘 밤 기분은",[["기대돼서 잠이 안 온다",0],["무난하게 잠든다",1],["예상 질문 리스트를 만든다",3]]],["a","함께 있을 때 편한 사람은","친구를 떠올리면",[["분위기를 띄우는 사람",0],["적당히 주고받는 사람",1],["말없이 있어도 괜찮은 사람",3]]]];
+  var PER_TEST = 10, SEEN_KEY = 'setsign-quiz-seen';
+  function rand(){ try { var u = new Uint32Array(1); crypto.getRandomValues(u); return u[0] / 4294967296; } catch (e) { return Math.random(); } }
+  function shuffle(a){ for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(rand() * (i + 1)), t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+  function loadSeen(){ try { var v = JSON.parse(localStorage.getItem(SEEN_KEY)); return Array.isArray(v) ? v : []; } catch (e) { return []; } }
+  function saveSeen(v){ try { localStorage.setItem(SEEN_KEY, JSON.stringify(v)); } catch (e) {} }
+  // 한 테스트 안에서는 같은 질문이 절대 나오지 않고, 이 브라우저에서 아직 안 본 질문을 먼저 뽑아요.
+  // 한 분류에서는 최대 2개까지만 뽑아 헬스장·카페·메신저 등 여러 상황이 고르게 섞여요.
+  function draw(){
+    var seen = loadSeen(), was = {}; seen.forEach(function(id){ was[id] = 1; });
+    var ids = shuffle(QBANK.map(function(_, i){ return i; }));
+    var fresh = ids.filter(function(i){ return !was[i]; });
+    if (fresh.length < PER_TEST * 2) { seen = []; fresh = ids; }   // 거의 다 봤으면 처음부터 다시
+    var order = fresh.concat(ids.filter(function(i){ return fresh.indexOf(i) < 0; }));
+    var pick = [], used = {}, perCat = {};
+    order.forEach(function(i){
+      var c = QBANK[i][0];
+      if (pick.length < PER_TEST && !used[i] && (perCat[c] || 0) < 2) { pick.push(i); used[i] = 1; perCat[c] = (perCat[c] || 0) + 1; }
+    });
+    order.forEach(function(i){ if (pick.length < PER_TEST && !used[i]) { pick.push(i); used[i] = 1; } });
+    saveSeen(seen.concat(pick).slice(-QBANK.length));
+    return pick.map(function(i){ var r = QBANK[i]; return { id: i, q: r[1], h: r[2], a: shuffle(r[3].slice()) }; });
+  }
+  var Q = [];
+  var TIERS = [
+    { min:75, t:'눈빛으로 대화하는 사람', v:'살 만한 사람: 매우 그렇다', buy:'주문하기',
+      d:'말보다 분위기를 먼저 읽는 편이에요. 조용히 배려하는 건 능력인데, 헬스장에서는 그게 가끔 손해가 되죠. 말 대신 꽂으라고 만든 물건이 여기 있어요.', c:'먼저 꽂아 볼 카드: 같이 써요' },
+    { min:50, t:'조용한 고수', v:'살 만한 사람: 그렇다', buy:'주문하기',
+      d:'필요한 말은 하지만, 안 해도 되면 더 좋은 사람이에요. 카드 한 장이 하루치 말하기 에너지를 아껴 줄 거예요.', c:'먼저 꽂아 볼 카드: 2세트 남음' },
+    { min:25, t:'스위치형 인간', v:'살 만한 사람: 있으면 든든', buy:'주문하기',
+      d:'컨디션에 따라 말수가 달라지는 편이에요. 사회성 배터리가 바닥난 날을 위해 가방에 하나 있으면 든든해요.', c:'먼저 꽂아 볼 카드: 세트 중' },
+    { min:0, t:'말이 곧 카드인 사람', v:'살 만한 사람: 선물용으로 추천', buy:'선물로 주문하기',
+      d:'먼저 말 거는 게 어렵지 않은 분이에요. 솔직히 꼭 필요하진 않아요. 대신 말 꺼내기 어려워하는 친구에게 건네면 꽤 센스 있는 선물이 돼요.', c:'선물하기 좋은 카드: 같이 써요' }
+  ];
+  var dlg = document.getElementById('quiz'); if (!dlg || !dlg.showModal) return;
+  var $ = function(id){ return document.getElementById(id); };
+  var panes = [].slice.call(dlg.querySelectorAll('[data-pane]')), bars = [].slice.call(dlg.querySelectorAll('.qz-bar i'));
+  var idx = 0, ans = [], pct = 0, KEYS = ['A','B','C','D'];
+  var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function show(name, focusEl){
+    panes.forEach(function(p){ var on = p.dataset.pane === name; p.hidden = !on; p.classList.remove('in'); if (on) { void p.offsetWidth; p.classList.add('in'); } });
+    dlg.querySelector('.qz-body').scrollTop = 0;
+    if (focusEl) setTimeout(function(){ focusEl.focus(); }, 30);
+  }
+  function renderQ(){
+    var it = Q[idx];
+    $('qz-n').textContent = (idx < 9 ? '0' : '') + (idx + 1);
+    $('qz-tot').textContent = (Q.length < 10 ? '0' : '') + Q.length;
+    $('qz-q').textContent = it.q; $('qz-hint').textContent = it.h;
+    $('qz-count').textContent = '질문 ' + (idx + 1) + ' / ' + Q.length;
+    var ul = $('qz-opts'); ul.textContent = '';
+    it.a.forEach(function(o, k){
+      var li = document.createElement('li'), b = document.createElement('button');
+      b.type = 'button'; b.dataset.k = KEYS[k]; b.textContent = o[0];
+      b.setAttribute('aria-pressed', String(ans[idx] === k));
+      b.addEventListener('click', function(){ ans[idx] = k; if (idx < Q.length - 1) { idx++; renderQ(); } else result(); });
+      li.appendChild(b); ul.appendChild(li);
+    });
+    bars.forEach(function(b, k){ b.classList.toggle('on', k <= idx); });
+    $('qz-back').style.visibility = idx ? 'visible' : 'hidden';
+    show('q', $('qz-q'));
+  }
+  function result(){
+    var sum = 0; Q.forEach(function(it, i){ sum += it.a[ans[i]][1]; });
+    pct = Math.round(sum / (Q.length * 3) * 100);
+    var t = TIERS.filter(function(x){ return pct >= x.min; })[0];
+    $('qz-title').textContent = t.t; $('qz-verdict').textContent = t.v; $('qz-desc').textContent = t.d; $('qz-card').textContent = t.c;
+    $('qz-buy').textContent = t.buy; $('qz-pct-wrap').setAttribute('aria-label', '내향인 지수 ' + pct + '퍼센트');
+    $('qz-msg').textContent = '재미로 보는 테스트예요. 심리 검사가 아니에요.';
+    bars.forEach(function(b){ b.classList.add('on'); });
+    show('res', $('qz-title'));
+    var el = $('qz-pct'), fill = $('qz-fill'); fill.style.width = '0';
+    if (reduce) { el.textContent = pct; fill.style.width = pct + '%'; return; }
+    var t0 = performance.now();
+    requestAnimationFrame(function(){ fill.style.width = pct + '%'; });
+    (function f(n){ var p = Math.min(1, (n - t0) / 1400), e = 1 - Math.pow(1 - p, 4); el.textContent = Math.round(pct * e); if (p < 1) requestAnimationFrame(f); })(t0);
+  }
+  function open(){
+    idx = 0; ans = []; Q = draw(); bars.forEach(function(b){ b.classList.remove('on'); });
+    var r = parseInt(new URLSearchParams(location.search).get('r'), 10), fr = $('qz-friend');
+    if (r >= 0 && r <= 100) { fr.hidden = false; fr.textContent = '친구는 내향인 ' + r + '%가 나왔어요. 나는 몇 %일까요'; } else fr.hidden = true;
+    if (!dlg.open) dlg.showModal(); show('start', $('qz-go'));
+  }
+  function close(){ if (dlg.open) dlg.close(); }
+  dlg.addEventListener('close', function(){ if (location.hash === '#test') history.replaceState(null, '', location.pathname + location.search); });
+  $('qz-go').addEventListener('click', renderQ);
+  $('qz-back').addEventListener('click', function(){ if (idx) { idx--; renderQ(); } });
+  $('qz-again').addEventListener('click', open);
+  dlg.querySelector('[data-quiz-close]').addEventListener('click', close);
+  dlg.addEventListener('click', function(e){ if (e.target.closest('[data-buy]')) close(); });   // 주문 창은 구매 스크립트가 엽니다
+  document.addEventListener('click', function(e){ var b = e.target.closest('[data-quiz]'); if (b) { e.preventDefault(); open(); } });
+  $('qz-share').addEventListener('click', function(){
+    var url = location.origin + location.pathname + '?r=' + pct + '#test';
+    var text = '나는 내향인 ' + pct + '%. 넌 몇 %야? SETSIGN 내향인 테스트';
+    var msg = $('qz-msg');
+    if (navigator.share) { navigator.share({ title:'SETSIGN 내향인 테스트', text:text, url:url }).catch(function(){}); return; }
+    (navigator.clipboard ? navigator.clipboard.writeText(text + ' ' + url) : Promise.reject()).then(
+      function(){ msg.textContent = '링크를 복사했어요. 친구에게 붙여 넣어 보내세요.'; },
+      function(){ msg.textContent = '이 주소를 복사해 보내세요: ' + url; });
+  });
+  if (location.hash === '#test') open();
+  addEventListener('hashchange', function(){ if (location.hash === '#test') open(); });
+
+  // ── 앱 설치 (PWA) ──
+  if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) navigator.serviceWorker.register('sw.js').catch(function(){});
+  var installBtn = $('btn-install'), hint = $('app-hint'), deferred = null;
+  var standalone = matchMedia('(display-mode: standalone)').matches || navigator.standalone;
+  if (standalone) hint.textContent = '지금 앱으로 열려 있어요.';
+  else if (/iphone|ipad|ipod/i.test(navigator.userAgent)) hint.textContent = 'iPhone·iPad는 Safari의 공유 버튼을 누른 뒤 ‘홈 화면에 추가’를 고르면 앱으로 설치돼요.';
+  addEventListener('beforeinstallprompt', function(e){ e.preventDefault(); deferred = e; installBtn.hidden = false; hint.textContent = '홈 화면에 두면 사이즈 찾기와 주문 내역을 바로 열 수 있어요.'; });
+  installBtn.addEventListener('click', function(){ if (!deferred) return; deferred.prompt(); deferred.userChoice.then(function(){ deferred = null; installBtn.hidden = true; }); });
+  addEventListener('appinstalled', function(){ installBtn.hidden = true; hint.textContent = '설치됐어요. 홈 화면에서 SETSIGN을 열어 보세요.'; });
+})();
+</script>
+
+<!-- 3D: 물병 + 실리콘 밴드 + 2겹 카드 포켓 + 문구 카드 (AI 생성 그래픽) -->
+<script type="module">
+import * as THREE from 'three';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
+
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const narrowMQ = matchMedia('(max-width: 900px)');
+const HEX = { navy:'#0E1240', orange:'#FF5A1F', white:'#F5F5F0' };
+const CARDS = window.SETSIGN_CARDS;
+const byKey = Object.fromEntries(CARDS.map(c => [c.key, c]));
+const TAU = Math.PI * 2;
+const clamp = (v,a,b) => Math.min(b, Math.max(a, v));
+const lerp = (a,b,t) => a + (b - a) * t;
+const seg = (x,a,b) => clamp((x - a) / (b - a), 0, 1);
+const sm = t => t * t * (3 - 2 * t);
+const easeIO = t => t < .5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3) / 2;
+const wrapPi = a => { a = (a + Math.PI) % TAU; if (a < 0) a += TAU; return a - Math.PI; };
+
+/* ---------- 렌더러 ---------- */
+const canvas = document.getElementById('gl');
+let renderer;
+try { renderer = new THREE.WebGLRenderer({ canvas, antialias:true, alpha:true }); }
+catch (e) { document.documentElement.classList.add('no-gl'); throw e; }
+window.__ss3d = true;
+renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+renderer.setClearColor(0x000000, 0);
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(30, 1, .1, 100);
+camera.position.set(0, 0, 12);
+const VIEW_H = 2 * camera.position.z * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2));
+/* 조명: 스튜디오 반사 환경 + 키·림 라이트. 재질은 게임 에셋처럼 PBR(거칠기·반사·투명도)로 표현 */
+scene.environment = new THREE.PMREMGenerator(renderer).fromScene(new RoomEnvironment(), .03).texture;
+scene.add(new THREE.AmbientLight(0xffffff, .25));
+const sun = new THREE.DirectionalLight(0xffffff, 2.4); sun.position.set(-4, 6, 8); scene.add(sun);
+const rim = new THREE.DirectionalLight(0xffffff, 1.5); rim.position.set(6, 3, -5); scene.add(rim);
+
+const V = (x,y) => new THREE.Vector2(x, y);
+const maxAniso = renderer.capabilities.getMaxAnisotropy();
+function canvasTex(w, h, draw, repeatX) {
+  const c = document.createElement('canvas'); c.width = w; c.height = h;
+  const t = new THREE.CanvasTexture(c); t.wrapS = THREE.RepeatWrapping; t.repeat.x = repeatX || 1; t.anisotropy = maxAniso;
+  t.userData.redraw = () => { const g = c.getContext('2d'); g.clearRect(0, 0, w, h); draw(g, w, h); t.needsUpdate = true; }; t.userData.redraw();
+  return t;
+}
+// 뚜껑 옆면의 미끄럼 방지 홈
+const knurlTex = canvasTex(64, 8, (g, w, h) => { g.fillStyle = '#fff'; g.fillRect(0, 0, w, h); g.fillStyle = '#000'; g.fillRect(0, 0, w * .38, h); }, 60);
+// 실리콘 밴드에 양각으로 찍힌 로고 (바깥 면은 텍스처 세로 37.5~50% 구간)
+const embossTex = canvasTex(2048, 1024, (g, w, h) => {
+  g.fillStyle = '#808080'; g.fillRect(0, 0, w, h);
+  g.fillStyle = '#fff'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.font = '84px Anton, Impact, sans-serif';
+  for (let i = 0; i < 4; i++) g.fillText('SETSIGN', w * (i + .5) / 4, h * .5625 + 4);
+});
+// 쉐이커 옆면에 양각된 용량 눈금 (앞에서 왼쪽으로 60° 돌아간 자리, 세로는 몸통 위쪽 구간)
+const gradTex = canvasTex(1024, 1024, (g, w, h) => {
+  const x = w * .83; g.fillStyle = 'rgba(14,18,64,.78)'; const top = 8, bot = h - 4; g.textBaseline = 'middle'; g.font = '700 30px "Noto Sans KR", sans-serif';
+  for (let i = 0; i <= 14; i++) {
+    const y = bot - i * (bot - top) / 14, major = i % 2 === 0;
+    if (!i) continue;
+    g.fillRect(x - (major ? 34 : 18), y - 2, major ? 34 : 18, 4);
+    if (major && i) g.fillText(String(i * 50) + (i === 14 ? ' ML' : ''), x + 10, y);
+  }
+});
+// 바닥에 닿는 부드러운 그림자
+const shadowTex = canvasTex(128, 128, (g, w, h) => {
+  const im = g.createImageData(w, h);
+  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+    const d = Math.hypot(x - w / 2, y - h / 2) / (w / 2), a = Math.max(0, 1 - d), i = (y * w + x) * 4;
+    im.data[i] = 14; im.data[i + 1] = 18; im.data[i + 2] = 64; im.data[i + 3] = a * a * 160;
+  }
+  g.putImageData(im, 0, 0);
+});
+
+const bodyMat = new THREE.MeshPhysicalMaterial({ color: HEX.white, roughness: .3, transparent: true, opacity: .56, clearcoat: .7, clearcoatRoughness: .18, side: THREE.DoubleSide, depthWrite: false });
+const gradMat = new THREE.MeshBasicMaterial({ map: gradTex, transparent: true, depthWrite: false });
+const footMat = new THREE.MeshStandardMaterial({ color: HEX.white, roughness: .55 });
+const waterMat = new THREE.MeshBasicMaterial({ color: HEX.navy, transparent: true, opacity: .2, depthWrite: false });   // 물은 반사 없이 옅은 색으로만 표시
+const surfMat = new THREE.MeshBasicMaterial({ color: HEX.white, transparent: true, opacity: .55, depthWrite: false });
+const capMat = new THREE.MeshStandardMaterial({ color: HEX.orange, roughness: .46, bumpMap: knurlTex, bumpScale: 3 });
+const lidMat = new THREE.MeshStandardMaterial({ color: HEX.orange, roughness: .46 });
+const siliconeMat = new THREE.MeshPhysicalMaterial({ color: HEX.orange, roughness: .82, sheen: .7, sheenRoughness: .45, sheenColor: 0xffd9c8, bumpMap: embossTex, bumpScale: 2.5 });
+const padMat = new THREE.MeshPhysicalMaterial({ color: HEX.orange, roughness: .86, sheen: .7, sheenRoughness: .45, sheenColor: 0xffd9c8 });
+const shellMat = new THREE.MeshPhysicalMaterial({ color: HEX.navy, roughness: .42, clearcoat: .5, clearcoatRoughness: .3 });
+const glassMat = new THREE.MeshPhysicalMaterial({ color: 0xffffff, roughness: .05, transparent: true, opacity: .18, depthWrite: false });
+const dividerMat = new THREE.MeshStandardMaterial({ color: HEX.white, roughness: .5, transparent: true, opacity: .42, depthWrite: false });
+const rivetMat = new THREE.MeshStandardMaterial({ color: 0xeceeef, metalness: 1, roughness: .2 });
+
+/* ---------- 모델: 흔히 쓰는 프로틴 쉐이커 (특정 브랜드와 무관한 일반 형태) ---------- */
+// 실제 비율: 700mL급 쉐이커 지름 약 9.6cm, 높이 약 24cm. 화면 1단위 ≈ 9.2cm
+const root = new THREE.Group(), spin = new THREE.Group(), model = new THREE.Group();
+scene.add(root); root.add(spin); spin.add(model);
+
+// 몸통 두 가지: S는 위아래가 둥근 캡슐형, L은 아래로 살짝 좁아지는 기본형.
+// 두 윤곽선을 같은 개수의 점으로 다시 나눠, 사이즈를 바꾸면 모양이 자연스럽게 변해요(모프 타깃)
+const PROFILE_S = [[0,-1.25],[.56,-1.25],[.72,-1.22],[.84,-1.15],[.93,-1.04],[.985,-.88],[1,-.7],[1,.5],[.99,.52],[.975,.53]];
+const PROFILE_L = [[0,-1.19],[.8,-1.19],[.86,-1.18],[.88,-1.17],[1,.82],[.985,.84]];
+const TOP_S = .53, TOP_L = .82;
+function resample(pts, n) {
+  const seg = []; let total = 0;
+  for (let i = 1; i < pts.length; i++) { const l = Math.hypot(pts[i][0] - pts[i-1][0], pts[i][1] - pts[i-1][1]); seg.push(l); total += l; }
+  const out = []; let i = 0, acc = 0;
+  for (let k = 0; k < n; k++) {
+    const d = total * k / (n - 1);
+    while (i < seg.length - 1 && acc + seg[i] < d) { acc += seg[i]; i++; }
+    const t = seg[i] ? Math.min(1, (d - acc) / seg[i]) : 0;
+    out.push([lerp(pts[i][0], pts[i+1][0], t), lerp(pts[i][1], pts[i+1][1], t)]);
+  }
+  return out;
+}
+const PN = 72, PS = resample(PROFILE_S, PN), PL = resample(PROFILE_L, PN);
+const profileAt = k => PS.map((a, i) => [lerp(a[0], PL[i][0], k), lerp(a[1], PL[i][1], k)]);
+function radiusAt(prof, y) {                       // 윤곽선에서 높이 y의 반지름 (몸통 옆면 구간)
+  for (let i = 1; i < prof.length; i++) {
+    const a = prof[i-1], b = prof[i];
+    if (b[1] > a[1] && y >= a[1] && y <= b[1]) return lerp(a[0], b[0], (y - a[1]) / (b[1] - a[1]));
+  }
+  return y < prof[0][1] ? 0 : prof[prof.length - 1][0];
+}
+function morphMesh(geoS, geoL, mat) {
+  geoS.morphAttributes.position = [geoL.attributes.position];
+  geoS.morphAttributes.normal = [geoL.attributes.normal];
+  const m = new THREE.Mesh(geoS, mat); m.updateMorphTargets(); m.frustumCulled = false; return m;
+}
+const latheOf = prof => new THREE.LatheGeometry(prof.map(([x, y]) => V(x, y)), 96);
+const bottle = new THREE.Group(), bottleShape = new THREE.Group();
+model.add(bottle); bottle.add(bottleShape);
+const body = morphMesh(latheOf(PS), latheOf(PL), bodyMat);
+body.renderOrder = 3; bottleShape.add(body);
+// 용량 눈금: 0mL(아래) ~ 700mL(위). 몸통 곡면을 그대로 따라감
+const WATER_RANGE = { S: [-1.12, .45], L: [-1.15, .7] };
+const gradShell = (prof, [y0, y1]) => latheOf(Array.from({ length: 28 }, (_, i) => { const y = lerp(y0, y1, i / 27); return [radiusAt(prof, y) + .006, y]; }));
+const grads = morphMesh(gradShell(PS, WATER_RANGE.S), gradShell(PL, WATER_RANGE.L), gradMat);
+grads.renderOrder = 6; bottleShape.add(grads);
+// 기본형의 바닥 받침 (캡슐형은 둥근 바닥이라 없음)
+const foot = new THREE.Mesh(new THREE.LatheGeometry([V(.8,-1.25), V(.86,-1.25), V(.9,-1.22), V(.9,-1.15), V(.87,-1.15), V(.82,-1.19), V(.8,-1.25)], 96), footMat);
+const floor = new THREE.Mesh(new THREE.CircleGeometry(.86, 64), footMat); floor.rotation.x = -Math.PI / 2; floor.position.y = -1.185;
+bottleShape.add(foot, floor);
+// 물: 몸통 안쪽 윤곽을 따라 수위까지 채움 (수위·모양이 바뀔 때만 다시 만듦)
+const waterMesh = new THREE.Mesh(new THREE.BufferGeometry(), waterMat); waterMesh.renderOrder = 4; bottleShape.add(waterMesh);   // 반투명 통 위에 그려 물 높이가 잘 보이게
+const surf = new THREE.Mesh(new THREE.RingGeometry(.9, 1, 64), surfMat); surf.rotation.x = -Math.PI / 2; surf.renderOrder = 5; bottleShape.add(surf);   // 수면 가장자리 반사
+let waterKey = '';
+function updateWater(k, w) {
+  const key = k.toFixed(3) + ':' + w.toFixed(3); if (key === waterKey) return; waterKey = key;
+  const prof = profileAt(k), lo = lerp(WATER_RANGE.S[0], WATER_RANGE.L[0], k), hi = lerp(WATER_RANGE.S[1], WATER_RANGE.L[1], k);
+  const level = lo + (hi - lo) * w, base = prof[0][1] + .03;
+  const show = w > .004 && level > base + .01;
+  waterMesh.visible = surf.visible = show; if (!show) return;
+  const pts = [V(0, base)];
+  for (const [x, y] of prof) if (y > base && y < level && x > .05) pts.push(V(x * .955, y));
+  const rl = radiusAt(prof, level) * .955; pts.push(V(rl, level), V(0, level));
+  waterMesh.geometry.dispose(); waterMesh.geometry = new THREE.LatheGeometry(pts, 64);
+  surf.position.y = level; surf.scale.setScalar(rl);
+}
+
+// 뚜껑 L(기본형): 홈 파인 링 + 윗판 + 플립 캡 + 손잡이 고리. 단위는 몸통 반지름, 크기는 통째로 스케일
+const capG = new THREE.Group(); bottle.add(capG);
+capG.add(new THREE.Mesh(new THREE.LatheGeometry([V(.99,0), V(1.04,.03), V(1.04,.4), V(1.0,.44)], 96), capMat));
+capG.add(new THREE.Mesh(new THREE.LatheGeometry([V(1.0,.44), V(.94,.5), V(.6,.56), V(0,.575)], 96), lidMat));
+const flip = new THREE.Mesh(new RoundedBoxGeometry(.62, .1, .46, 3, .04), shellMat); flip.position.set(0, .6, .3); flip.rotation.x = -.06; capG.add(flip);
+const tab = new THREE.Mesh(new RoundedBoxGeometry(.2, .06, .1, 2, .025), shellMat); tab.position.set(0, .6, .56); capG.add(tab);
+const loop = new THREE.Mesh(new THREE.TorusGeometry(.3, .07, 16, 40, Math.PI), lidMat); loop.position.set(0, .54, -.55); capG.add(loop);
+// 뚜껑 S(캡슐형): 굵은 홈 링 + 둥근 돔 + 플립 캡. 특정 제품의 로고·슬라이드 뚜껑은 쓰지 않은 일반 형태
+const domeMat = new THREE.MeshStandardMaterial({ color: HEX.white, roughness: .55 });
+const capS = new THREE.Group(); bottle.add(capS);
+capS.add(new THREE.Mesh(new THREE.LatheGeometry([V(.97,0), V(1.07,.02), V(1.08,.05), V(1.08,.3), V(1.07,.33), V(.99,.35)], 96), capMat));
+for (let i = 0; i < 12; i++) {
+  const a = i / 12 * TAU, rib = new THREE.Mesh(new RoundedBoxGeometry(.08, .27, .06, 2, .02), lidMat);
+  rib.position.set(Math.sin(a) * 1.09, .175, Math.cos(a) * 1.09); rib.rotation.y = a; capS.add(rib);
+}
+capS.add(new THREE.Mesh(new THREE.LatheGeometry([V(.99,.35), V(1,.42), V(.97,.56), V(.88,.7), V(.74,.81), V(.56,.88), V(.36,.92), V(0,.93)], 96), domeMat));
+const flipS = new THREE.Mesh(new RoundedBoxGeometry(.7, .14, .52, 3, .05), shellMat); flipS.position.set(0, .95, .04); capS.add(flipS);
+const tabS = new THREE.Mesh(new RoundedBoxGeometry(.22, .07, .12, 2, .03), lidMat); tabS.position.set(0, .98, .34); capS.add(tabS);
+const loopS = new THREE.Mesh(new THREE.TorusGeometry(.2, .05, 14, 36, Math.PI), lidMat); loopS.position.set(0, .94, -.36); capS.add(loopS);
+const shadow = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), new THREE.MeshBasicMaterial({ map: shadowTex, transparent: true, depthWrite: false }));
+shadow.rotation.x = -Math.PI / 2; bottle.add(shadow);
+
+// 실리콘 밴드 + 뒷면 균형 패드(뒤쪽 120°만 4mm 두껍게, 같은 금형에서 한 번에 성형)
+const BAND_Y = -.3, BIN = radiusAt(PL, BAND_Y);
+const band = new THREE.Group(), bandShape = new THREE.Group();
+model.add(band); band.add(bandShape);
+const bandGeo = new THREE.LatheGeometry([V(BIN,-.27),V(BIN+.085,-.27),V(BIN+.085,-.21),V(BIN+.065,-.19),V(BIN+.065,.19),V(BIN+.085,.21),V(BIN+.085,.27),V(BIN,.27),V(BIN,-.27)], 96);
+bandShape.add(new THREE.Mesh(bandGeo, siliconeMat));
+const padGeo = new THREE.LatheGeometry([V(BIN+.06,-.2), V(BIN+.13,-.2), V(BIN+.15,-.17), V(BIN+.15,.17), V(BIN+.13,.2), V(BIN+.06,.2), V(BIN+.06,-.2)], 40, Math.PI * 2 / 3, Math.PI * 2 / 3);
+const pad = new THREE.Mesh(padGeo, padMat); bandShape.add(pad);
+
+// 2겹 카드 포켓 (모서리를 둥글린 케이스, 오른쪽이 열린 옆 입구). 카드는 신용카드 규격 85.6×54mm
+const PW = 1.04, PH = .74, CW = .93, CH = .59, CD = .014;
+const Z = { back:.016, B:.05, div:.074, A:.098, front:.124 };
+const OFF = { band:.75, back:1.3, B:1.75, div:2.2, A:2.65, front:3.1 };
+const pocket = new THREE.Group(); model.add(pocket);
+const back = new THREE.Mesh(new RoundedBoxGeometry(PW, PH, .032, 3, .014), shellMat);
+const divider = new THREE.Mesh(new THREE.BoxGeometry(PW - .05, PH - .05, .006), dividerMat);
+const front = new THREE.Group();
+const glass = new THREE.Mesh(new THREE.PlaneGeometry(PW - .02, PH - .02), glassMat);
+const barT = new THREE.Mesh(new RoundedBoxGeometry(PW, .08, .03, 3, .012), shellMat); barT.position.y = PH/2 - .04;
+const barB = new THREE.Mesh(new RoundedBoxGeometry(PW, .08, .03, 3, .012), shellMat); barB.position.y = -(PH/2 - .04);
+const barL = new THREE.Mesh(new RoundedBoxGeometry(.08, PH, .03, 3, .012), shellMat); barL.position.x = -(PW/2 - .04);
+front.add(glass, barT, barB, barL);
+[.24, -.24].forEach(y => {                                   // 포켓을 고정하는 금속 리벳
+  const r = new THREE.Mesh(new THREE.CylinderGeometry(.017, .017, .012, 20), rivetMat);
+  r.rotation.x = Math.PI / 2; r.position.set(-(PW/2 - .04), y, .018); front.add(r);
+});
+pocket.add(back, divider, front);
+
+// 문구 카드
+const texCache = {};
+function drawCard(key) {
+  const { c, t } = texCache[key], d = byKey[key], g = c.getContext('2d'), W = c.width, H = c.height;
+  g.fillStyle = HEX[d.bg]; g.fillRect(0, 0, W, H);
+  g.fillStyle = HEX[d.ac]; g.fillRect(0, H - 44, W, 44);
+  g.fillStyle = HEX[d.fg]; g.textBaseline = 'alphabetic';
+  g.font = '34px Anton, Impact, sans-serif'; g.textAlign = 'left'; g.fillText('SETSIGN', 64, 92);
+  g.textAlign = 'right'; g.fillText(d.n, W - 64, 92); g.textAlign = 'left';
+  let fs = 170; const fam = '"Black Han Sans", "Noto Sans KR", sans-serif';
+  g.font = `${fs}px ${fam}`;
+  while (g.measureText(d.t).width > W - 128 && fs > 60) { fs -= 6; g.font = `${fs}px ${fam}`; }
+  g.fillText(d.t, 62, 300);
+  g.font = '700 38px "Noto Sans KR", sans-serif'; g.fillText(d.s, 66, 384);
+  t.needsUpdate = true;
+}
+function cardTex(key) {
+  if (!texCache[key]) {
+    const c = document.createElement('canvas'); c.width = 768; c.height = 512;
+    const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace;
+    t.anisotropy = renderer.capabilities.getMaxAnisotropy();
+    texCache[key] = { c, t }; drawCard(key);
+  }
+  return texCache[key].t;
+}
+const cardGeo = new THREE.BoxGeometry(CW, CH, CD);
+function makeCard() {
+  const side = new THREE.MeshStandardMaterial({ color: HEX.white, roughness: .7 });
+  const face = new THREE.MeshStandardMaterial({ color: 0xffffff, map: cardTex('together'), roughness: .58 });   // 코팅된 종이 카드
+  const m = new THREE.Mesh(cardGeo, [side, side, side, side, face, side]);
+  m.userData = { side, face }; return m;
+}
+function setCard(m, key) { m.userData.face.map = cardTex(key); m.userData.face.needsUpdate = true; m.userData.side.color.set(HEX[byKey[key].bg]); }
+const cardA = makeCard(), cardB = makeCard();
+pocket.add(cardA, cardB);
+const cardKey = { A:'together', B:'set' };
+setCard(cardA, cardKey.A); setCard(cardB, cardKey.B);
+const allText = CARDS.map(c => c.t + c.s).join('') + 'SETSIGN0123456789';
+if (document.fonts) {
+  Promise.all(['170px "Black Han Sans"', '34px Anton', '700 38px "Noto Sans KR"']
+    .map(f => document.fonts.load(f, allText).catch(() => {})))
+    .then(() => { Object.keys(texCache).forEach(drawCard); embossTex.userData.redraw(); gradTex.userData.redraw(); });
+}
+
+/* ---------- 분해 이름표 ---------- */
+const marker = (parent, x, y, z) => { const o = new THREE.Object3D(); o.position.set(x, y, z); parent.add(o); return o; };
+const lblLayer = document.getElementById('labels');
+const LABELS = [
+  { name:'내 쉐이커 (미포함)', o: marker(bottle, 0, 1.42, 0) },
+  { name:'실리콘 밴드',     o: marker(bandShape, -.72, .3, .72) },
+  { name:'뒷면 균형 패드',  o: marker(bandShape, -.55, .24, -.95) },
+  { name:'포켓 뒤판',       o: marker(back, -PW/2 + .1, PH/2 + .02, 0) },
+  { name:'뒤 칸 카드',      o: marker(cardB, -CW/2 + .1, CH/2 + .02, 0), card:'B' },
+  { name:'칸막이',          o: marker(divider, -PW/2 + .1, PH/2, 0) },
+  { name:'앞 칸 카드',      o: marker(cardA, -CW/2 + .1, CH/2 + .02, 0), card:'A' },
+  { name:'투명 앞판 · 옆 입구', o: marker(front, -PW/2 + .1, PH/2 + .02, 0) },
+].map(l => { const el = document.createElement('span'); el.className = 'lbl'; el.textContent = l.name; lblLayer.appendChild(el); return { ...l, el }; });
+
+/* ---------- 포즈 ---------- */
+let W = innerWidth, H = innerHeight;
+let userRot = 0, vel = 0, drag = null;
+function applyPose(p) {
+  const k = p.size, R = .47 + .06 * k, sy = 1 + .04 * k;      // k 0: S 캡슐형, 1: L 기본형
+  bottleShape.scale.set(R, sy, R);
+  body.morphTargetInfluences[0] = grads.morphTargetInfluences[0] = k;
+  bodyMat.opacity = lerp(.86, .56, k); bodyMat.roughness = lerp(.55, .3, k); bodyMat.clearcoat = lerp(.15, .7, k);
+  foot.visible = floor.visible = k > .5;
+  const top = lerp(TOP_S, TOP_L, k) * sy;
+  capG.visible = k >= .5; capS.visible = k < .5;
+  capG.position.y = capS.position.y = top; capG.scale.setScalar(R); capS.scale.setScalar(R);
+  LABELS[0].o.position.y = top + lerp(.62, .5, k);
+  shadow.position.y = -1.252 * sy; shadow.scale.set(R * lerp(3.4, 4.4, k), R * lerp(3.4, 4.4, k), 1);
+  updateWater(k, p.water);                                       // p.water = 물 양 ÷ 700mL
+  const kb = lerp(radiusAt(PS, BAND_Y), BIN, k) / BIN;           // 밴드는 그 높이의 몸통 굵기에 맞춰 늘어남
+  bandShape.scale.set(R * kb, 1, R * kb);
+  const by = BAND_Y * sy, E = p.explode, st = (narrowMQ.matches ? .24 : .15) * E;
+  band.position.set(0, by, OFF.band * E);
+  pocket.position.set(0, by, R * kb * (BIN + .085));
+  back.position.set(0, st, Z.back + OFF.back * E);
+  divider.position.set(0, st * 3, Z.div + OFF.div * E);
+  front.position.set(0, st * 5, Z.front + OFF.front * E);
+  // 뽑기 / 바꿔 꽂기
+  const s = p.swap, OUT = 1.12;
+  const outA = Math.max(p.pull, sm(seg(s, 0, .28)) * (1 - sm(seg(s, .75, 1))));
+  const outB = sm(seg(s, .32, .5)) * (1 - sm(seg(s, .78, 1)));
+  const ex = sm(seg(s, .5, .72)), arc = Math.sin(ex * Math.PI) * .42;
+  cardA.position.set(OUT * outA,  arc + st * lerp(4, 2, ex), lerp(Z.A, Z.B, ex) + E * lerp(OFF.A, OFF.B, ex));
+  cardB.position.set(OUT * outB, -arc + st * lerp(2, 4, ex), lerp(Z.B, Z.A, ex) + E * lerp(OFF.B, OFF.A, ex));
+  model.position.set(0, -st * 2, -1.55 * E);
+  spin.rotation.y = p.rot + userRot;
+  root.rotation.z = p.tilt;
+  root.rotation.x = .13;                       // 살짝 내려다보는 각도: 뚜껑 윗면과 바닥 그림자가 보여요
+  const upp = VIEW_H / H;
+  root.position.set((p.x - W / 2) * upp, -(p.y - H / 2) * upp + p.bob * p.h * upp, 0);
+  root.scale.setScalar(Math.max(1e-4, p.h * upp * .8 / 2.6 * p.zoom));
+}
+
+/* ---------- 무대(앵커)별 목표 ---------- */
+const stages = [...document.querySelectorAll('[data-stage]')];
+const track = document.querySelector('.how-track');
+const tryState = { pull:0, swap:0, explode:0, size:0, water:250 / 700 };
+document.addEventListener('ss:water', e => { tryState.water = clamp(+e.detail || 0, 0, 1); });
+function storyP() { const r = track.getBoundingClientRect(); return clamp(-r.top / (r.height - H), 0, 1); }
+function target(el, r, t) {
+  const base = { x: r.left + r.width / 2, y: r.top + r.height / 2, h: r.height, ol: el.dataset.bg === 'navy' ? 1 : 0, tilt:0, bob:0, size: tryState.size, water: tryState.water };
+  const k = reduce ? 0 : 1;
+  if (el.id === 'a-hero') {
+    return { ...base, rot: Math.sin(t * .55) * .42 * k, tilt: Math.sin(t * .8) * .05 * k, bob: Math.sin(t * 1.1) * .012 * k, zoom:1, pull:0, swap:0, explode:0 };
+  }
+  if (el.id === 'a-story') {
+    const P = storyP(), a = sm(seg(P, 0, .2)), E = sm(seg(P, .76, .94));
+    const s = P < .24 ? 0 : P < .46 ? .3 * sm(seg(P, .24, .46)) : P < .5 ? .3 : P < .72 ? .3 + .7 * seg(P, .5, .72) : 1;
+    const n = narrowMQ.matches;
+    // 카드가 옆으로 빠져나오는 동안은 물병을 왼쪽으로 살짝 옮겨 화면 밖으로 잘리지 않게
+    base.x -= r.width * (n ? .2 : .14) * sm(seg(P, .2, .28)) * (1 - sm(seg(P, .72, .8)));
+    return { ...base, rot: (-TAU - .3) * a - .6 * E, zoom: (n ? .62 : .8) + .2 * a - (n ? .4 : .08) * E, pull:0, swap:s, explode:E };
+  }
+  const E = el.id === 'a-cards' ? 0 : tryState.explode, sw = tryState.swap;
+  const outK = Math.max(tryState.pull, sm(seg(sw, 0, .15)) * (1 - sm(seg(sw, .85, 1))));
+  base.x -= r.width * (narrowMQ.matches ? .2 : .1) * outK;
+  return { ...base, rot: -.35 - .55 * E + Math.sin(t * .5) * .12 * k * (1 - E), zoom: 1 - (narrowMQ.matches ? .42 : .3) * E,
+           pull: tryState.pull, swap: tryState.swap, explode: E };
+}
+function pick() {
+  let best = null, bv = 0;
+  for (const a of stages) { const r = a.getBoundingClientRect(); const v = Math.min(r.bottom, H) - Math.max(r.top, 0); if (v > bv) { bv = v; best = a; } }
+  return best;
+}
+
+/* ---------- 드래그로 돌리기 ---------- */
+stages.forEach(a => {
+  a.addEventListener('pointerdown', e => { if (e.button > 0) return; drag = { x: e.clientX, id: e.pointerId }; vel = 0; try { a.setPointerCapture(e.pointerId); } catch {} });
+  a.addEventListener('pointermove', e => { if (!drag || drag.id !== e.pointerId) return; const d = (e.clientX - drag.x) * .011; drag.x = e.clientX; userRot += d; vel = d; });
+  const end = () => { drag = null; };
+  a.addEventListener('pointerup', end); a.addEventListener('pointercancel', end); a.addEventListener('lostpointercapture', end);
+  a.addEventListener('keydown', e => {
+    if (e.key === 'ArrowLeft') { userRot -= .35; e.preventDefault(); }
+    else if (e.key === 'ArrowRight') { userRot += .35; e.preventDefault(); }
+  });
+});
+
+/* ---------- 버튼 모션 (트윈) ---------- */
+const tweens = new Map();
+function tween(key, to, dur, ease, done) {
+  tweens.set(key, { from: tryState[key], to, dur: Math.max(.01, reduce ? Math.min(dur, .25) : dur), t:0, ease, done });
+}
+function stepTweens(dt) {
+  for (const [k, tw] of tweens) {
+    tw.t = Math.min(1, tw.t + dt / tw.dur);
+    tryState[k] = lerp(tw.from, tw.to, tw.ease === 'lin' ? tw.t : easeIO(tw.t));
+    if (tw.t >= 1) { tweens.delete(k); tw.done && tw.done(); }
+  }
+}
+const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+const btnPull = $('[data-act="pull"]'), btnSwap = $('[data-act="swap"]'), btnEx = $('[data-act="explode"]');
+let busy = false;
+function syncUI() {
+  $('#now-front').textContent = byKey[cardKey.A].t;
+  $('#now-back').textContent = byKey[cardKey.B].t;
+  $$('.chip[data-card]').forEach(c => c.setAttribute('aria-pressed', String(c.dataset.card === cardKey.A)));
+}
+function setPullBtn(on) { btnPull.setAttribute('aria-pressed', String(on)); btnPull.textContent = on ? '다시 꽂기' : '카드 뽑기'; }
+function doPull() { if (busy) return; const on = tryState.pull < .5; tween('pull', on ? 1 : 0, .65, 'io'); setPullBtn(on); }
+function doSwap() {
+  if (busy) return; busy = true;
+  if (tryState.pull > 0) { tween('pull', 0, .35, 'io'); setPullBtn(false); }
+  tween('swap', 1, 1.9, 'lin', () => {
+    [cardKey.A, cardKey.B] = [cardKey.B, cardKey.A];
+    setCard(cardA, cardKey.A); setCard(cardB, cardKey.B);
+    tryState.swap = 0; busy = false; syncUI(); flush();
+  });
+}
+let want = null;
+function flush() { if (want && want !== cardKey.A) { const k = want; want = null; chooseCard(k, true); } else want = null; }
+function chooseCard(key, quick) {            // quick: 카드 갤러리에서 스크롤로 고를 때
+  if (busy) { if (quick) want = key; return; }
+  if (key === cardKey.A) return;
+  if (key === cardKey.B && !quick) return doSwap();
+  busy = true; setPullBtn(false);
+  const d = quick ? .32 : .45;
+  tween('pull', 1, d, 'io', () => {
+    if (key === cardKey.B) { cardKey.B = cardKey.A; setCard(cardB, cardKey.B); }
+    cardKey.A = key; setCard(cardA, key); syncUI();
+    tween('pull', 0, d, 'io', () => { busy = false; flush(); });
+  });
+}
+document.addEventListener('ss:card', e => chooseCard(e.detail, true));
+function setSize(v) {
+  tween('size', v, .7, 'io');
+  $$('.seg [data-size]').forEach(b => b.setAttribute('aria-pressed', String(Number(b.dataset.size) === v)));
+}
+function toggleExplode() {
+  const on = tryState.explode < .5; tween('explode', on ? 1 : 0, 1.1, 'io');
+  btnEx.setAttribute('aria-pressed', String(on)); btnEx.textContent = on ? '다시 조립' : '분해 보기';
+}
+const goTry = cb => { $('#try').scrollIntoView({ behavior: reduce ? 'auto' : 'smooth' }); setTimeout(cb, reduce ? 50 : 750); };
+btnPull.addEventListener('click', doPull);
+btnSwap.addEventListener('click', doSwap);
+btnEx.addEventListener('click', toggleExplode);
+$$('.seg [data-size]').forEach(b => b.addEventListener('click', () => setSize(Number(b.dataset.size))));
+$$('[data-size-go]').forEach(b => b.addEventListener('click', () => goTry(() => setSize(Number(b.dataset.sizeGo)))));
+$$('[data-card]').forEach(b => b.addEventListener('click', () => {
+  const k = b.dataset.card;
+  if (b.closest('#try')) chooseCard(k); else goTry(() => chooseCard(k));
+}));
+
+/* ---------- 루프 ---------- */
+function resize() { W = innerWidth; H = innerHeight; renderer.setSize(W, H); camera.aspect = W / H; camera.updateProjectionMatrix(); }
+addEventListener('resize', resize); resize();
+let act = null, from = null, tr = 1, last = performance.now(), wasOn = true, intro0 = null;
+const tmp = new THREE.Vector3();
+function frame(now) {
+  requestAnimationFrame(frame);
+  const dt = Math.min(.05, (now - last) / 1000); last = now;
+  if (document.hidden) return;
+  const t = now / 1000;
+  stepTweens(dt);
+  const a = pick() || act || stages[0];
+  let cur = null;
+  if (a !== act) { if (act && frame.cur) { from = { ...frame.cur }; tr = 0; } act = a; }
+  const r = act.getBoundingClientRect();
+  const tgt = target(act, r, t);
+  if (tr < 1 && from) {
+    tr = Math.min(1, tr + dt / (reduce ? .2 : .8));
+    const e = easeIO(tr); cur = {};
+    for (const k in tgt) cur[k] = k === 'rot' ? from.rot + wrapPi(tgt.rot - from.rot) * e : lerp(from[k], tgt[k], e);
+  } else cur = tgt;
+  frame.cur = cur;
+  // 사용자 회전: 관성 + (스크롤 연출 중에는) 제자리로 복귀
+  if (!drag) { userRot += vel; vel *= Math.pow(.9, dt * 60); if (Math.abs(vel) < 1e-4) vel = 0; }
+  if (act.id === 'a-story' && !drag) userRot += (Math.round(userRot / TAU) * TAU - userRot) * Math.min(1, dt * 3);
+  // 첫 등장: 물병이 돌면서 커짐
+  if (intro0 === null) intro0 = t;
+  const it = reduce ? 1 : 1 - Math.pow(1 - clamp((t - intro0 - .25) / 1.5, 0, 1), 4);
+  applyPose(it < 1 ? { ...cur, zoom: cur.zoom * it, rot: cur.rot - (1 - it) * 3.4 } : cur);
+  const on = r.bottom > -H * .6 && r.top < H * 1.6;
+  root.visible = on;
+  if (on || wasOn) renderer.render(scene, camera);
+  wasOn = on;
+  // 이름표
+  const op = on ? clamp((cur.explode - .55) / .3, 0, 1) : 0;
+  lblLayer.style.opacity = op;
+  lblLayer.classList.toggle('on-white', cur.ol < .5);
+  if (op > 0) {
+    const aFront = cardA.position.z >= cardB.position.z;
+    for (const l of LABELS) {
+      if (l.card) l.el.textContent = (l.card === 'A') === aFront ? '앞 칸 카드' : '뒤 칸 카드';
+      l.o.getWorldPosition(tmp).project(camera);
+      l.el.style.transform = `translate(${((tmp.x + 1) / 2 * W).toFixed(1)}px, ${((1 - tmp.y) / 2 * H).toFixed(1)}px)`;
+    }
+  }
+}
+requestAnimationFrame(frame);
+</script>
+
+<!-- 구매: 회원가입 · 이메일 인증 · 로그인 · 주문서 · 토스페이먼츠 결제 · 주문 내역 -->
+<script type="module">
+/*
+  서버(/api/*)가 있으면 실서버 모드, 없으면(파일로 열기, GitHub Pages 등) 데모 모드로 동작해요.
+  - 비밀 키(시크릿 키)는 이 파일에 없어요. 토스 클라이언트 키도 서버의 /api/config 에서 받아와요.
+  - 결제 금액은 서버가 주문 수량으로 다시 계산하고, 승인(/api/payments/confirm) 때 한 번 더 대조해요.
+*/
+const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const won = n => Number(n).toLocaleString('ko-KR') + '원';
+const UNIT = 9900;
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+const PW_RE = /^(?=.*[A-Za-z])(?=.*\d).{8,64}$/;
+const PHONE_RE = /^01[016789]-?\d{3,4}-?\d{4}$/;
+const STATUS = { WAITING_DEPOSIT:['입금 대기','ready'], CONFIRMING:['승인 중','ready'], READY:['결제 대기','ready'], DONE:['결제 완료','done'], FAILED:['결제 실패','failed'], CANCELED:['취소','failed'] };
+
+class ApiError extends Error { constructor(m, code) { super(m); this.code = code; } }
+async function req(path, { method = 'GET', body } = {}) {
+  const r = await fetch(path, { method, credentials:'same-origin', cache:'no-store',
+    headers: body ? { 'Content-Type':'application/json' } : {}, body: body ? JSON.stringify(body) : undefined });
+  let data = {}; try { data = await r.json(); } catch {}
+  if (!r.ok) throw new ApiError(data.message || `요청을 처리하지 못했어요 (${r.status})`, data.code);
+  return data;
+}
+const ADDON = 3900; // 화면 표시용 임시 가격. 실제 금액은 서버가 계산합니다.
+const orderName = (S, L, C) => `SETSIGN (${[S && `밴드 S ${S}개`, L && `밴드 L ${L}개`, C && `카드 추가 팩 ${C}개`].filter(Boolean).join(', ')})`;
+function loadScript(src) {
+  return new Promise((ok, no) => { const s = document.createElement('script'); s.src = src; s.onload = ok; s.onerror = () => no(new ApiError('결제 모듈을 불러오지 못했어요.')); document.head.appendChild(s); });
+}
+
+/* ----- 실서버 ----- */
+const Live = {
+  mode:'live', cfg:null,
+  async init() {
+    const ac = new AbortController(); const tm = setTimeout(() => ac.abort(), 2500);
+    const r = await fetch('/api/health', { signal: ac.signal, cache:'no-store' }); clearTimeout(tm);
+    const j = await r.json(); if (!r.ok || j.service !== 'setsign') throw 0;
+    this.cfg = await req('/api/config');
+  },
+  me: () => req('/api/me'),
+  signup: b => req('/api/auth/signup', { method:'POST', body:b }),
+  resend: b => req('/api/auth/resend', { method:'POST', body:b }),
+  verify: b => req('/api/auth/verify', { method:'POST', body:b }),
+  login: b => req('/api/auth/login', { method:'POST', body:b }),
+  logout: () => req('/api/auth/logout', { method:'POST', body:{} }),
+  createOrder: b => req('/api/orders', { method:'POST', body:b }),
+  confirm: b => req('/api/payments/confirm', { method:'POST', body:b }),
+  orders: () => req('/api/orders'),
+  fit: b => req('/api/fit', { method:'POST', body:b }),
+  async pay(order) {
+    if (!this.cfg?.tossClientKey) throw new ApiError('결제 설정(클라이언트 키)이 서버에 없어요.');
+    if (!window.TossPayments) await loadScript('https://js.tosspayments.com/v2/standard');
+    const payment = window.TossPayments(this.cfg.tossClientKey).payment({ customerKey: order.customerKey });
+    const base = location.origin + location.pathname;
+    await payment.requestPayment({
+      method: order.payMethod === 'TRANSFER' ? 'TRANSFER' : 'CARD', amount:{ currency:'KRW', value: order.amount },
+      orderId: order.orderId, orderName: order.orderName,
+      successUrl: base + '?pay=success', failUrl: base + '?pay=fail',
+      customerEmail: order.email, customerName: order.name,
+    });
+  }
+};
+
+/* ----- 데모 (이 브라우저에만 저장) ----- */
+const Demo = (() => {
+  const KEY = 'setsign-demo-v1'; let mem = null;
+  const empty = () => ({ users:{}, session:null, orders:[] });
+  const load = () => { try { return JSON.parse(localStorage.getItem(KEY)) || empty(); } catch { return mem || (mem = empty()); } };
+  const save = s => { try { localStorage.setItem(KEY, JSON.stringify(s)); } catch { mem = s; } };
+  const hash = async s => { try { const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s)); return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, '0')).join(''); } catch { let h = 0; for (const ch of s) h = (h * 31 + ch.charCodeAt(0)) | 0; return 'x' + h; } };
+  const code6 = () => String(Math.floor(100000 + Math.random() * 900000));
+  const wait = (ms = 350) => new Promise(r => setTimeout(r, ms));
+  const pub = u => u && { email: u.email, name: u.name };
+  return {
+    mode:'demo', cfg:{ shippingFee:0, unitPrice:UNIT, addonPrice:ADDON, sizes:{ S:[75,90], L:[90,105] } },
+    async me() { const s = load(); return { user: s.session ? pub(s.users[s.session]) : null }; },
+    async signup(b) {
+      await wait(); const s = load(); const email = b.email.toLowerCase(); const u = s.users[email];
+      if (u && u.verified) throw new ApiError('이미 가입된 이메일이에요.', 'EMAIL_TAKEN');
+      if (!b.agreeAge || !b.agreeTerms || !b.agreePrivacy) throw new ApiError('필수 항목에 동의해 주세요.');
+      const code = code6();
+      s.users[email] = { email, name: b.name, pw: await hash(email + ':' + b.password), verified:false, code, tries:0, marketing: !!b.agreeMarketing };
+      save(s); return { ok:true, demoCode: code };
+    },
+    async resend({ email }) { await wait(); const s = load(); const u = s.users[email.toLowerCase()]; if (!u) throw new ApiError('가입 정보를 찾을 수 없어요.'); u.code = code6(); u.tries = 0; save(s); return { ok:true, demoCode: u.code }; },
+    async verify({ email, code }) {
+      await wait(); const s = load(); const u = s.users[email.toLowerCase()];
+      if (!u) throw new ApiError('가입 정보를 찾을 수 없어요.');
+      if (u.tries >= 5) throw new ApiError('시도 횟수를 넘었어요. 코드를 다시 받아 주세요.');
+      if (u.code !== String(code).trim()) { u.tries++; save(s); throw new ApiError('인증 코드가 맞지 않아요.'); }
+      u.verified = true; u.code = null; s.session = u.email; save(s); return { user: pub(u) };
+    },
+    async login({ email, password }) {
+      await wait(); const s = load(); const u = s.users[email.toLowerCase()];
+      if (!u || u.pw !== await hash(u.email + ':' + password)) throw new ApiError('이메일 또는 비밀번호가 맞지 않아요.');
+      if (!u.verified) throw new ApiError('이메일 인증을 먼저 마쳐 주세요.', 'EMAIL_NOT_VERIFIED');
+      s.session = u.email; save(s); return { user: pub(u) };
+    },
+    async logout() { const s = load(); s.session = null; save(s); return { ok:true }; },
+    async createOrder({ items, shipping, payMethod, depositor }) {
+      await wait(); const s = load(); if (!s.session) throw new ApiError('로그인이 필요해요.', 'AUTH');
+      const n = v => Math.max(0, Math.min(10, v | 0)), S = n(items.S), L = n(items.L), C = n(items.cards);
+      if (S + L + C < 1) throw new ApiError('수량을 1개 이상 골라 주세요.');
+      const dep = payMethod === 'DEPOSIT';
+      if (dep && !(depositor || '').trim()) throw new ApiError('입금자명을 입력해 주세요.');
+      const o = { orderId: 'DEMO' + Date.now().toString(36).toUpperCase() + Math.random().toString(36).slice(2, 6).toUpperCase(),
+        orderName: orderName(S, L, C), amount: (S + L) * UNIT + C * ADDON + this.cfg.shippingFee, items:{ S, L, cards:C }, shipping,
+        payMethod: dep ? 'DEPOSIT' : payMethod === 'TRANSFER' ? 'TRANSFER' : 'CARD',
+        status: dep ? 'WAITING_DEPOSIT' : 'READY', createdAt: new Date().toISOString(), email: s.session, name: shipping.name };
+      if (dep) Object.assign(o, { depositor: depositor.trim(), depositDue: new Date(Date.now() + 3 * 864e5).toISOString(),
+        bank:{ bank:'[은행명]', account:'[계좌번호]', holder:'[예금주]' } });   // 실제 계좌는 서버 환경 변수에서 내려와요
+      s.orders.push(o); save(s); return o;
+    },
+    async fit() { await wait(200); throw new ApiError('물병 검색은 서버에 연결됐을 때만 동작해요. 아래에서 둘레를 재서 바로 계산할 수 있어요.', 'FIT_OFF'); },
+    async confirm({ paymentKey, orderId, amount }) {
+      await wait(600); const s = load(); const o = s.orders.find(x => x.orderId === orderId && x.email === s.session);
+      if (!o) throw new ApiError('주문을 찾을 수 없어요.');
+      if (Number(amount) !== o.amount) { o.status = 'FAILED'; save(s); throw new ApiError('결제 금액이 주문 금액과 달라 승인하지 않았어요.'); }
+      Object.assign(o, { status:'DONE', paymentKey, method:'데모', approvedAt: new Date().toISOString() }); save(s); return o;
+    },
+    async orders() { const s = load(); return { orders: s.orders.filter(o => o.email === s.session).reverse() }; },
+  };
+})();
+
+/* ----- 화면 ----- */
+let B = Demo, user = null, pendingOrder = false, verifyEmail = '', lastOrder = null;
+const shop = $('#shop'), docDlg = $('#doc');
+
+function view(name) {
+  $$('.view', shop).forEach(v => { v.hidden = v.dataset.view !== name; });
+  $$('.msg', shop).forEach(m => { m.textContent = ''; });
+  if (!shop.open) shop.showModal();
+  const v = $(`.view[data-view="${name}"]`, shop);
+  requestAnimationFrame(() => (v.querySelector('input:not([type=checkbox])') || v.querySelector('h2')).focus());
+}
+const say = (form, text) => { $('.msg', form).textContent = text; };
+async function busy(btn, fn) {
+  const label = btn.textContent; btn.disabled = true; btn.textContent = '처리 중…';
+  try { await fn(); } finally { btn.disabled = false; btn.textContent = label; }
+}
+async function refreshMe() {
+  try { user = (await B.me()).user; } catch { user = null; }
+  $('#btn-account').textContent = user ? '내 주문' : '로그인';
+}
+function showDemoCode(code) { const box = $('#demo-code-box'); box.hidden = !code; $('#demo-code').textContent = code || ''; }
+function openVerify(code) { $('#verify-email').textContent = verifyEmail; showDemoCode(code); view('verify'); }
+function result(title, body) { $('#res-title').textContent = title; $('#res-body').textContent = body; view('result'); }
+function afterAuth() { if (pendingOrder) { pendingOrder = false; openOrder(); } else openOrders(); }
+
+// 닫기, 화면 이동
+$$('[data-close]').forEach(b => b.addEventListener('click', () => b.closest('dialog').close()));
+[shop, docDlg].forEach(d => d.addEventListener('click', e => { if (e.target === d) d.close(); }));
+document.addEventListener('click', e => {
+  const go = e.target.closest('[data-go]');
+  if (go) { const v = go.dataset.go; v === 'orders' ? openOrders() : v === 'order' ? openOrder() : view(v); return; }
+  const buy = e.target.closest('[data-buy]');
+  if (buy) { e.preventDefault(); startOrder(); return; }
+  const d = e.target.closest('[data-doc]');
+  if (d) { e.preventDefault(); openDoc(d.dataset.doc); }
+});
+$('#btn-account').addEventListener('click', () => user ? openOrders() : (pendingOrder = false, $('[data-need-login]').hidden = true, view('login')));
+
+function openDoc(key) {
+  const t = $('#t-' + key); if (!t) return;
+  $('#doc-title').textContent = t.dataset.title;
+  const body = $('#doc-body'); body.replaceChildren(t.content.cloneNode(true));
+  docDlg.showModal();
+}
+
+// 로그인
+$('#f-login').addEventListener('submit', async e => {
+  e.preventDefault(); const f = e.currentTarget, d = Object.fromEntries(new FormData(f));
+  const email = (d.email || '').trim();
+  if (!EMAIL_RE.test(email)) return say(f, '이메일 형식을 확인해 주세요.');
+  if (!d.password) return say(f, '비밀번호를 입력해 주세요.');
+  await busy(f.querySelector('[type=submit]'), async () => {
+    try { user = (await B.login({ email, password: d.password })).user; await refreshMe(); f.reset(); afterAuth(); }
+    catch (err) {
+      if (err.code === 'EMAIL_NOT_VERIFIED') {
+        verifyEmail = email; let code; try { code = (await B.resend({ email })).demoCode; } catch {}
+        openVerify(code); return;
+      }
+      say(f, err.message);
+    }
+  });
+});
+
+// 회원가입
+const agreeAll = $('#agree-all'), agreeBoxes = $$('#f-signup .agree input:not(#agree-all)');
+agreeAll.addEventListener('change', () => agreeBoxes.forEach(c => { c.checked = agreeAll.checked; }));
+agreeBoxes.forEach(c => c.addEventListener('change', () => { agreeAll.checked = agreeBoxes.every(x => x.checked); }));
+$('#f-signup').addEventListener('submit', async e => {
+  e.preventDefault(); const f = e.currentTarget, d = Object.fromEntries(new FormData(f));
+  const email = (d.email || '').trim(), name = (d.name || '').trim();
+  if (!name) return say(f, '이름을 입력해 주세요.');
+  if (!EMAIL_RE.test(email)) return say(f, '이메일 형식을 확인해 주세요.');
+  if (!PW_RE.test(d.password || '')) return say(f, '비밀번호는 영문과 숫자를 섞어 8자 이상으로 만들어 주세요.');
+  if (d.password !== d.password2) return say(f, '비밀번호 확인이 일치하지 않아요.');
+  if (!f.agreeAge.checked) return say(f, '만 14세 이상만 가입할 수 있어요.');
+  if (!f.agreeTerms.checked || !f.agreePrivacy.checked) return say(f, '필수 약관에 동의해 주세요.');
+  await busy(f.querySelector('[type=submit]'), async () => {
+    try {
+      const r = await B.signup({ name, email, password: d.password, agreeAge:true, agreeTerms:true, agreePrivacy:true, agreeMarketing: f.agreeMarketing.checked });
+      verifyEmail = email; f.reset(); openVerify(r.demoCode);
+    } catch (err) { say(f, err.message); }
+  });
+});
+
+// 이메일 인증
+$('#f-verify').addEventListener('submit', async e => {
+  e.preventDefault(); const f = e.currentTarget, code = (f.code.value || '').trim();
+  if (!/^\d{6}$/.test(code)) return say(f, '숫자 6자리를 입력해 주세요.');
+  await busy(f.querySelector('[type=submit]'), async () => {
+    try { user = (await B.verify({ email: verifyEmail, code })).user; await refreshMe(); f.reset(); showDemoCode(''); afterAuth(); }
+    catch (err) { say(f, err.message); }
+  });
+});
+$('#btn-resend').addEventListener('click', async e => {
+  const f = $('#f-verify');
+  await busy(e.currentTarget, async () => {
+    try { const r = await B.resend({ email: verifyEmail }); showDemoCode(r.demoCode); say(f, '새 코드를 보냈어요.'); }
+    catch (err) { say(f, err.message); }
+  });
+});
+
+// 주문서
+const qty = { S:1, L:0, cards:0 };
+function renderSum() {
+  $$('#f-order .qty').forEach(q => { q.querySelector('output').textContent = qty[q.dataset.size]; });
+  const total = qty.S + qty.L + qty.cards;
+  const goods = (qty.S + qty.L) * Number(B.cfg?.unitPrice || UNIT) + qty.cards * Number(B.cfg?.addonPrice || ADDON), ship = total ? Number(B.cfg?.shippingFee || 0) : 0;
+  $('#sum-goods').textContent = won(goods); $('#sum-ship').textContent = won(ship); $('#sum-total').textContent = won(goods + ship);
+}
+$$('#f-order .qty button').forEach(b => b.addEventListener('click', () => {
+  const k = b.closest('.qty').dataset.size; qty[k] = Math.max(0, Math.min(10, qty[k] + Number(b.dataset.d))); renderSum();
+}));
+function startOrder() {
+  if (!user) { pendingOrder = true; $('[data-need-login]').hidden = false; view('login'); return; }
+  openOrder();
+}
+function openOrder() {
+  if (!user) return startOrder();
+  const f = $('#f-order'); if (!f.name.value && user.name) f.name.value = user.name;
+  const dep = f.querySelector('[name=payMethod][value=DEPOSIT]');
+  if (B.mode === 'live' && !B.cfg?.bankEnabled) { dep.disabled = true; if (dep.checked) f.querySelector('[name=payMethod][value=CARD]').checked = true; }
+  syncPay(); renderSum(); view('order');
+}
+function syncPay() { const f = $('#f-order'); $('#depositor-f').hidden = f.payMethod.value !== 'DEPOSIT'; }
+$$('#f-order [name=payMethod]').forEach(r => r.addEventListener('change', syncPay));
+function showDeposit(o) {
+  $('#dp-bank').textContent = o.bank?.bank || ''; $('#dp-acct').textContent = o.bank?.account || ''; $('#dp-holder').textContent = o.bank?.holder || '';
+  $('#dp-amt').textContent = won(o.amount); $('#dp-name').textContent = o.depositor || '';
+  $('#dp-due').textContent = o.depositDue ? new Date(o.depositDue).toLocaleDateString('ko-KR') + '까지' : '';
+  view('deposit');
+}
+$('#btn-copy-acct').addEventListener('click', async () => {
+  const box = $('[data-view="deposit"]', shop), t = $('#dp-acct').textContent;
+  try { await navigator.clipboard.writeText(t); say(box, '계좌번호를 복사했어요.'); } catch { say(box, '복사하지 못했어요. 계좌번호를 길게 눌러 복사해 주세요.'); }
+});
+$('#f-order').addEventListener('submit', async e => {
+  e.preventDefault(); const f = e.currentTarget, d = Object.fromEntries(new FormData(f));
+  if (qty.S + qty.L + qty.cards < 1) return say(f, '수량을 1개 이상 골라 주세요.');
+  const payMethod = f.payMethod.value, depositor = (d.depositor || '').trim();
+  if (payMethod === 'DEPOSIT' && !depositor) return say(f, '입금자명을 입력해 주세요.');
+  if (!(d.name || '').trim()) return say(f, '받는 분 이름을 입력해 주세요.');
+  if (!PHONE_RE.test((d.phone || '').trim())) return say(f, '휴대폰 번호를 확인해 주세요. 예: 010-1234-5678');
+  if (!/^\d{5}$/.test((d.zip || '').trim())) return say(f, '우편번호 5자리를 입력해 주세요.');
+  if (!(d.addr1 || '').trim()) return say(f, '주소를 입력해 주세요.');
+  if (!f.agree.checked) return say(f, '주문 내용 확인에 동의해 주세요.');
+  const shipping = { name: d.name.trim(), phone: d.phone.trim(), zip: d.zip.trim(), addr1: d.addr1.trim(), addr2: (d.addr2 || '').trim(), memo: (d.memo || '').trim() };
+  await busy(f.querySelector('[type=submit]'), async () => {
+    try {
+      lastOrder = await B.createOrder({ items:{ S: qty.S, L: qty.L, cards: qty.cards }, shipping, payMethod, depositor });
+      if (lastOrder.payMethod === 'DEPOSIT') showDeposit(lastOrder);
+      else if (B.mode === 'demo') { $('#pd-id').textContent = lastOrder.orderId; $('#pd-amt').textContent = won(lastOrder.amount); view('paydemo'); }
+      else await B.pay(lastOrder); // 토스페이먼츠 결제창으로 이동
+    } catch (err) {
+      say(f, err.code === 'USER_CANCEL' || err.code === 'PAY_PROCESS_CANCELED' ? '결제를 취소했어요.' : err.message);
+      if (err.code === 'AUTH') { user = null; await refreshMe(); }
+    }
+  });
+});
+$('#btn-demo-pay').addEventListener('click', async e => {
+  const box = $('[data-view="paydemo"]', shop);
+  await busy(e.currentTarget, async () => {
+    try {
+      const o = await B.confirm({ paymentKey: 'demo_' + Math.random().toString(36).slice(2), orderId: lastOrder.orderId, amount: lastOrder.amount });
+      result('결제 완료', `${o.orderName} · ${won(o.amount)} 결제가 승인됐어요. (데모)`);
+    } catch (err) { say(box, err.message); }
+  });
+});
+
+// 주문 내역
+async function openOrders() {
+  if (!user) { pendingOrder = false; view('login'); return; }
+  view('orders'); $('#me-line').textContent = `${user.name || ''} · ${user.email}`;
+  const list = $('#order-list'); list.replaceChildren(Object.assign(document.createElement('li'), { textContent:'불러오는 중…' }));
+  try {
+    const { orders } = await B.orders(); list.replaceChildren();
+    if (!orders.length) { list.append(Object.assign(document.createElement('li'), { textContent:'아직 주문이 없어요.' })); return; }
+    for (const o of orders) {
+      const li = document.createElement('li'); const [label, cls] = STATUS[o.status] || [o.status, 'ready'];
+      const name = Object.assign(document.createElement('b'), { textContent: o.orderName });
+      const badge = Object.assign(document.createElement('span'), { className:'badge ' + cls, textContent: label });
+      const meta = Object.assign(document.createElement('span'), { className:'oid', textContent: `${new Date(o.createdAt).toLocaleString('ko-KR')} · 주문번호 ${o.orderId}` });
+      const amt = Object.assign(document.createElement('span'), { className:'amt', textContent: won(o.amount) });
+      li.append(name, badge, meta, amt);
+      if (o.status === 'WAITING_DEPOSIT' && o.bank) li.append(Object.assign(document.createElement('span'), { className:'bank',
+        textContent: `입금 계좌: ${o.bank.bank} ${o.bank.account} (${o.bank.holder}) · 입금자명 ${o.depositor || ''}` }));
+      list.append(li);
+    }
+  } catch (err) { list.replaceChildren(Object.assign(document.createElement('li'), { textContent: err.message })); }
+}
+$('#btn-logout').addEventListener('click', async () => { try { await B.logout(); } catch {} user = null; await refreshMe(); shop.close(); });
+
+/* ----- 내 물병 사이즈 찾기 ----- */
+const fitOut = $('#fit-out');
+function recommend(mm) {                       // 서버와 같은 기준 (cfg.sizes, 단위 mm)
+  const z = B.cfg?.sizes || { S:[75,90], L:[90,105] };
+  if (mm < z.S[0]) return { size:null, text:'S보다 가는 물병이에요. 밴드가 헐거울 수 있어요' };
+  if (mm > z.L[1]) return { size:null, text:'L보다 굵은 물병이에요. 지금 사이즈로는 맞지 않아요' };
+  const size = mm <= z.S[1] ? 'S' : 'L', edge = Math.abs(mm - z.S[1]) <= 2;
+  return { size, text: size + ' 사이즈를 추천해요' + (edge ? '. S와 L의 경계라 둘레를 한 번 재 보면 더 정확해요' : '') };
+}
+function showFit({ product, mm, basis, sourceUrl, note, manual }) {
+  const r = recommend(mm); fitOut.className = 'fit-out'; fitOut.replaceChildren();
+  const rec = Object.assign(document.createElement('p'), { className:'rec' });
+  rec.append(Object.assign(document.createElement('b'), { textContent: r.size || '–' }), Object.assign(document.createElement('span'), { textContent: r.text }));
+  fitOut.append(rec, Object.assign(document.createElement('p'), { textContent: `${product} · 몸통 지름 약 ${(mm / 10).toFixed(1)}cm` + (basis === 'estimate' ? ' (추정값)' : basis === 'circumference' ? ' (둘레로 계산)' : '') }));
+  if (note) fitOut.append(Object.assign(document.createElement('p'), { textContent: note }));
+  if (sourceUrl) { const p = document.createElement('p'), a = Object.assign(document.createElement('a'), { href: sourceUrl, target:'_blank', rel:'noopener noreferrer', textContent: new URL(sourceUrl).hostname }); p.append('규격 출처: ', a); fitOut.append(p); }
+  fitOut.append(Object.assign(document.createElement('p'), { textContent: manual ? '직접 잰 둘레로 계산한 추천이에요.' : '인터넷에서 찾은 규격으로 계산한 추천이에요. 제품이 리뉴얼되면 달라질 수 있으니, 애매하면 둘레를 재 보세요.' }));
+  fitOut.append(Object.assign(document.createElement('p'), { className:'caution', textContent:'일회용 플라스틱 생수병이라면 사이즈가 맞아도 권장하지 않아요. 물이 줄어들수록 밴드를 유지하기 어렵고 물병이 쓰러질 수 있어요.' }));
+  if (r.size) { const b = Object.assign(document.createElement('button'), { className:'btn btn-n', type:'button', textContent: r.size + ' 사이즈로 주문하기' });
+    b.addEventListener('click', () => { qty.S = r.size === 'S' ? 1 : 0; qty.L = r.size === 'L' ? 1 : 0; startOrder(); }); fitOut.append(b); }
+}
+$('#f-fit').addEventListener('submit', async e => {
+  e.preventDefault(); const f = e.currentTarget, q = f.q.value.trim();
+  if (q.length < 2) { fitOut.className = 'fit-out wait'; fitOut.textContent = '물병 이름을 두 글자 이상 적어 주세요.'; return; }
+  fitOut.className = 'fit-out wait'; fitOut.textContent = `“${q}” 규격을 인터넷에서 찾는 중이에요. 10~30초쯤 걸려요.`;
+  await busy(f.querySelector('[type=submit]'), async () => {
+    try {
+      const r = await B.fit({ query: q });
+      if (!r.found) { fitOut.textContent = (r.note || '이 제품의 지름을 찾지 못했어요.') + ' 아래에서 둘레를 재서 계산해 보세요.'; $('#fit-manual').open = true; return; }
+      showFit({ product: r.product, mm: r.diameterMm, basis: r.basis, sourceUrl: r.sourceUrl, note: r.note });
+    } catch (err) { fitOut.textContent = err.message; $('#fit-manual').open = true; }
+  });
+});
+$('#f-fit-manual').addEventListener('submit', e => {
+  e.preventDefault(); const c = parseFloat(String(e.currentTarget.c.value).replace(',', '.'));
+  if (!(c >= 10 && c <= 45)) { fitOut.className = 'fit-out wait'; fitOut.textContent = '둘레를 cm로 적어 주세요. 쉐이커는 보통 24~33cm 사이예요.'; return; }
+  showFit({ product:'직접 잰 물병', mm: Math.round(c * 10 / Math.PI), basis:'circumference', manual:true });
+});
+// 말로 입력 (지원하는 브라우저에서만 버튼이 보여요)
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition, mic = $('#fit-mic');
+if (SR) {
+  mic.hidden = false; let rec = null;
+  mic.addEventListener('click', () => {
+    if (rec) { rec.stop(); return; }
+    rec = new SR(); rec.lang = 'ko-KR'; rec.interimResults = false; rec.maxAlternatives = 1;
+    mic.setAttribute('aria-pressed', 'true'); fitOut.className = 'fit-out wait'; fitOut.textContent = '듣고 있어요. 물병 이름을 말해 주세요.';
+    rec.onresult = ev => { $('#fit-q').value = ev.results[0][0].transcript.slice(0, 60); fitOut.textContent = ''; $('#f-fit').requestSubmit(); };
+    rec.onerror = () => { fitOut.textContent = '잘 듣지 못했어요. 글자로 적어 주세요.'; };
+    rec.onend = () => { mic.setAttribute('aria-pressed', 'false'); rec = null; };
+    try { rec.start(); } catch { rec = null; mic.setAttribute('aria-pressed', 'false'); }
+  });
+}
+
+/* ----- 시작: 서버 확인 → 결제 후 돌아온 경우 승인 ----- */
+try { await Live.init(); B = Live; } catch { B = Demo; }
+$$('.demo-banner', shop).forEach(el => { if (el.id !== 'demo-code-box') el.hidden = B.mode !== 'demo'; });
+await refreshMe();
+const qs = new URLSearchParams(location.search);
+if (qs.get('pay')) {
+  history.replaceState(null, '', location.pathname + location.hash);
+  if (qs.get('pay') === 'success') {
+    result('결제 확인 중…', '서버에서 결제 금액을 확인하고 있어요. 창을 닫지 말아 주세요.');
+    try {
+      const o = await B.confirm({ paymentKey: qs.get('paymentKey'), orderId: qs.get('orderId'), amount: Number(qs.get('amount')) });
+      result('결제 완료', `${o.orderName} · ${won(o.amount)} 결제가 승인됐어요. 주문 내역에서 확인할 수 있어요.`);
+    } catch (err) { result('결제를 완료하지 못했어요', err.message); }
+  } else {
+    result('결제가 취소되었거나 실패했어요', qs.get('message') || '다시 시도해 주세요.');
+  }
+}
+</script>
+</body>
+</html>
