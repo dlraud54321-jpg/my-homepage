@@ -292,7 +292,28 @@ fieldset.box legend{padding:0;margin:0 0 8px;font:400 20px/1.2 var(--disp)}
 .sum .tot b{font:400 32px/1 var(--en);color:var(--orange)}
 .sum .fine{margin:10px 0 0;font-size:12px}
 .order-list{list-style:none;margin:0;padding:0}
-.order-list li{padding:14px 0;border-bottom:1.5px solid var(--navy);display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 12px}
+.order-list li{border-bottom:1.5px solid var(--navy)}
+.order-list li.msg-li{padding:14px 0}
+.od-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 12px;width:100%;padding:14px 4px;border:0;background:transparent;color:inherit;font:inherit;text-align:left;cursor:pointer}
+.od-row:hover{background:rgba(14,18,64,.05)}
+.od-row .st{grid-column:1 / -1;font-size:13px;font-weight:700}
+.od-row .st::after{content:' 자세히 ›';font-weight:500;opacity:.7}
+.od-row.off b,.od-row.off .amt{text-decoration:line-through;text-decoration-thickness:2px}
+.od-chip{margin:0 0 10px}
+.od-chip .badge{font-size:13px;padding:5px 10px}
+.steps{list-style:none;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin:0 0 20px;padding:0;counter-reset:st}
+.steps li{position:relative;padding:10px 8px 8px;border-top:5px solid rgba(14,18,64,.18);font-size:13px;font-weight:700;opacity:.55}
+.steps li.done{border-top-color:var(--navy);opacity:1}
+.steps li.now{border-top-color:var(--orange);opacity:1}
+.steps li.stop{border-top-color:var(--orange);opacity:1;color:var(--navy);background:repeating-linear-gradient(135deg,transparent 0 6px,rgba(255,90,31,.18) 6px 12px)}
+.steps li small{display:block;font-weight:500;font-size:12px}
+.od-info{display:grid;grid-template-columns:auto minmax(0,1fr);gap:6px 16px;margin:18px 0 0;padding:14px 0 0;border-top:2px solid var(--navy);font-size:14px}
+.od-info dt{font-weight:700}
+.od-info dd{margin:0;word-break:break-all}
+.od-note{margin:0 0 16px;padding:12px 14px;border:2px solid var(--navy);font-size:14px}
+.od-note b{display:block;margin-bottom:2px}
+.od-confirm{display:grid;gap:10px;margin-top:16px;padding:14px;border:2px solid var(--navy)}
+.od-confirm p{margin:0;font-weight:700}
 .order-list .oid{font-size:12px;word-break:break-all}
 .order-list .amt{font:400 22px/1 var(--en);text-align:right}
 .badge{display:inline-block;padding:3px 8px;font-size:12px;font-weight:700;border:1.5px solid var(--navy);justify-self:end}
@@ -963,6 +984,18 @@ fieldset.box legend{padding:0;margin:0 0 8px;font:400 20px/1.2 var(--disp)}
       <h2 tabindex="-1" id="res-title"></h2>
       <p id="res-body"></p>
       <div class="btn-row"><button class="btn btn-n" type="button" data-go="orders">주문 내역 보기</button><button class="btn btn-ghost" type="button" data-close>닫기</button></div>
+    </section>
+
+    <section class="view" data-view="detail" hidden>
+      <p style="margin:0 0 10px"><button class="link" type="button" data-go="orders">← 주문 내역</button></p>
+      <p class="od-chip" id="od-chip"></p>
+      <h2 tabindex="-1" id="od-title"></h2>
+      <p class="sub" id="od-desc"></p>
+      <ol class="steps" id="od-steps" aria-label="주문 진행 단계"></ol>
+      <div id="od-extra"></div>
+      <dl class="od-info" id="od-info"></dl>
+      <p class="msg" role="alert" id="od-msg"></p>
+      <div class="btn-row" id="od-acts"></div>
     </section>
 
     <section class="view" data-view="orders" hidden>
@@ -1763,7 +1796,7 @@ const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [..
 const won = n => Number(n).toLocaleString('ko-KR') + '원';
 const UNIT = 9900;
 const PHONE_RE = /^01[016789]-?\d{3,4}-?\d{4}$/;
-const STATUS = { WAITING_DEPOSIT:['입금 대기','ready'], EXPIRED:['입금 기한 지남','failed'], READY:['결제 대기','ready'], DONE:['결제 완료','done'], FAILED:['결제 실패','failed'], CANCELED:['취소','failed'] };
+const STATUS = { WAITING_DEPOSIT:['입금 대기','ready'], EXPIRED:['입금 기한 지남','failed'], READY:['결제 대기','ready'], DONE:['결제 완료','done'], FAILED:['결제 실패','failed'], CANCELED:['취소됨','failed'] };
 
 class ApiError extends Error { constructor(m, code) { super(m); this.code = code; } }
 async function req(path, { method = 'GET', body } = {}) {
@@ -1790,6 +1823,7 @@ const Live = {
   logout: () => req('/api/auth/logout', { method:'POST', body:{} }),
   createOrder: b => req('/api/orders', { method:'POST', body:b }),
   orders: () => req('/api/orders'),
+  cancelOrder: b => req('/api/orders/cancel', { method:'POST', body:b }),
   fit: b => req('/api/fit', { method:'POST', body:b }),
 };
 
@@ -1827,6 +1861,12 @@ const Demo = (() => {
     },
     async fit() { await wait(200); throw new ApiError('물병 검색은 서버에 연결됐을 때만 동작해요. 아래에서 둘레를 재서 바로 계산할 수 있어요.', 'FIT_OFF'); },
     async orders() { const s = load(); return { orders: s.orders.filter(o => o.email === s.session).reverse() }; },
+    async cancelOrder({ orderId }) {
+      await wait(); const s = load(); const o = s.orders.find(x => x.orderId === orderId && x.email === s.session);
+      if (!o) throw new ApiError('주문을 찾을 수 없어요.');
+      if (o.status === 'DONE') throw new ApiError('입금이 확인된 주문은 직접 취소할 수 없어요.');
+      Object.assign(o, { status:'CANCELED', canceledAt: new Date().toISOString(), canceledBy:'buyer', cancelReason:'', bank: undefined }); save(s); return o;
+    },
   };
 })();
 
@@ -1987,26 +2027,102 @@ $('#f-order').addEventListener('submit', async e => {
     }
   });
 });
-// 주문 내역
+// 주문 내역 · 주문 상세: 판매자가 입금 확인이나 취소를 하면 상태에 맞는 화면이 보여요
+const fmt = d => d ? new Date(d).toLocaleString('ko-KR', { year:'numeric', month:'numeric', day:'numeric', hour:'2-digit', minute:'2-digit' }) : '';
+const fmtDay = d => d ? new Date(d).toLocaleDateString('ko-KR', { month:'long', day:'numeric', weekday:'short' }) : '';
+const mk = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
+let myOrders = [];
+function statusLine(o) {
+  if (o.status === 'WAITING_DEPOSIT') return `${fmtDay(o.depositDue)}까지 입금해 주세요`;
+  if (o.status === 'DONE') return '입금 확인 완료 · 배송 준비 중';
+  if (o.status === 'EXPIRED') return '입금 기한이 지나 주문이 멈췄어요';
+  if (o.status === 'CANCELED') return (o.canceledBy === 'buyer' ? '직접 취소한 주문이에요' : '판매자가 취소했어요') + (o.cancelReason ? ` · 사유: ${o.cancelReason}` : '');
+  return '';
+}
 async function openOrders() {
   if (!user) { pendingOrder = false; openLogin(false); return; }
   view('orders'); $('#me-line').textContent = `${user.name || ''} · ${user.email}`;
-  const list = $('#order-list'); list.replaceChildren(Object.assign(document.createElement('li'), { textContent:'불러오는 중…' }));
+  const list = $('#order-list'); list.replaceChildren(mk('li', 'msg-li', '불러오는 중…'));
   try {
-    const { orders } = await B.orders(); list.replaceChildren();
-    if (!orders.length) { list.append(Object.assign(document.createElement('li'), { textContent:'아직 주문이 없어요.' })); return; }
-    for (const o of orders) {
-      const li = document.createElement('li'); const [label, cls] = STATUS[o.status] || [o.status, 'ready'];
-      const name = Object.assign(document.createElement('b'), { textContent: o.orderName });
-      const badge = Object.assign(document.createElement('span'), { className:'badge ' + cls, textContent: label });
-      const meta = Object.assign(document.createElement('span'), { className:'oid', textContent: `${new Date(o.createdAt).toLocaleString('ko-KR')} · 주문번호 ${o.orderId}` });
-      const amt = Object.assign(document.createElement('span'), { className:'amt', textContent: won(o.amount) });
-      li.append(name, badge, meta, amt);
-      if (o.status === 'WAITING_DEPOSIT' && o.bank) li.append(Object.assign(document.createElement('span'), { className:'bank',
-        textContent: `입금 계좌: ${o.bank.bank} ${o.bank.account} (${o.bank.holder}) · 입금자명 ${o.depositor || ''}` }));
-      list.append(li);
+    myOrders = (await B.orders()).orders || []; list.replaceChildren();
+    if (!myOrders.length) { list.append(mk('li', 'msg-li', '아직 주문이 없어요.')); return; }
+    for (const o of myOrders) {
+      const [label, cls] = STATUS[o.status] || [o.status, 'ready'];
+      const row = mk('button', 'od-row' + (o.status === 'CANCELED' ? ' off' : '')); row.type = 'button';
+      row.append(mk('b', '', o.orderName), mk('span', 'badge ' + cls, label),
+        mk('span', 'oid', `${fmt(o.createdAt)} · 주문번호 ${o.orderId}`), mk('span', 'amt', won(o.amount)), mk('span', 'st', statusLine(o)));
+      row.addEventListener('click', () => openDetail(o.orderId));
+      const li = mk('li'); li.append(row); list.append(li);
     }
-  } catch (err) { list.replaceChildren(Object.assign(document.createElement('li'), { textContent: err.message })); }
+  } catch (err) { list.replaceChildren(mk('li', 'msg-li', err.message)); }
+}
+function openDetail(id) {
+  const o = myOrders.find(x => x.orderId === id); if (!o) return openOrders();
+  const [label, cls] = STATUS[o.status] || [o.status, 'ready'];
+  $('#od-chip').replaceChildren(mk('span', 'badge ' + cls, label));
+  const T = {
+    WAITING_DEPOSIT: ['입금을 기다리고 있어요', `${fmtDay(o.depositDue)}까지 아래 계좌로 입금자명 그대로 입금해 주세요. 판매자가 통장에서 확인하면 ‘결제 완료’로 바뀌어요.`],
+    DONE: ['결제가 확인됐어요', `${fmt(o.approvedAt)}에 입금이 확인됐어요. 상품을 준비해서 보내 드릴게요.`],
+    EXPIRED: ['입금 기한이 지났어요', '기한 안에 입금이 확인되지 않아 주문이 멈췄어요. 필요하면 다시 주문해 주세요.'],
+    CANCELED: ['주문이 취소됐어요', `${fmt(o.canceledAt)}에 ${o.canceledBy === 'buyer' ? '직접 취소했어요.' : '판매자가 주문을 취소했어요.'}`],
+  }[o.status] || [label, ''];
+  $('#od-title').textContent = T[0]; $('#od-desc').textContent = T[1];
+  // 진행 단계
+  const steps = $('#od-steps'); steps.replaceChildren();
+  const step = (name, state, sub) => { const li = mk('li', state, name); if (sub) li.append(mk('small', '', sub)); if (state === 'now') li.setAttribute('aria-current', 'step'); steps.append(li); };
+  step('주문 접수', 'done', fmtDay(o.createdAt));
+  if (o.status === 'WAITING_DEPOSIT') { step('입금 확인', 'now', '확인 대기 중'); step('배송 준비', '', ''); }
+  else if (o.status === 'DONE') { step('입금 확인', 'done', fmtDay(o.approvedAt)); step('배송 준비', 'now', '준비 중'); }
+  else if (o.status === 'CANCELED') { step('주문 취소', 'stop', fmtDay(o.canceledAt)); step('배송 준비', '', ''); }
+  else { step('입금 기한 지남', 'stop', fmtDay(o.depositDue)); step('배송 준비', '', ''); }
+  // 상태별 안내
+  const extra = $('#od-extra'); extra.replaceChildren();
+  if (o.status === 'WAITING_DEPOSIT' && o.bank) {
+    const box = mk('div', 'bankbox');
+    const line = (k, v, c) => { const d = mk('div', c || ''); d.append(mk('span', '', k), mk('b', '', v)); box.append(d); };
+    line('은행', o.bank.bank); line('계좌번호', o.bank.account, 'acct'); line('예금주', o.bank.holder);
+    line('입금액', won(o.amount)); line('입금자명', o.depositor || ''); line('입금 기한', fmtDay(o.depositDue) + '까지');
+    extra.append(box);
+  }
+  if (o.status === 'CANCELED') {
+    const n = mk('div', 'od-note');
+    n.append(mk('b', '', o.canceledBy === 'buyer' ? '직접 취소한 주문이에요' : '판매자가 취소한 주문이에요'));
+    if (o.cancelReason) n.append(mk('span', '', `사유: ${o.cancelReason}`), mk('br'));
+    n.append(mk('span', '', '이미 입금하셨다면 주문번호와 함께 문의해 주세요. 확인 후 환불해 드려요.'));
+    extra.append(n);
+  }
+  if (o.status === 'EXPIRED') { const n = mk('div', 'od-note'); n.append(mk('b', '', '이미 입금하셨나요?'), mk('span', '', '판매자가 통장을 확인하면 ‘결제 완료’로 바뀌어요. 늦어지면 주문번호와 함께 문의해 주세요.')); extra.append(n); }
+  // 주문 정보
+  const info = $('#od-info'); info.replaceChildren();
+  const sh = o.shipping || {};
+  const row = (k, v) => { if (!v) return; info.append(mk('dt', '', k), mk('dd', '', v)); };
+  row('주문번호', o.orderId); row('주문 일시', fmt(o.createdAt)); row('상품', o.orderName); row('결제 금액', won(o.amount) + ' (계좌이체)');
+  row('입금자명', o.depositor); row('받는 분', sh.name); row('연락처', sh.phone);
+  row('배송지', sh.addr1 ? `(${sh.zip}) ${sh.addr1} ${sh.addr2 || ''}`.trim() : ''); row('배송 메모', sh.memo);
+  // 버튼
+  $('#od-msg').textContent = '';
+  const acts = $('#od-acts'); acts.replaceChildren(); acts.nextElementSibling?.classList.contains('od-confirm') && acts.nextElementSibling.remove();
+  const btn = (text, cls, fn) => { const b = mk('button', 'btn ' + cls, text); b.type = 'button'; b.addEventListener('click', fn); acts.append(b); return b; };
+  if (o.status === 'WAITING_DEPOSIT') btn('계좌번호 복사', 'btn-o', async () => { try { await navigator.clipboard.writeText(o.bank?.account || ''); $('#od-msg').textContent = '계좌번호를 복사했어요.'; } catch { $('#od-msg').textContent = '복사하지 못했어요. 계좌번호를 길게 눌러 복사해 주세요.'; } });
+  if (o.status === 'EXPIRED' || o.status === 'CANCELED') { const b = btn('다시 주문하기', 'btn-o', () => {}); b.dataset.buy = ''; }
+  if (o.status === 'WAITING_DEPOSIT' || o.status === 'EXPIRED') btn('주문 취소하기', 'btn-ghost', () => askCancel(o));
+  if (o.status === 'CANCELED' || o.status === 'EXPIRED' || o.status === 'DONE') btn('문의하기', 'btn-ghost', () => { shop.close(); location.hash = '#contact'; });
+  view('detail');
+}
+function askCancel(o) {
+  const acts = $('#od-acts'); if (acts.nextElementSibling?.classList.contains('od-confirm')) return acts.nextElementSibling.querySelector('button').focus();
+  const box = mk('div', 'od-confirm');
+  box.append(mk('p', '', '이 주문을 취소할까요? 취소하면 되돌릴 수 없어요.'));
+  const r = mk('div', 'btn-row'); r.style.marginTop = '0';
+  const no = mk('button', 'btn btn-ghost', '아니요'); no.type = 'button'; no.addEventListener('click', () => box.remove());
+  const yes = mk('button', 'btn btn-n', '네, 취소할게요'); yes.type = 'button';
+  yes.addEventListener('click', () => busy(yes, async () => {
+    try {
+      const u = await B.cancelOrder({ orderId: o.orderId });
+      myOrders = myOrders.map(x => x.orderId === o.orderId ? { ...x, ...u } : x); openDetail(o.orderId);
+    } catch (err) { $('#od-msg').textContent = err.message; }
+  }));
+  r.append(yes, no); box.append(r); acts.after(box); yes.focus();
 }
 $('#btn-logout').addEventListener('click', async () => { try { await B.logout(); } catch {} try { window.google?.accounts.id.disableAutoSelect(); } catch {} user = null; await refreshMe(); shop.close(); });
 

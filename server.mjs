@@ -118,12 +118,14 @@ function expire(o) {
   if (o.status === 'WAITING_DEPOSIT' && Date.parse(o.depositDue) < Date.now()) { o.status = 'EXPIRED'; return true; }
   return false;
 }
+// 구매자 본인에게 보여 주는 주문 정보. 상태가 바뀐 시각과 취소 사유까지 내려줘서 주문 상세 화면에 써요
 const pubOrder = o => ({
   orderId: o.orderId, orderName: o.orderName, amount: o.amount, items: o.items, status: o.status, payMethod: 'DEPOSIT',
   createdAt: o.createdAt, approvedAt: o.approvedAt, depositor: o.depositor, depositDue: o.depositDue,
+  canceledAt: o.canceledAt, canceledBy: o.canceledBy, cancelReason: o.cancelReason, shipping: o.shipping,
   bank: o.status === 'WAITING_DEPOSIT' ? BANK : undefined,
 });
-const adminOrder = o => ({ ...pubOrder(o), email: o.email, shipping: o.shipping, canceledAt: o.canceledAt });
+const adminOrder = o => ({ ...pubOrder(o), email: o.email });
 function requireAdmin(req) {
   if (!ADMIN_TOKEN || !sameToken(req.headers['x-admin-token'] || '', ADMIN_TOKEN)) throw new HttpError(403, '관리자 비밀번호가 맞지 않아요.');
 }
@@ -245,6 +247,17 @@ const routes = {
     db.orders[order.orderId] = order; await save();
     return { ...pubOrder(order), email: u.email, name: shipping.name };
   },
+  // 구매자가 직접 취소: 입금 전(입금 대기·기한 지남) 주문만 돼요
+  'POST /api/orders/cancel': async req => {
+    const u = requireUser(req), order = db.orders[clip((await readJson(req)).orderId, 64)];
+    if (!order || order.email !== u.email) throw new HttpError(404, '주문을 찾을 수 없어요.');
+    expire(order);
+    if (order.status === 'CANCELED') return pubOrder(order);
+    if (!['WAITING_DEPOSIT', 'EXPIRED'].includes(order.status)) throw new HttpError(409, '입금이 확인된 주문은 직접 취소할 수 없어요. 문의 메일로 알려 주세요.');
+    Object.assign(order, { status: 'CANCELED', canceledAt: new Date().toISOString(), canceledBy: 'buyer', cancelReason: '' });
+    await save();
+    return pubOrder(order);
+  },
   'GET /api/orders': async req => {
     const u = requireUser(req);
     const mine = Object.values(db.orders).filter(o => o.email === u.email);
@@ -272,10 +285,11 @@ const routes = {
   },
   'POST /api/admin/cancel': async req => {
     requireAdmin(req);
-    const order = db.orders[clip((await readJson(req)).orderId, 64)];
+    const b = await readJson(req), order = db.orders[clip(b.orderId, 64)];
     if (!order) throw new HttpError(404, '주문을 찾을 수 없어요.');
+    if (order.status === 'CANCELED') return adminOrder(order);
     if (order.status === 'DONE') throw new HttpError(409, '입금 확인된 주문은 여기서 취소할 수 없어요. 환불 후 따로 처리해 주세요.');
-    Object.assign(order, { status: 'CANCELED', canceledAt: new Date().toISOString() });
+    Object.assign(order, { status: 'CANCELED', canceledAt: new Date().toISOString(), canceledBy: 'seller', cancelReason: clip(b.reason, 100) });
     await save();
     return adminOrder(order);
   },

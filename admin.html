@@ -47,6 +47,14 @@ main{max-width:1080px;margin:0 auto;padding:24px var(--gut) 64px}
 .badge.ready{background:var(--orange)}
 .acts{grid-column:1 / -1;display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end}
 .empty{padding:40px;text-align:center;border:2px dashed var(--navy)}
+.note{margin:0 0 16px;padding:12px 14px;background:var(--navy);color:var(--white);font-weight:700}
+.note:empty{display:none}
+.confirm{grid-column:1 / -1;display:grid;gap:10px;padding:14px;background:var(--white);border:2px solid var(--navy)}
+.confirm p{margin:0;font-weight:700}
+.confirm input{width:100%;height:46px;padding:0 12px;border:2px solid var(--navy);background:#fff}
+.confirm .row{display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end}
+.card.off{opacity:.72}
+.why{grid-column:1 / -1;margin:0;font-size:14px;padding:8px 10px;background:var(--white);border-left:4px solid var(--orange)}
 @media (max-width:600px){.card{grid-template-columns:minmax(0,1fr)}.amt{text-align:left}.sum{margin-left:0;width:100%}}
 </style>
 </head>
@@ -71,10 +79,12 @@ main{max-width:1080px;margin:0 auto;padding:24px var(--gut) 64px}
       <div class="tabs" role="group" aria-label="주문 상태">
         <button type="button" data-f="WAITING_DEPOSIT" aria-pressed="true">입금 대기</button>
         <button type="button" data-f="DONE" aria-pressed="false">입금 확인됨</button>
+        <button type="button" data-f="OFF" aria-pressed="false">취소·기한 지남</button>
         <button type="button" data-f="ALL" aria-pressed="false">전체</button>
       </div>
       <p class="sum" id="sum" aria-live="polite"></p>
     </div>
+    <p class="note" role="status" id="note"></p>
     <p class="msg" role="alert" id="msg"></p>
     <ul class="list" id="list"></ul>
   </section>
@@ -84,7 +94,8 @@ main{max-width:1080px;margin:0 auto;padding:24px var(--gut) 64px}
 (function(){
   var $ = function(id){ return document.getElementById(id); };
   var KEY = 'setsign-admin-token', token = '', filter = 'WAITING_DEPOSIT', orders = [];
-  var STATUS = { WAITING_DEPOSIT:['입금 대기','ready'], DONE:['입금 확인됨','done'], EXPIRED:['기한 지남',''], CANCELED:['취소',''] };
+  var STATUS = { WAITING_DEPOSIT:['입금 대기','ready'], DONE:['입금 확인됨','done'], EXPIRED:['기한 지남',''], CANCELED:['취소됨',''] };
+  var inFilter = function(o){ return filter === 'ALL' || (filter === 'OFF' ? (o.status === 'CANCELED' || o.status === 'EXPIRED') : o.status === filter); };
   var won = function(n){ return Number(n).toLocaleString('ko-KR') + '원'; };
   var dt = function(s){ return s ? new Date(s).toLocaleString('ko-KR', { month:'numeric', day:'numeric', hour:'2-digit', minute:'2-digit' }) : ''; };
   try { token = sessionStorage.getItem(KEY) || ''; } catch (e) {}
@@ -102,7 +113,7 @@ main{max-width:1080px;margin:0 auto;padding:24px var(--gut) 64px}
   function line(label, value){ var s = el('span'); s.append(el('b', '', label), String(value || '-')); return s; }
 
   function render(){
-    var shown = orders.filter(function(o){ return filter === 'ALL' || o.status === filter; });
+    var shown = orders.filter(inFilter);
     var wait = orders.filter(function(o){ return o.status === 'WAITING_DEPOSIT'; });
     $('sum').textContent = '';
     $('sum').append('입금 대기 ', el('b', '', wait.length), '건 · ', el('b', '', won(wait.reduce(function(a, o){ return a + o.amount; }, 0))));
@@ -110,7 +121,7 @@ main{max-width:1080px;margin:0 auto;padding:24px var(--gut) 64px}
     if (!shown.length) { list.append(el('li', 'empty', filter === 'WAITING_DEPOSIT' ? '입금을 기다리는 주문이 없어요.' : '주문이 없어요.')); return; }
     shown.forEach(function(o){
       var st = STATUS[o.status] || [o.status, ''], sh = o.shipping || {};
-      var li = el('li', 'card' + (o.status === 'WAITING_DEPOSIT' ? ' ready' : ''));
+      var li = el('li', 'card' + (o.status === 'WAITING_DEPOSIT' ? ' ready' : '') + (o.status === 'CANCELED' ? ' off' : ''));
       var left = el('div');
       var who = el('p', 'who'); who.style.margin = '0 0 4px'; who.append(el('span', 'badge ' + st[1], st[0]), o.orderId + ' · ' + dt(o.createdAt) + ' 주문');
       var dep = el('p', 'dep', o.depositor || '-'); dep.style.margin = '0'; dep.append(el('small', '', '입금자명'));
@@ -119,29 +130,48 @@ main{max-width:1080px;margin:0 auto;padding:24px var(--gut) 64px}
       var amt = el('p', 'amt', won(o.amount)); amt.style.margin = '0';
       var meta = el('div', 'meta');
       meta.append(line('받는 분', sh.name), line('연락처', sh.phone), line('주소', '(' + (sh.zip || '') + ') ' + (sh.addr1 || '') + ' ' + (sh.addr2 || '')),
-                  line('메모', sh.memo), line('이메일', o.email), line(o.status === 'DONE' ? '확인 일시' : '입금 기한', o.status === 'DONE' ? dt(o.approvedAt) : dt(o.depositDue)));
+                  line('메모', sh.memo), line('이메일', o.email),
+                  o.status === 'DONE' ? line('확인 일시', dt(o.approvedAt)) : o.status === 'CANCELED' ? line('취소 일시', dt(o.canceledAt)) : line('입금 기한', dt(o.depositDue)));
+      li.append(left, amt, meta);
+      if (o.status === 'CANCELED') li.append(el('p', 'why', (o.canceledBy === 'buyer' ? '구매자가 직접 취소했어요.' : '판매자가 취소했어요.') + (o.cancelReason ? ' 사유: ' + o.cancelReason : '')));
       var acts = el('div', 'acts');
-      if (o.status === 'WAITING_DEPOSIT' || o.status === 'EXPIRED') {
-        acts.append(actBtn('입금 확인', 'btn btn-o', '/api/admin/deposit', o, '입금자명과 금액이 통장과 같나요? 한 번 더 누르면 확정돼요'));
-      }
-      if (o.status !== 'DONE' && o.status !== 'CANCELED') acts.append(actBtn('주문 취소', 'btn', '/api/admin/cancel', o, '정말 취소할까요? 한 번 더 누르면 취소돼요'));
-      li.append(left, amt, meta); if (acts.childNodes.length) li.append(acts);
+      if (o.status === 'WAITING_DEPOSIT' || o.status === 'EXPIRED') acts.append(openBtn('입금 확인', 'btn btn-o', li, o, 'deposit'));
+      if (o.status === 'WAITING_DEPOSIT' || o.status === 'EXPIRED') acts.append(openBtn('주문 취소', 'btn', li, o, 'cancel'));
+      if (acts.childNodes.length) li.append(acts);
       list.append(li);
     });
   }
-  // 실수 방지: 한 번 누르면 확인 문구로 바뀌고, 4초 안에 한 번 더 눌러야 실행돼요
-  function actBtn(label, cls, path, o, confirmText){
-    var b = el('button', cls, label), armed = false, t; b.type = 'button';
-    b.addEventListener('click', async function(){
-      if (!armed) { armed = true; b.textContent = confirmText; t = setTimeout(function(){ armed = false; b.textContent = label; }, 4000); return; }
-      clearTimeout(t); b.disabled = true; b.textContent = '처리 중…';
-      try { await api(path, { orderId: o.orderId }); await load(); }
-      catch (e) { $('msg').textContent = e.message; b.disabled = false; b.textContent = label; armed = false; }
+  // 실수 방지: 버튼을 누르면 카드 아래에 확인 칸이 열리고, 거기서 한 번 더 확정해야 실행돼요
+  function openBtn(label, cls, li, o, kind){
+    var b = el('button', cls, label); b.type = 'button';
+    b.addEventListener('click', function(){
+      var old = li.querySelector('.confirm'); if (old) { var same = old.dataset.kind === kind; old.remove(); if (same) return; }
+      var box = el('div', 'confirm'); box.dataset.kind = kind;
+      var reason = null;
+      if (kind === 'deposit') box.append(el('p', '', '통장에 ' + (o.depositor || '-') + ' 이름으로 ' + won(o.amount) + '이 들어온 게 맞나요? 확정하면 구매자 주문 내역이 ‘결제 완료’로 바뀌어요.'));
+      else {
+        box.append(el('p', '', '이 주문을 취소할까요? 구매자 주문 내역에 ‘취소됨’과 아래 사유가 보여요.'));
+        reason = el('input'); reason.maxLength = 100; reason.placeholder = '취소 사유 (선택) 예: 입금 기한 지남, 재고 부족';
+        box.append(reason);
+      }
+      var row = el('div', 'row');
+      var no = el('button', 'btn', '그만두기'); no.type = 'button'; no.addEventListener('click', function(){ box.remove(); b.focus(); });
+      var yes = el('button', kind === 'deposit' ? 'btn btn-o' : 'btn btn-n', kind === 'deposit' ? '입금 확인 확정' : '취소 확정'); yes.type = 'button';
+      yes.addEventListener('click', async function(){
+        yes.disabled = no.disabled = true; yes.textContent = '처리 중…';
+        try {
+          await api(kind === 'deposit' ? '/api/admin/deposit' : '/api/admin/cancel', { orderId: o.orderId, reason: reason ? reason.value.trim() : undefined });
+          await load();
+          $('note').textContent = (o.depositor || o.orderId) + ' 님 주문을 ' + (kind === 'deposit' ? '입금 확인했어요. 구매자 화면에 ‘결제 완료’로 보여요.' : '취소했어요. 구매자 화면에 ‘취소됨’으로 보여요.');
+        } catch (e) { $('msg').textContent = e.message; yes.disabled = no.disabled = false; yes.textContent = kind === 'deposit' ? '입금 확인 확정' : '취소 확정'; }
+      });
+      row.append(no, yes); box.append(row); li.append(box);
+      (reason || yes).focus();
     });
     return b;
   }
   async function load(){
-    $('msg').textContent = '';
+    $('msg').textContent = ''; $('note').textContent = '';
     try { orders = (await api('/api/admin/orders')).orders || []; render(); }
     catch (e) { if (e.status === 403) return out(e.message); $('msg').textContent = e.message; }
   }
