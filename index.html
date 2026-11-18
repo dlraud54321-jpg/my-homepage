@@ -1037,7 +1037,7 @@ fieldset.box legend{padding:0;margin:0 0 8px;font:400 20px/1.2 var(--disp)}
   <h3>수집하는 항목</h3><ul><li>회원가입(구글 로그인): 이름, 이메일, 구글 계정 식별 번호, 약관 동의 기록. 비밀번호는 받지 않아요</li><li>주문: 받는 분, 휴대폰 번호, 배송 주소, 배송 메모</li><li>결제: 입금자명, 입금 확인 일시</li></ul>
   <h3>이용 목적</h3><p>회원 확인, 주문 처리와 배송, 고객 문의 응대</p>
   <h3>보유 기간</h3><p>회원 탈퇴 시 바로 삭제해요. 단, 전자상거래법에 따라 계약·청약철회 기록과 대금 결제·공급 기록은 5년, 소비자 불만·분쟁 처리 기록은 3년 보관해요.</p>
-  <h3>처리 위탁</h3><p>배송: [택배사] · 이메일 발송: [메일 서비스]</p>
+  <h3>처리 위탁·외부 서비스</h3><p>로그인: Google(구글 계정 로그인) · 서버 운영: Render · 배송: [택배사]</p>
   <h3>문의</h3><p>개인정보 보호책임자: [이름] · hello@example.com</p>
 </template>
 <template id="t-refund" data-title="교환·환불 정책">
@@ -2081,6 +2081,9 @@ if (STATIC_HOST) {
   })();
 }
 $$('.demo-banner', shop).forEach(el => { el.hidden = B.mode !== 'demo'; });
+// 약관 바로가기: /privacy, /terms, /refund 주소나 #privacy 같은 링크로 들어오면 해당 문서를 열어요
+const docFromUrl = () => { const k = (location.pathname.match(/\/(privacy|terms|refund)\/?$/) || location.hash.match(/^#(privacy|terms|refund)$/) || [])[1]; if (k) openDoc(k); };
+docFromUrl(); addEventListener('hashchange', docFromUrl);
 if (B.mode === 'live') await serverReady;
 await refreshMe();
 </script>
