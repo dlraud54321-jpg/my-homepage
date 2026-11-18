@@ -1,5 +1,6 @@
-# Render 배포 설정 (Blueprint). Render 대시보드에서 New → Blueprint → 이 저장소를 고르면 아래대로 만들어져요.
-# sync: false 인 값은 이 파일에 적지 않고, 배포할 때 Render 화면에서 직접 입력해요.
+# Render Blueprint — New → Blueprint 로 이 저장소를 고르면 아래 설정으로 서버가 만들어져요.
+# 계좌·비밀번호·API 키 같은 값은 이 파일에 적지 않아요 (공개 저장소).
+# sync: false 인 값은 Render 대시보드 → Environment 에서 직접 넣고, 이후 배포해도 덮어쓰지 않아요.
 services:
   - type: web
     name: setsign
@@ -12,13 +13,13 @@ services:
     envVars:
       - key: NODE_ENV
         value: production
-      - key: BANK_NAME            # 입금받을 은행 이름. 지금은 테스트용 값이에요. 실제 판매 전에 Render의 Environment에서 바꾸세요
-        value: 테스트은행
-      - key: BANK_ACCOUNT         # 계좌번호 (테스트용 자리표시)
-        value: 000-0000-0000
-      - key: BANK_HOLDER          # 예금주 (테스트용)
-        value: SETSIGN 테스트
-      - key: ADMIN_TOKEN          # 주문 관리 페이지(/admin.html) 비밀번호. Render가 임의로 만들어 줘요. Environment에서 확인하세요
+      - key: BANK_NAME
+        sync: false
+      - key: BANK_ACCOUNT
+        sync: false
+      - key: BANK_HOLDER
+        sync: false
+      - key: ADMIN_TOKEN
         generateValue: true
-      - key: SHOW_VERIFY_CODE     # 테스트용: 인증 코드를 메일 대신 화면에 표시. 실제 운영 전에 지우세요
-        value: "1"
+      - key: SHOW_VERIFY_CODE
+        sync: false

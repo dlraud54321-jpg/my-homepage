@@ -9,6 +9,7 @@
 //   BANK_NAME / BANK_ACCOUNT / BANK_HOLDER  주문 대금을 받을 계좌 (결제는 이 계좌로 직접 이체만 받아요). 사업자 계좌를 쓰세요
 //   ADMIN_TOKEN                         주문 관리 페이지(/admin.html) 비밀번호. 길고 추측하기 어렵게
 //   SHOW_VERIFY_CODE=1                  테스트 전용. 메일 발송 없이 인증 코드를 화면에 보여 줘요
+//   BREVO_API_KEY + MAIL_FROM           인증 메일 실제 발송 (Brevo 무료 플랜). RESEND_API_KEY도 돼요. MAIL_FROM_NAME은 선택
 //   ANTHROPIC_API_KEY                   물병 사이즈 찾기(웹 검색). 없으면 그 기능만 꺼져요
 //
 // ⚠ 비밀 키와 토큰은 환경 변수로만 넣으세요. 저장소·HTML에 절대 커밋하지 마세요.
@@ -36,6 +37,15 @@ const SHIPPING_FEE = Number(env.SHIPPING_FEE || 0);
 const DB_FILE = env.DB_FILE || './data.json';
 const SECURE_COOKIE = env.NODE_ENV === 'production';
 const SHOW_VERIFY_CODE = env.SHOW_VERIFY_CODE === '1';   // 테스트 전용: 메일 대신 화면에 인증 코드 표시. 실제 운영에서는 끄세요
+// 인증 메일: Brevo(무료, 도메인 없이 보내는 사람 이메일 인증만으로 가능) 또는 Resend.
+// Render 무료 서버는 SMTP 포트가 막혀 있어서 HTTP API로 보내요.
+const BREVO_API_KEY = env.BREVO_API_KEY || '';
+const RESEND_API_KEY = env.RESEND_API_KEY || '';
+const MAIL_FROM = env.MAIL_FROM || '';                   // Brevo에서 인증한 보내는 사람 이메일
+const MAIL_FROM_NAME = env.MAIL_FROM_NAME || 'SETSIGN';
+const MAIL_ON = Boolean((BREVO_API_KEY || RESEND_API_KEY) && MAIL_FROM);
+// 로그에는 이메일을 가려서 남겨요 (ab***@gmail.com)
+const maskEmail = e => String(e).replace(/^([^@]{0,2})[^@]*/, (m, a) => `${a}***`);
 
 // 가격의 기준은 서버예요. 브라우저가 보낸 금액은 받지 않아요.
 const CATALOG = {
@@ -49,6 +59,8 @@ if (!BANK_ON) console.warn('[경고] BANK_NAME / BANK_ACCOUNT / BANK_HOLDER 가 
 if (!ADMIN_TOKEN) console.warn('[경고] ADMIN_TOKEN 이 비어 있어 주문 관리 페이지(/admin.html)를 쓸 수 없어요.');
 if (!ANTHROPIC_API_KEY) console.warn('[안내] ANTHROPIC_API_KEY가 없어 물병 사이즈 검색이 꺼져 있어요.');
 if (SHOW_VERIFY_CODE) console.warn('[주의] SHOW_VERIFY_CODE=1: 인증 코드를 화면에 보여 줘요. 테스트가 끝나면 꼭 끄세요.');
+if (MAIL_ON) console.log(`[안내] 인증 메일 발송: ${BREVO_API_KEY ? 'Brevo' : 'Resend'} (보내는 사람 ${maskEmail(MAIL_FROM)})`);
+else console.warn('[경고] BREVO_API_KEY(또는 RESEND_API_KEY)와 MAIL_FROM이 없어 인증 메일이 실제로 나가지 않아요.');
 
 /* ---------- 저장소 (예시: JSON 파일) ---------- */
 let db = { users: {}, orders: {}, fit: {} };
@@ -76,9 +88,49 @@ async function checkSecret(secret, stored) {
 const DUMMY = await hashSecret('timing-equalizer');
 function sameToken(a, b) { const x = Buffer.from(String(a)), y = Buffer.from(String(b)); return x.length === y.length && timingSafeEqual(x, y); }
 
+function verificationMail(code) {
+  const subject = `[SETSIGN] 인증 코드 ${code}`;
+  const text = `SETSIGN 이메일 인증 코드: ${code}\n\n10분 안에 입력해 주세요.\n본인이 가입하지 않았다면 이 메일은 무시하셔도 돼요.`;
+  const html = `<div style="font-family:'Apple SD Gothic Neo','Noto Sans KR',sans-serif;max-width:440px;margin:0 auto;padding:32px 24px;background:#F5F5F0;color:#0E1240">
+  <p style="margin:0 0 4px;font-weight:700;letter-spacing:.08em">SETSIGN 세트사인</p>
+  <h1 style="margin:0 0 20px;font-size:20px">이메일 인증 코드</h1>
+  <p style="margin:0 0 8px">아래 6자리 코드를 가입 화면에 입력해 주세요.</p>
+  <p style="margin:0 0 20px;font-size:34px;font-weight:800;letter-spacing:.3em;color:#FF5A1F">${code}</p>
+  <p style="margin:0;font-size:13px;opacity:.75">코드는 10분 동안 유효해요. 본인이 가입하지 않았다면 이 메일은 무시하셔도 돼요.</p>
+</div>`;
+  return { subject, text, html };
+}
+
 async function sendVerificationEmail(email, code) {
-  // TODO: 실제 메일 발송 서비스(Amazon SES, Resend, SendGrid 등)로 교체하세요.
-  console.log(`[메일] ${email} 인증 코드: ${code} (10분 유효)`);
+  if (!MAIL_ON) {   // 메일 서비스가 없으면 로그에만 남겨요 (테스트용)
+    console.log(`[메일 미설정] ${maskEmail(email)} 인증 코드: ${code} (10분 유효)`);
+    return;
+  }
+  const { subject, text, html } = verificationMail(code);
+  let r;
+  try {
+    if (BREVO_API_KEY) {
+      r = await fetch('https://api.brevo.com/v3/smtp/email', {
+        method: 'POST', signal: AbortSignal.timeout(15_000),
+        headers: { 'api-key': BREVO_API_KEY, 'content-type': 'application/json', accept: 'application/json' },
+        body: JSON.stringify({ sender: { name: MAIL_FROM_NAME, email: MAIL_FROM }, to: [{ email }], subject, textContent: text, htmlContent: html }),
+      });
+    } else {
+      r = await fetch('https://api.resend.com/emails', {
+        method: 'POST', signal: AbortSignal.timeout(15_000),
+        headers: { authorization: `Bearer ${RESEND_API_KEY}`, 'content-type': 'application/json' },
+        body: JSON.stringify({ from: `${MAIL_FROM_NAME} <${MAIL_FROM}>`, to: [email], subject, text, html }),
+      });
+    }
+  } catch (e) {
+    console.error('[메일] 연결 실패', e?.message);
+    throw new HttpError(502, '인증 메일을 보내지 못했어요. 잠시 뒤에 다시 시도해 주세요.', 'MAIL_FAIL');
+  }
+  if (!r.ok) {
+    console.error('[메일] 발송 실패', r.status, (await r.text().catch(() => '')).slice(0, 300));
+    throw new HttpError(502, '인증 메일을 보내지 못했어요. 잠시 뒤에 다시 시도해 주세요.', 'MAIL_FAIL');
+  }
+  console.log(`[메일] ${maskEmail(email)} 에게 인증 메일을 보냈어요.`);
 }
 
 async function readJson(req) {
