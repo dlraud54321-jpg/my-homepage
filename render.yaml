@@ -12,13 +12,13 @@ services:
     envVars:
       - key: NODE_ENV
         value: production
-      - key: BANK_NAME            # 입금받을 은행 이름 (예: ○○은행)
-        sync: false
-      - key: BANK_ACCOUNT         # 계좌번호
-        sync: false
-      - key: BANK_HOLDER          # 예금주
-        sync: false
-      - key: ADMIN_TOKEN          # 주문 관리 페이지(/admin.html) 비밀번호. 길고 추측하기 어렵게
-        sync: false
+      - key: BANK_NAME            # 입금받을 은행 이름. 지금은 테스트용 값이에요. 실제 판매 전에 Render의 Environment에서 바꾸세요
+        value: 테스트은행
+      - key: BANK_ACCOUNT         # 계좌번호 (테스트용 자리표시)
+        value: 000-0000-0000
+      - key: BANK_HOLDER          # 예금주 (테스트용)
+        value: SETSIGN 테스트
+      - key: ADMIN_TOKEN          # 주문 관리 페이지(/admin.html) 비밀번호. Render가 임의로 만들어 줘요. Environment에서 확인하세요
+        generateValue: true
       - key: SHOW_VERIFY_CODE     # 테스트용: 인증 코드를 메일 대신 화면에 표시. 실제 운영 전에 지우세요
         value: "1"
