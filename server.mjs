@@ -8,24 +8,21 @@
 // 환경 변수
 //   BANK_NAME / BANK_ACCOUNT / BANK_HOLDER  주문 대금을 받을 계좌 (결제는 이 계좌로 직접 이체만 받아요). 사업자 계좌를 쓰세요
 //   ADMIN_TOKEN                         주문 관리 페이지(/admin.html) 비밀번호. 길고 추측하기 어렵게
-//   SHOW_VERIFY_CODE=1                  테스트 전용. 메일 발송 없이 인증 코드를 화면에 보여 줘요
-//   BREVO_API_KEY + MAIL_FROM           인증 메일 실제 발송 (Brevo 무료 플랜). RESEND_API_KEY도 돼요. MAIL_FROM_NAME은 선택
+//   GOOGLE_CLIENT_ID                    구글 로그인용 OAuth 클라이언트 ID (공개 값). 회원가입·로그인은 구글 로그인만 받아요
 //   ANTHROPIC_API_KEY                   물병 사이즈 찾기(웹 검색). 없으면 그 기능만 꺼져요
 //
 // ⚠ 비밀 키와 토큰은 환경 변수로만 넣으세요. 저장소·HTML에 절대 커밋하지 마세요.
 // ⚠ data.json(회원·주문 데이터)은 .gitignore에 들어 있어요.
 //
-// 이 파일은 흐름을 보여주는 최소 예시예요. 운영 전에 실제 DB, 메일 발송 서비스,
+// 이 파일은 흐름을 보여주는 최소 예시예요. 운영 전에 실제 DB,
 // HTTPS, 세션 저장소(재시작해도 유지), 요청 횟수 제한 등을 갖춰 주세요.
 
 import http from 'node:http';
 import { readFile, writeFile } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { randomBytes, randomInt, randomUUID, scrypt as _scrypt, timingSafeEqual } from 'node:crypto';
-import { promisify } from 'node:util';
+import { randomBytes, randomUUID, timingSafeEqual, createPublicKey, verify as cryptoVerify } from 'node:crypto';
 
-const scrypt = promisify(_scrypt);
 const env = process.env;
 const PORT = Number(env.PORT || 8080);
 const BANK = { bank: env.BANK_NAME || '', account: env.BANK_ACCOUNT || '', holder: env.BANK_HOLDER || '' };
@@ -36,16 +33,9 @@ const FIT_MODEL = env.FIT_MODEL || 'claude-haiku-5-5';
 const SHIPPING_FEE = Number(env.SHIPPING_FEE || 0);
 const DB_FILE = env.DB_FILE || './data.json';
 const SECURE_COOKIE = env.NODE_ENV === 'production';
-const SHOW_VERIFY_CODE = env.SHOW_VERIFY_CODE === '1';   // 테스트 전용: 메일 대신 화면에 인증 코드 표시. 실제 운영에서는 끄세요
-// 인증 메일: Brevo(무료, 도메인 없이 보내는 사람 이메일 인증만으로 가능) 또는 Resend.
-// Render 무료 서버는 SMTP 포트가 막혀 있어서 HTTP API로 보내요.
-const BREVO_API_KEY = env.BREVO_API_KEY || '';
-const RESEND_API_KEY = env.RESEND_API_KEY || '';
-const MAIL_FROM = env.MAIL_FROM || '';                   // Brevo에서 인증한 보내는 사람 이메일
-const MAIL_FROM_NAME = env.MAIL_FROM_NAME || 'SETSIGN';
-const MAIL_ON = Boolean((BREVO_API_KEY || RESEND_API_KEY) && MAIL_FROM);
-// 로그에는 이메일을 가려서 남겨요 (ab***@gmail.com)
-const maskEmail = e => String(e).replace(/^([^@]{0,2})[^@]*/, (m, a) => `${a}***`);
+// 구글 로그인: 클라이언트 ID는 공개 값이라 브라우저에 내려줘도 돼요. 클라이언트 시크릿은 쓰지 않아요.
+const GOOGLE_CLIENT_ID = env.GOOGLE_CLIENT_ID || '';
+const GOOGLE_CERTS_URL = env.GOOGLE_CERTS_URL || 'https://www.googleapis.com/oauth2/v3/certs';   // 테스트할 때만 바꿔요
 
 // 가격의 기준은 서버예요. 브라우저가 보낸 금액은 받지 않아요.
 const CATALOG = {
@@ -58,9 +48,7 @@ const DEPOSIT_DAYS = 3;
 if (!BANK_ON) console.warn('[경고] BANK_NAME / BANK_ACCOUNT / BANK_HOLDER 가 비어 있어 주문을 받을 수 없어요.');
 if (!ADMIN_TOKEN) console.warn('[경고] ADMIN_TOKEN 이 비어 있어 주문 관리 페이지(/admin.html)를 쓸 수 없어요.');
 if (!ANTHROPIC_API_KEY) console.warn('[안내] ANTHROPIC_API_KEY가 없어 물병 사이즈 검색이 꺼져 있어요.');
-if (SHOW_VERIFY_CODE) console.warn('[주의] SHOW_VERIFY_CODE=1: 인증 코드를 화면에 보여 줘요. 테스트가 끝나면 꼭 끄세요.');
-if (MAIL_ON) console.log(`[안내] 인증 메일 발송: ${BREVO_API_KEY ? 'Brevo' : 'Resend'} (보내는 사람 ${maskEmail(MAIL_FROM)})`);
-else console.warn('[경고] BREVO_API_KEY(또는 RESEND_API_KEY)와 MAIL_FROM이 없어 인증 메일이 실제로 나가지 않아요.');
+if (!GOOGLE_CLIENT_ID) console.warn('[경고] GOOGLE_CLIENT_ID 가 비어 있어 로그인(구글)을 쓸 수 없어요.');
 
 /* ---------- 저장소 (예시: JSON 파일) ---------- */
 let db = { users: {}, orders: {}, fit: {} };
@@ -71,66 +59,38 @@ const sessions = new Map(); // token → { email, exp }
 
 /* ---------- 유틸 ---------- */
 class HttpError extends Error { constructor(status, message, code) { super(message); this.status = status; this.code = code; } }
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
-const PW_RE = /^(?=.*[A-Za-z])(?=.*\d).{8,64}$/;
 const PHONE_RE = /^01[016789]-?\d{3,4}-?\d{4}$/;
 const clip = (v, n) => String(v ?? '').replace(/[\u0000-\u001f\u007f]/g, ' ').trim().slice(0, n);
 
-async function hashSecret(secret, salt = randomBytes(16).toString('hex')) {
-  return `${salt}:${(await scrypt(secret, salt, 64)).toString('hex')}`;
-}
-async function checkSecret(secret, stored) {
-  if (!stored) return false;
-  const [salt, hex] = stored.split(':');
-  const a = Buffer.from(hex, 'hex'), b = await scrypt(String(secret), salt, 64);
-  return a.length === b.length && timingSafeEqual(a, b);
-}
-const DUMMY = await hashSecret('timing-equalizer');
 function sameToken(a, b) { const x = Buffer.from(String(a)), y = Buffer.from(String(b)); return x.length === y.length && timingSafeEqual(x, y); }
 
-function verificationMail(code) {
-  const subject = `[SETSIGN] 인증 코드 ${code}`;
-  const text = `SETSIGN 이메일 인증 코드: ${code}\n\n10분 안에 입력해 주세요.\n본인이 가입하지 않았다면 이 메일은 무시하셔도 돼요.`;
-  const html = `<div style="font-family:'Apple SD Gothic Neo','Noto Sans KR',sans-serif;max-width:440px;margin:0 auto;padding:32px 24px;background:#F5F5F0;color:#0E1240">
-  <p style="margin:0 0 4px;font-weight:700;letter-spacing:.08em">SETSIGN 세트사인</p>
-  <h1 style="margin:0 0 20px;font-size:20px">이메일 인증 코드</h1>
-  <p style="margin:0 0 8px">아래 6자리 코드를 가입 화면에 입력해 주세요.</p>
-  <p style="margin:0 0 20px;font-size:34px;font-weight:800;letter-spacing:.3em;color:#FF5A1F">${code}</p>
-  <p style="margin:0;font-size:13px;opacity:.75">코드는 10분 동안 유효해요. 본인이 가입하지 않았다면 이 메일은 무시하셔도 돼요.</p>
-</div>`;
-  return { subject, text, html };
-}
-
-async function sendVerificationEmail(email, code) {
-  if (!MAIL_ON) {   // 메일 서비스가 없으면 로그에만 남겨요 (테스트용)
-    console.log(`[메일 미설정] ${maskEmail(email)} 인증 코드: ${code} (10분 유효)`);
-    return;
-  }
-  const { subject, text, html } = verificationMail(code);
+/* ---------- 구글 로그인: ID 토큰(JWT)을 구글 공개 키로 직접 검증해요 ---------- */
+let gkeys = { keys: [], exp: 0 };
+async function googleKeys(force = false) {
+  if (!force && gkeys.exp > Date.now()) return gkeys.keys;
   let r;
-  try {
-    if (BREVO_API_KEY) {
-      r = await fetch('https://api.brevo.com/v3/smtp/email', {
-        method: 'POST', signal: AbortSignal.timeout(15_000),
-        headers: { 'api-key': BREVO_API_KEY, 'content-type': 'application/json', accept: 'application/json' },
-        body: JSON.stringify({ sender: { name: MAIL_FROM_NAME, email: MAIL_FROM }, to: [{ email }], subject, textContent: text, htmlContent: html }),
-      });
-    } else {
-      r = await fetch('https://api.resend.com/emails', {
-        method: 'POST', signal: AbortSignal.timeout(15_000),
-        headers: { authorization: `Bearer ${RESEND_API_KEY}`, 'content-type': 'application/json' },
-        body: JSON.stringify({ from: `${MAIL_FROM_NAME} <${MAIL_FROM}>`, to: [email], subject, text, html }),
-      });
-    }
-  } catch (e) {
-    console.error('[메일] 연결 실패', e?.message);
-    throw new HttpError(502, '인증 메일을 보내지 못했어요. 잠시 뒤에 다시 시도해 주세요.', 'MAIL_FAIL');
-  }
-  if (!r.ok) {
-    console.error('[메일] 발송 실패', r.status, (await r.text().catch(() => '')).slice(0, 300));
-    throw new HttpError(502, '인증 메일을 보내지 못했어요. 잠시 뒤에 다시 시도해 주세요.', 'MAIL_FAIL');
-  }
-  console.log(`[메일] ${maskEmail(email)} 에게 인증 메일을 보냈어요.`);
+  try { r = await fetch(GOOGLE_CERTS_URL, { signal: AbortSignal.timeout(10_000) }); } catch { r = null; }
+  if (!r || !r.ok) throw new HttpError(502, '구글 로그인을 확인하지 못했어요. 잠시 뒤에 다시 시도해 주세요.', 'GOOGLE_FAIL');
+  const maxAge = Number((r.headers.get('cache-control') || '').match(/max-age=(\d+)/)?.[1] || 3600);
+  gkeys = { keys: (await r.json()).keys || [], exp: Date.now() + Math.min(maxAge, 86400) * 1000 };
+  return gkeys.keys;
+}
+const BAD_TOKEN = () => new HttpError(401, '구글 로그인 정보가 올바르지 않아요. 다시 시도해 주세요.', 'BAD_TOKEN');
+async function verifyGoogleIdToken(token) {
+  const parts = String(token || '').split('.');
+  if (parts.length !== 3 || token.length > 4096) throw BAD_TOKEN();
+  let header, p;
+  try { header = JSON.parse(Buffer.from(parts[0], 'base64url')); p = JSON.parse(Buffer.from(parts[1], 'base64url')); } catch { throw BAD_TOKEN(); }
+  if (header.alg !== 'RS256' || typeof header.kid !== 'string') throw BAD_TOKEN();
+  const jwk = (await googleKeys()).find(k => k.kid === header.kid) || (await googleKeys(true)).find(k => k.kid === header.kid);
+  if (!jwk) throw BAD_TOKEN();
+  const ok = cryptoVerify('RSA-SHA256', Buffer.from(`${parts[0]}.${parts[1]}`), createPublicKey({ key: jwk, format: 'jwk' }), Buffer.from(parts[2], 'base64url'));
+  if (!ok) throw BAD_TOKEN();
+  const now = Date.now() / 1000;
+  if (!['accounts.google.com', 'https://accounts.google.com'].includes(p.iss) || p.aud !== GOOGLE_CLIENT_ID) throw BAD_TOKEN();
+  if (!(p.exp > now)) throw new HttpError(401, '로그인 시간이 지났어요. 구글 로그인을 다시 눌러 주세요.', 'TOKEN_EXPIRED');
+  if (typeof p.sub !== 'string' || typeof p.email !== 'string' || p.email_verified !== true) throw new HttpError(403, '이메일이 확인된 구글 계정만 쓸 수 있어요.');
+  return p;
 }
 
 async function readJson(req) {
@@ -232,55 +192,30 @@ const routes = {
   // 공개해도 되는 값만 내려줘요. 시크릿 키·관리자 토큰·API 키는 절대 응답에 넣지 않아요.
   'GET /api/config': async () => ({
     payMethod: 'DEPOSIT', unitPrice: CATALOG.band.price, addonPrice: CATALOG.cards.price, shippingFee: SHIPPING_FEE,
-    bankEnabled: BANK_ON, fitEnabled: Boolean(ANTHROPIC_API_KEY), sizes: SIZES,
+    bankEnabled: BANK_ON, fitEnabled: Boolean(ANTHROPIC_API_KEY), sizes: SIZES, googleClientId: GOOGLE_CLIENT_ID,
   }),
   'GET /api/me': async req => { const u = currentUser(req); return { user: u ? pubUser(u) : null }; },
 
-  'POST /api/auth/signup': async req => {
+  // 구글 로그인 하나로 가입과 로그인을 함께 해요. 처음이면 약관 동의를 받은 뒤에 가입시켜요.
+  'POST /api/auth/google': async (req, res) => {
+    if (!GOOGLE_CLIENT_ID) throw new HttpError(503, '구글 로그인이 아직 설정되지 않았어요.', 'GOOGLE_OFF');
+    limit(`google:${req.socket.remoteAddress || 'unknown'}`, 20, 60e3);
     const b = await readJson(req);
-    const email = clip(b.email, 254).toLowerCase(), name = clip(b.name, 40);
-    if (!name) throw new HttpError(400, '이름을 입력해 주세요.');
-    if (!EMAIL_RE.test(email)) throw new HttpError(400, '이메일 형식을 확인해 주세요.');
-    if (!PW_RE.test(String(b.password || ''))) throw new HttpError(400, '비밀번호는 영문과 숫자를 섞어 8자 이상으로 만들어 주세요.');
-    if (b.agreeAge !== true) throw new HttpError(400, '만 14세 이상만 가입할 수 있어요.');
-    if (b.agreeTerms !== true || b.agreePrivacy !== true) throw new HttpError(400, '필수 약관에 동의해 주세요.');
-    if (db.users[email]?.verified) throw new HttpError(409, '이미 가입된 이메일이에요.', 'EMAIL_TAKEN');
-    const code = String(randomInt(100000, 1000000));
-    db.users[email] = {
-      email, name, pw: await hashSecret(b.password), verified: false,
-      code: await hashSecret(code), codeExp: Date.now() + 10 * 60e3, codeSentAt: Date.now(), tries: 0,
-      customerKey: randomUUID(),
-      agreements: { age: true, terms: true, privacy: true, marketing: b.agreeMarketing === true, at: new Date().toISOString() },
-      createdAt: new Date().toISOString(),
-    };
-    await save(); await sendVerificationEmail(email, code);
-    return SHOW_VERIFY_CODE ? { ok: true, demoCode: code } : { ok: true };
-  },
-  'POST /api/auth/resend': async req => {
-    const email = clip((await readJson(req)).email, 254).toLowerCase(), u = db.users[email];
-    if (!u || u.verified) return { ok: true }; // 가입 여부를 드러내지 않아요
-    if (Date.now() - (u.codeSentAt || 0) < 60e3) throw new HttpError(429, '1분 뒤에 다시 요청해 주세요.');
-    const code = String(randomInt(100000, 1000000));
-    Object.assign(u, { code: await hashSecret(code), codeExp: Date.now() + 10 * 60e3, codeSentAt: Date.now(), tries: 0 });
-    await save(); await sendVerificationEmail(email, code);
-    return SHOW_VERIFY_CODE ? { ok: true, demoCode: code } : { ok: true };
-  },
-  'POST /api/auth/verify': async (req, res) => {
-    const b = await readJson(req), u = db.users[clip(b.email, 254).toLowerCase()];
-    if (!u || u.verified) throw new HttpError(400, '인증할 수 없는 계정이에요.');
-    if (u.tries >= 5) throw new HttpError(429, '시도 횟수를 넘었어요. 코드를 다시 받아 주세요.');
-    if (Date.now() > u.codeExp) throw new HttpError(400, '코드가 만료됐어요. 다시 받아 주세요.');
-    if (!(await checkSecret(clip(b.code, 6), u.code))) { u.tries++; await save(); throw new HttpError(400, '인증 코드가 맞지 않아요.'); }
-    Object.assign(u, { verified: true, code: null, verifiedAt: new Date().toISOString() });
-    await save(); startSession(res, u.email);
-    return { user: pubUser(u) };
-  },
-  'POST /api/auth/login': async (req, res) => {
-    const b = await readJson(req), u = db.users[clip(b.email, 254).toLowerCase()];
-    const ok = await checkSecret(String(b.password || ''), u ? u.pw : DUMMY);
-    if (!u || !ok) throw new HttpError(401, '이메일 또는 비밀번호가 맞지 않아요.');
-    if (!u.verified) throw new HttpError(403, '이메일 인증을 먼저 마쳐 주세요.', 'EMAIL_NOT_VERIFIED');
-    startSession(res, u.email);
+    const p = await verifyGoogleIdToken(b.credential);
+    const email = clip(p.email, 254).toLowerCase();
+    let u = db.users[email];
+    if (u?.googleSub && u.googleSub !== p.sub) throw new HttpError(403, '이 구글 계정으로는 로그인할 수 없어요.');
+    if (!u) {
+      if (b.agreeAge !== true || b.agreeTerms !== true || b.agreePrivacy !== true) return { needAgree: true, email };
+      u = db.users[email] = {
+        email, name: clip(p.name, 40) || email.split('@')[0], googleSub: p.sub, provider: 'google', verified: true,
+        customerKey: randomUUID(),
+        agreements: { age: true, terms: true, privacy: true, marketing: b.agreeMarketing === true, at: new Date().toISOString() },
+        createdAt: new Date().toISOString(),
+      };
+    }
+    Object.assign(u, { googleSub: p.sub, provider: 'google', verified: true, lastLoginAt: new Date().toISOString() });
+    await save(); startSession(res, email);
     return { user: pubUser(u) };
   },
   'POST /api/auth/logout': async (req, res) => {
