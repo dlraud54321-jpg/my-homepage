@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>SETSIGN 숏폼</title>
+<style>
+@font-face{font-family:'BHS';src:url(fonts/BlackHanSans-Regular.ttf)}
+@font-face{font-family:'Anton';src:url(fonts/Anton-Regular.ttf)}
+:root{--n:#0E1240;--o:#FF5A1F;--w:#F5F5F0}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1080px;height:1920px;overflow:hidden;background:var(--n)}
+body{font-family:'Noto Sans CJK KR','Noto Sans KR',sans-serif;color:var(--w);word-break:keep-all}
+#stage{position:relative;width:1080px;height:1920px;overflow:hidden}
+#bg{position:absolute;inset:0;background:var(--n)}
+#world{position:absolute;inset:0;transform-origin:540px 900px}
+.L{position:absolute;opacity:0;white-space:nowrap;will-change:transform,opacity}
+.bhs{font-family:'BHS',sans-serif;line-height:1.04;letter-spacing:-.01em}
+.ant{font-family:'Anton',sans-serif;line-height:1}
+.c{display:inline-block}
+.b9{font-weight:900}
+#bgword{position:absolute;right:-150px;top:-60px;font-family:'Anton';font-size:520px;line-height:.86;color:transparent;-webkit-text-stroke:3px rgba(255,90,31,.5);writing-mode:vertical-rl;opacity:0}
+#wipe{position:absolute;inset:0;background:var(--o);transform:translateX(-110%)}
+#mark{position:absolute;left:64px;top:206px;font-family:'Anton';font-size:44px;letter-spacing:.03em}
+#mark small{font-family:'Noto Sans CJK KR';font-weight:900;font-size:22px;color:var(--o);margin-left:10px;vertical-align:6px}
+#ai{position:absolute;right:64px;top:212px;padding:6px 12px;border:2.5px solid currentColor;font-weight:900;font-size:22px;letter-spacing:.04em}
+#sh{position:absolute;left:0;top:0;width:588px;height:1120px;transform-origin:294px 560px;opacity:0;overflow:visible}
+#cap{position:absolute;left:0;top:0;width:420px;height:900px;transform-origin:210px 450px;opacity:0;overflow:visible}
+.bub{padding:22px 34px;background:#fff;color:var(--n);border:6px solid var(--n);border-radius:60px;font-family:'BHS';font-size:66px}
+.bub.o{background:var(--o)}
+.box{padding:22px 32px;background:var(--w);color:var(--n);border:6px solid var(--n);font-family:'BHS';font-size:74px;line-height:1.15;white-space:normal;width:900px}
+.bigcard{width:820px;height:516px;border-radius:34px;padding:48px 56px;display:flex;flex-direction:column;justify-content:space-between;border:6px solid var(--n);box-shadow:18px 18px 0 var(--n)}
+.bigcard .top{display:flex;justify-content:space-between;font-family:'Anton';font-size:40px;letter-spacing:.04em}
+.bigcard .t{font-family:'BHS';font-size:150px;line-height:1}
+.bigcard .s{font-weight:900;font-size:46px;margin-top:8px}
+.url{display:inline-block;padding:20px 34px;background:var(--n);color:var(--w);font-family:'Anton';font-size:64px;letter-spacing:.02em}
+.stamp{padding:10px 30px;border:10px solid var(--o);color:var(--o);font-family:'BHS';font-size:120px;transform:rotate(-8deg)}
+.cmt{width:900px;padding:34px 38px;background:#fff;color:var(--n);border:6px solid var(--n);border-radius:28px;white-space:normal;box-shadow:14px 14px 0 var(--n)}
+.cmt .who{display:flex;align-items:center;gap:20px;font-weight:900;font-size:38px}
+.cmt .av{width:72px;height:72px;border-radius:50%;background:var(--n)}
+.cmt .txt{margin-top:18px;font-weight:900;font-size:54px;line-height:1.35}
+.cmt .meta{margin-top:16px;font-size:30px;font-weight:700;opacity:.55}
+.step{display:flex;align-items:center;gap:26px}
+.step b{display:grid;place-items:center;width:110px;height:110px;background:var(--o);color:var(--n);font-family:'Anton';font-size:70px;flex:none}
+.step span{font-family:'BHS';font-size:88px;color:var(--n)}
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="bg"></div>
+  <div id="bgword">SETSIGN</div>
+  <div id="world">
+    __SH__
+    __CAP__
+  </div>
+  <div id="wipe"></div>
+  <div id="mark">SETSIGN<small>세트사인</small></div>
+  <div id="ai">AI 생성</div>
+</div>
+<script>
+const N = '#0E1240', O = '#FF5A1F', W = '#F5F5F0';
+const V = new URLSearchParams(location.search).get('v') || 'a';
+const $ = id => document.getElementById(id);
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const prog = (t, a, b) => clamp((t - a) / (b - a));
+const lerp = (a, b, p) => a + (b - a) * p;
+const E = {
+  out: p => 1 - Math.pow(1 - p, 3), in: p => p * p * p,
+  expo: p => p >= 1 ? 1 : 1 - Math.pow(2, -10 * p),
+  inOut: p => p < .5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2,
+  back: p => { const c1 = 1.9, c3 = c1 + 1; return 1 + c3 * Math.pow(p - 1, 3) + c1 * Math.pow(p - 1, 2); },
+};
+const spring = (p, k = 5, f = 2.4) => 1 - Math.exp(-k * p) * Math.cos(f * Math.PI * p);
+
+// ---- 글자 쪼개기와 요소 만들기
+const CH = {}, ALL = [];
+function split(el) {
+  const walk = node => [...node.childNodes].forEach(n => {
+    if (n.nodeType === 3) { const f = document.createDocumentFragment(); for (const ch of n.textContent) { const s = document.createElement('span'); s.className = 'c'; s.textContent = ch === ' ' ? ' ' : ch; f.append(s); } n.replaceWith(f); }
+    else if (n.nodeType === 1 && n.tagName !== 'BR' && !n.classList.contains('nosplit')) walk(n);
+  });
+  walk(el); return [...el.querySelectorAll('.c')];
+}
+function mk(id, html, css, cls = '', splitIt = false) {
+  const d = document.createElement('div'); d.id = id; d.className = 'L ' + cls; d.innerHTML = html; d.style.cssText += css;
+  $('world').insertBefore(d, $('sh')); ALL.push(id); if (splitIt) CH[id] = split(d); return d;
+}
+function A(id, t, tin, tout, kind = 'up', o = {}) {
+  const el = $(id), d = o.d ?? .45, xd = o.xd ?? .25;
+  if (t < tin - .001 || t > tout) { el.style.opacity = 0; return 0; }
+  const p = prog(t, tin, tin + d), q = prog(t, tout - xd, tout);
+  let op = 1, tx = 0, ty = 0, sc = 1, rot = o.r || 0;
+  if (kind === 'chars' || kind === 'charsPop') {
+    const st = o.st ?? .035;
+    CH[id].forEach((c, i) => { const pp = prog(t, tin + i * st, tin + i * st + d);
+      if (kind === 'chars') { c.style.transform = `translateY(${(1 - E.expo(pp)) * 110}%)`; c.style.opacity = pp > 0 ? 1 : 0; }
+      else { c.style.transform = `scale(${Math.max(0, E.back(pp))}) rotate(${(1 - pp) * -14}deg)`; c.style.opacity = pp > 0 ? 1 : 0; } });
+    el.style.clipPath = kind === 'chars' ? 'inset(-10% -5% -14% -5%)' : 'none';
+  } else {
+    const e = kind === 'slam' ? E.expo(p) : kind === 'pop' ? E.back(p) : E.out(p);
+    if (kind === 'up') { ty = (1 - e) * 90; op = p; }
+    if (kind === 'fade') op = p;
+    if (kind === 'pop') { sc = Math.max(0, e); op = p > 0 ? 1 : 0; }
+    if (kind === 'slam') { sc = lerp(2.4, 1, e); op = clamp(p * 3); }
+    if (kind === 'left') { tx = (1 - e) * -800; op = p > 0 ? 1 : 0; }
+    if (kind === 'right') { tx = (1 - e) * 900; op = p > 0 ? 1 : 0; }
+    if (kind === 'stamp') { sc = lerp(3, 1, E.expo(p)); op = clamp(p * 4); }
+  }
+  if (q > 0) { const e = E.in(q); op *= 1 - e; ty += -60 * e; }
+  el.style.opacity = op;
+  el.style.transform = `translate(${tx}px,${ty}px) scale(${sc * (o.s || 1)}) rotate(${rot}deg)`;
+  return p;
+}
+const beatPulse = (t, amt = .03) => 1 + amt * Math.exp(-((t % .5) / .5) * 6);
+function placeShaker(x, y, s, r = 0, op = 1) { const el = $('sh'); el.style.opacity = op; el.style.transform = `translate(${x - 294}px,${y - 560}px) scale(${s}) rotate(${r}deg)`; }
+function placeCap(x, y, s, op = 1) { const el = $('cap'); el.style.opacity = op; el.style.transform = `translate(${x - 210}px,${y - 450}px) scale(${s})`; }
+const setT = (id, x = 0, y = 0, s = 1, r = 0) => $(id).setAttribute('transform', `translate(${x} ${y}) rotate(${r} 210 460) scale(${s})`);
+let cardFront = 'A';
+function cardOrder(f) { if (f === cardFront) return; $('cards').append(f === 'A' ? $('cardA') : $('cardB')); cardFront = f; }
+function water(level) { // 1 = 가득(700mL), 0 = 빈 쉐이커
+  const y = lerp(760, 170, level), lx = 82 + (y - 134) / 604 * 17 + 4, rx = 338 - (y - 134) / 604 * 17 - 4;
+  $('shWater').setAttribute('d', level <= 0.01 ? 'M0 0' : `M${lx} ${y}H${rx}L321 738Q319 772 288 772H132Q101 772 99 738Z`);
+}
+const CARDS = { together: ['같이 써요', '교대로 쓰셔도 돼요'], set: ['세트 중', '지금 운동 중이에요'], left2: ['2세트 남음', '조금만 기다려 주세요'], last: ['마지막 세트', '곧 자리 비워요'], away: ['잠깐 비움', '물 마시고 올게요'], spot: ['스팟 가능', '보조 필요하면 불러 주세요'] };
+
+// ---- 공통: 브랜드 소개와 마지막 장면 (어느 영상 하나만 봐도 제품을 알 수 있게)
+mk('brA', '물병에 끼우는<br><span style="color:var(--o)">카드 밴드</span>', 'left:70px;top:330px;font-size:130px', 'bhs', true);
+mk('brB', 'SETSIGN <span class="nosplit" style="font-family:\'Noto Sans CJK KR\';font-weight:900;font-size:50px;color:var(--o);vertical-align:20px">세트사인</span>', 'left:70px;top:1270px;font-size:150px', 'ant', false);
+mk('brC', '헬스장에서 “같이 쓰실래요?” 대신<br>카드가 말해 주는 물병 액세서리', 'left:74px;top:1440px;font-size:42px;line-height:1.5', 'b9');
+mk('enA', '말 대신,', 'left:70px;top:300px;font-size:230px;color:var(--n)', 'bhs', true);
+mk('enB', '꽂아.', 'left:70px;top:540px;font-size:300px;color:var(--w)', 'bhs');
+mk('enC', 'SETSIGN <span style="font-family:\'Noto Sans CJK KR\';font-weight:900;font-size:40px;vertical-align:14px">세트사인</span>', 'left:74px;top:930px;font-size:110px;color:var(--n)', 'ant');
+mk('enD', '물병 카드 밴드 · 카드 6장 포함', 'left:78px;top:1070px;font-size:48px;color:var(--n)', 'b9');
+mk('enP', '9,900<span style="font-family:BHS;font-size:90px;margin-left:10px">원</span>', 'left:74px;top:1150px;font-size:170px;color:var(--w)', 'ant');
+mk('enU', '<span class="url">setsign.onrender.com</span>', 'left:74px;top:1360px', '');
+mk('enQ', '<div style="background:#fff;padding:12px;border:5px solid var(--n)"><img src="qr.svg" width="200" height="200" style="display:block"></div>', 'left:720px;top:1110px', '');
+
+function brand(t, a, b) {          // a~b: 제품 소개 장면
+  A('brA', t, a, b, 'chars', { st: .04 });
+  const p = E.back(prog(t, a + .25, a + .8));
+  placeShaker(560, 960, .66 * Math.max(0, p) * beatPulse(t, .015), lerp(-12, -3, clamp(p)));
+  A('brB', t, a + .55, b, 'left', { d: .45 }); A('brC', t, a + .9, b, 'up');
+}
+function ending(t, a, b) {         // 마지막: 슬로건 + 가격 + 주소
+  A('enA', t, a, b, 'chars', { st: .05, xd: .01 });
+  A('enB', t, a + .45, b, 'slam', { d: .45, xd: .01 });
+  A('enC', t, a + 1.0, b, 'up', { xd: .01 }); A('enD', t, a + 1.2, b, 'up', { xd: .01 });
+  A('enP', t, a + 1.6, b, 'slam', { d: .4, xd: .01 });
+  A('enU', t, a + 2.1, b, 'left', { d: .45, xd: .01 });
+  A('enQ', t, a + 2.4, b, 'pop', { d: .45, xd: .01 });
+}
+
+// ---- 영상별 요소
+const SC = {};   // v -> { len, cuts:[[start,bg]], wipes:[], render(t) }
+__SCENES__
+
+const S = SC[V];
+function render(t) {
+  ALL.forEach(id => { $(id).style.opacity = 0; });
+  $('sh').style.opacity = 0; $('cap').style.opacity = 0;
+  ['band', 'pocket', 'cards', 'kit', 'cardA', 'cardB'].forEach(id => $(id).setAttribute('transform', ''));
+  $('kit').style.opacity = 1; water(.45); cardOrder('A'); $('cAt').textContent = '같이 써요'; $('cBt').textContent = '세트 중';
+  $('sh').style.transformOrigin = '294px 560px';
+  let bg = S.cuts[0][1]; for (const [a, c] of S.cuts) if (t >= a) bg = c;
+  $('bg').style.background = bg;
+  $('bgword').style.opacity = bg === N ? .85 : 0; $('bgword').style.transform = `translateY(${-((t * 40) % 600)}px)`;
+  $('mark').style.color = bg === N ? W : N; $('ai').style.color = bg === N ? W : N;
+  const cam = { x: 0, y: 0, s: 1 };
+  cam.shake = (at, amp = 18, dur = .35) => { const p = prog(t, at, at + dur); if (p > 0 && p < 1) { const k = (1 - p) * amp; cam.x += Math.sin(t * 90) * k; cam.y += Math.cos(t * 77) * k; } };
+  S.render(t, cam);
+  $('wipe').style.transform = 'translateX(-110%)';
+  for (const a of S.wipes) { const p = prog(t, a - .22, a + .2); if (p > 0 && p < 1) $('wipe').style.transform = `translateX(${lerp(-105, 105, E.inOut(p))}%)`; }
+  $('world').style.transform = `translate(${cam.x}px,${cam.y}px) scale(${cam.s})`;
+}
+window.render = render; window.LEN = S.len;
+window.ready = document.fonts.ready.then(() => Promise.all([document.fonts.load('100px BHS'), document.fonts.load('100px Anton'), document.fonts.load('900 40px "Noto Sans CJK KR"')]));
+</script>
+</body>
+</html>

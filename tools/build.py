@@ -89,9 +89,9 @@ PARTS = [
 ]
 
 VIDEOS = [
-    dict(key='short-1', t='숏폼 1 · 15초 사용법', d='끼우고, 뽑고, 바꿔 꽂고, 두면 끝. 사용법 4단계를 20초에 보여 줘요.', file='videos/setsign-short-1-how.mp4', poster='videos/setsign-short-1-how.jpg', page='how'),
-    dict(key='short-2', t='숏폼 2 · 상황별 카드 6장', d='“같이 쓰실래요?” 대신 꽂는 카드 6장을 비트에 맞춰 한 장씩 소개해요.', file='videos/setsign-short-2-cards.mp4', poster='videos/setsign-short-2-cards.jpg', page='cards'),
-    dict(key='short-3', t='숏폼 3 · 사이즈와 주의사항', d='S·L 고르는 법, 거의 빈 쉐이커도 버티는 설계, 일회용 생수병 주의, 가격까지.', file='videos/setsign-short-3-size.mp4', poster='videos/setsign-short-3-size.jpg', page='size'),
+    dict(key='short-1', t='POV: 쓰고 싶은 기구에 누가 앉아 있다', d='말 걸까 말까 7분째… 헬스장 내향인의 고민을 카드 한 장으로 해결해요. 끼우고, 빼고, 바꿔 꽂는 법까지 28초.', file='videos/setsign-short-1-how.mp4', poster='videos/setsign-short-1-how.jpg', page='how'),
+    dict(key='short-2', t='헬스장에서 말 한마디 없이 대화하는 법', d='상황 6개, 카드 6장. 이럴 땐 어떤 카드를 꽂을까? 퀴즈처럼 넘겨 보는 30초.', file='videos/setsign-short-2-cards.mp4', poster='videos/setsign-short-2-cards.jpg', page='cards'),
+    dict(key='short-3', t='카드 달면 쉐이커 넘어지지 않아요?', d='댓글 질문에 실험으로 답했어요. 물을 다 빼고 툭 밀어 보고, 사이즈 고르는 법과 생수병 주의까지 28초.', file='videos/setsign-short-3-size.mp4', poster='videos/setsign-short-3-size.jpg', page='size'),
 ]
 MAIN_VIDEO = dict(t='브랜드 영상 · 60초', d='SETSIGN을 처음 보는 사람을 위한 60초 소개 영상이에요.', file='videos/setsign-intro-60s.mp4', poster='videos/setsign-intro-60s.jpg')
 
@@ -342,7 +342,7 @@ def build():
     body = '\n'.join([
         page_head('사용법', '끼우고, 뽑고,<br><span>바꿔 꽂으면 끝.</span>', '처음 한 번만 끼우면, 그다음부터는 카드만 바꿔 꽂아요. 단계를 누르면 자세한 방법이 나와요.'),
         f'<section class="sec white"><ol class="tiles steps4">{steps}</ol><p class="ai-note"><span class="ai-tag">AI 생성 일러스트</span></p></section>',
-        f'<section class="sec navy vid-sec"><div><p class="eyebrow">숏폼 영상</p><h2 class="big">20초면<br>다 보여요.</h2><p class="lede">사용법 4단계를 짧은 영상으로 확인하세요. 3D로 직접 돌려 보고 싶다면 홈의 <a href="index.html#try">직접 해 보기</a>에서 버튼을 눌러 보세요.</p></div>{video_html(VIDEOS[0], "")}</section>',
+        f'<section class="sec navy vid-sec"><div><p class="eyebrow">숏폼 영상</p><h2 class="big">30초면<br>다 보여요.</h2><p class="lede">헬스장에서 말 걸기 어려운 순간과, 카드로 해결하는 사용법을 짧은 영상으로 확인하세요. 3D로 직접 돌려 보고 싶다면 홈의 <a href="index.html#try">직접 해 보기</a>에서 버튼을 눌러 보세요.</p></div>{video_html(VIDEOS[0], "")}</section>',
         cta_band(''),
     ])
     page('how.html', 'how', '사용법', 'SETSIGN 사용법 4단계: 끼운다, 뽑는다, 바꿔 꽂는다, 두면 끝.', body)
@@ -376,7 +376,7 @@ def build():
     body = '\n'.join([
         page_head('카드 6장', '상황마다<br><span>한 장씩.</span>', '카드를 누르면 언제 꽂는지, 받는 사람은 어떻게 하면 되는지 자세히 볼 수 있어요.', theme='orange'),
         f'<section class="sec white"><ul class="card-grid">{grid}</ul><p class="ai-note"><span class="ai-tag">AI 생성 카드 디자인</span></p></section>',
-        f'<section class="sec navy vid-sec"><div><p class="eyebrow">숏폼 영상</p><h2 class="big">카드 6장을<br>비트에 맞춰.</h2><p class="lede">“같이 쓰실래요?”가 왜 어려운지, 그리고 카드 6장이 그 말을 어떻게 대신하는지 보여 줘요.</p></div>{video_html(VIDEOS[1], "")}</section>',
+        f'<section class="sec navy vid-sec"><div><p class="eyebrow">숏폼 영상</p><h2 class="big">이럴 땐<br>어떤 카드?</h2><p class="lede">상황 6개에 맞는 카드 6장을 퀴즈처럼 넘겨 보세요.</p></div>{video_html(VIDEOS[1], "")}</section>',
         cta_band(''),
     ])
     page('cards.html', 'cards', '카드 6장', 'SETSIGN 문구 카드 6장: 같이 써요, 세트 중, 2세트 남음, 마지막 세트, 잠깐 비움, 스팟 가능.', body)
@@ -421,7 +421,7 @@ def build():
         f'<section class="sec navy size">{sg}{foot}</section>',
         f'<section class="sec navy size">{fit}</section>',
         f'<section class="sec white">{warn_block}</section>',
-        f'<section class="sec navy vid-sec"><div><p class="eyebrow">숏폼 영상</p><h2 class="big">사이즈와<br>주의사항.</h2><p class="lede">S·L 고르는 법과 거의 빈 쉐이커도 버티는 설계를 20초에 보여 줘요.</p></div>{video_html(VIDEOS[2], "")}</section>',
+        f'<section class="sec navy vid-sec"><div><p class="eyebrow">숏폼 영상</p><h2 class="big">진짜<br>안 넘어질까?</h2><p class="lede">거의 빈 쉐이커를 밀어 보는 실험과 S·L 고르는 법을 영상으로 확인하세요.</p></div>{video_html(VIDEOS[2], "")}</section>',
         cta_band(''),
     ])
     page('size.html', 'size', '사이즈 S · L', 'SETSIGN 사이즈: S는 지름 7.5–9cm, L은 9–10.5cm. 쉐이커 이름으로 맞는 사이즈를 찾아 드려요.', body)
@@ -471,7 +471,7 @@ def build():
     R = ''
     vids = ''.join(f'<li>{video_html(v, "")}<a class="more" href="{v["page"]}.html">관련 페이지 보기 →</a></li>' for v in VIDEOS)
     body = '\n'.join([
-        page_head('영상', '숏폼 3편으로<br><span>먼저 보기.</span>', '세로 영상이라 휴대폰에서 보기 좋아요. 마지막 장면의 QR코드를 찍으면 이 사이트가 열려요.'),
+        page_head('영상', '30초 영상으로<br><span>먼저 보기.</span>', '인스타그램 릴스와 유튜브 쇼츠에 올리는 세로 영상이에요. 어느 하나만 봐도 SETSIGN이 뭔지 알 수 있게 만들었어요.'),
         f'<section class="sec white"><ul class="vid-grid">{vids}</ul></section>',
         f'<section class="sec navy vid-sec"><div><p class="eyebrow">브랜드 영상</p><h2 class="big">60초<br>소개 영상.</h2><p class="lede">{MAIN_VIDEO["d"]}</p></div>{video_html(MAIN_VIDEO, "")}</section>',
         cta_band(''),
