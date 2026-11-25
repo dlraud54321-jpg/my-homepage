@@ -191,12 +191,18 @@ def page(path, cur, title, desc, body, parent=None, three=False, quiz=False, cls
 </html>
 '''
     doc = doc.replace('{R}', R)
+    for rel in ['assets/site.css', 'assets/ui.js', 'assets/quiz.js', 'assets/bottle3d.js', 'assets/shop.js', 'assets/qr-setsign.svg', 'assets/qr-setsign.png'] + [v['file'] for v in VIDEOS + [MAIN_VIDEO]] + [v['poster'] for v in VIDEOS + [MAIN_VIDEO]]:
+        doc = doc.replace(f'"{R}{rel}"', f'"{R}{ver(rel)}"')
     out = ROOT / path
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(doc, encoding='utf-8')
     PAGES.append(path)
 
 PAGES = []
+import hashlib
+def ver(rel):
+    try: return rel + '?v=' + hashlib.md5((ROOT / rel).read_bytes()).hexdigest()[:8]
+    except FileNotFoundError: return rel
 
 def page_head(eyebrow, h1, lede, theme='navy', extra=''):
     return f'''<section class="ph {theme}">
