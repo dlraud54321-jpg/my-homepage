@@ -20,7 +20,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Black+Han+Sans&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/site.css?v=db7ce13e">
+<link rel="stylesheet" href="assets/site.css?v=1624fea3">
 </head>
 <body data-root="" data-page="size" class="">
 <a class="skip" href="#main">본문 바로가기</a>
@@ -145,7 +145,7 @@
   <!-- TODO: 실제 문의 이메일로 바꾸세요. 개인 전화번호·집 주소는 넣지 마세요. -->
   <dl class="biz">
     <div><dt>상호</dt><dd>SETSIGN 세트사인</dd></div>
-    <div><dt>운영</dt><dd>대학 과제 프로젝트 · 시범 판매</dd></div>
+    <div><dt>운영</dt><dd>대학 과제 프로젝트 · <b>실제로 판매하지 않아요</b></dd></div>
     <div><dt>이메일</dt><dd>hello@example.com</dd></div>
     <div><dt>호스팅</dt><dd>Render(서버) · GitHub(소스)</dd></div>
   </dl>
@@ -163,10 +163,11 @@
 <dialog class="dlg" id="shop" aria-labelledby="shop-title">
   <div class="dlg-in">
     <div class="dlg-hd"><p class="dlg-title" id="shop-title">SETSIGN</p><button class="x" type="button" data-close aria-label="닫기"><svg width="18" height="18" viewBox="0 0 18 18" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M2 2l14 14M16 2 2 16"/></svg></button></div>
-    <p class="demo-banner" hidden>데모 모드 — 서버 없이 이 브라우저에만 저장돼요. 실제 로그인·주문·결제는 일어나지 않아요.</p>
+    <p class="demo-banner" hidden>데모 모드 — 서버 없이 이 브라우저에만 저장돼요.</p>
 
     <section class="view" data-view="login" hidden>
       <h2 tabindex="-1">로그인</h2>
+      <div class="fake" role="note"><b>실제 판매 사이트가 아니에요</b><span>SETSIGN은 대학 과제로 만든 가상의 제품과 시범 사이트예요. 상품을 실제로 팔거나 배송하지 않아요. <strong>절대 돈을 보내지 마세요.</strong></span></div>
       <p class="sub" data-need-login hidden>주문하려면 로그인이 필요해요.</p>
       <p class="sub">구글 계정으로 바로 시작해요. 처음이면 동의 한 번으로 가입이 끝나요.</p>
       <div class="gsi" id="gsi-btn"></div>
@@ -177,6 +178,7 @@
 
     <section class="view" data-view="agree" hidden>
       <h2 tabindex="-1">처음 오셨네요</h2>
+      <div class="fake" role="note"><b>실제 판매 사이트가 아니에요</b><span>SETSIGN은 대학 과제로 만든 가상의 제품과 시범 사이트예요. 상품을 실제로 팔거나 배송하지 않아요. <strong>절대 돈을 보내지 마세요.</strong></span></div>
       <p class="sub"><b id="agree-email"></b> 계정으로 가입해요. 아래 항목에 동의해 주세요.</p>
       <form id="f-agree" novalidate>
         <fieldset class="agree">
@@ -194,7 +196,8 @@
     </section>
 
     <section class="view" data-view="order" hidden>
-      <h2 tabindex="-1">주문서</h2>
+      <h2 tabindex="-1">시범 주문서</h2>
+      <div class="fake" role="note"><b>실제 판매 사이트가 아니에요</b><span>SETSIGN은 대학 과제로 만든 가상의 제품과 시범 사이트예요. 상품을 실제로 팔거나 배송하지 않아요. <strong>절대 돈을 보내지 마세요.</strong></span></div>
       <form id="f-order" novalidate>
         <fieldset class="box"><legend>상품 · 개당 9,900원</legend>
           <div class="qty-row"><span>S 사이즈<small>지름 약 7.5–9cm 쉐이커·텀블러</small></span>
@@ -206,17 +209,18 @@
           <p class="warn-s" role="note">일회용 플라스틱 생수병에는 권장하지 않아요. 물이 줄어들수록 밴드를 유지하기 어렵고 물병이 쓰러질 수 있어요. 단단한 다회용 물병·텀블러에 써 주세요.</p>
         </fieldset>
         <fieldset class="box"><legend>결제 방법 · 계좌이체</legend>
-          <p class="pay-note">주문을 마치면 입금할 계좌가 바로 안내돼요. 입금이 확인되면 주문이 확정되고 발송을 준비해요.</p>
-          <label class="field">입금자명 <small>(통장에 찍히는 이름)</small><input name="depositor" maxlength="20" autocomplete="name" required></label>
+          <div class="fake s" role="note"><b>안내되는 계좌는 가짜예요</b><span>주문 흐름을 보여 주기 위한 예시 계좌라 <strong>입금하지 마세요.</strong> 입금하지 않아도 시범 주문은 그대로 진행돼요.</span></div>
+          <label class="field">입금자명 <small>(예시 이름을 적어도 돼요)</small><input name="depositor" maxlength="20" autocomplete="off" placeholder="예: 홍길동" required></label>
         </fieldset>
         <fieldset class="box"><legend>배송 정보</legend>
-          <label class="field">받는 분<input name="name" autocomplete="name" maxlength="40" required></label>
-          <label class="field">휴대폰 번호<input name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="010-0000-0000" required></label>
+          <div class="fake s" role="note"><b>실제로 배송되지 않아요</b><span>과제용 시범 사이트라 상품이 발송되지 않아요. <strong>진짜 이름·전화번호·주소 대신 예시 정보를 적어 주세요.</strong></span></div>
+          <label class="field">받는 분<input name="name" autocomplete="off" maxlength="40" placeholder="예: 홍길동" required></label>
+          <label class="field">휴대폰 번호<input name="phone" type="tel" inputmode="tel" autocomplete="off" placeholder="예: 010-0000-0000" required></label>
           <div class="row2">
-            <label class="field">우편번호<input name="zip" inputmode="numeric" autocomplete="postal-code" maxlength="5" required></label>
-            <label class="field">주소<input name="addr1" autocomplete="address-line1" maxlength="120" required></label>
+            <label class="field">우편번호<input name="zip" inputmode="numeric" autocomplete="off" maxlength="5" placeholder="예: 00000" required></label>
+            <label class="field">주소<input name="addr1" autocomplete="off" maxlength="120" placeholder="예: 서울시 예시구 예시로 1" required></label>
           </div>
-          <label class="field">상세 주소<input name="addr2" autocomplete="address-line2" maxlength="120"></label>
+          <label class="field">상세 주소<input name="addr2" autocomplete="off" maxlength="120"></label>
           <label class="field">배송 메모 <small>(선택)</small><textarea name="memo" maxlength="100"></textarea></label>
         </fieldset>
         <div class="sum" aria-live="polite">
@@ -225,25 +229,26 @@
           <div class="tot"><span>결제 예정 금액</span><b id="sum-total">9,900원</b></div>
           <p class="fine">최종 결제 금액은 서버에서 다시 계산해 확인해요.</p>
         </div>
-        <label class="chk"><input type="checkbox" name="agree"> 주문 내용을 확인했고, 안내받은 계좌로 입금할게요 (필수)</label>
+        <label class="chk"><input type="checkbox" name="agree"> 실제 판매가 아닌 과제용 시범 주문이고, 돈을 보내지 않는다는 걸 확인했어요 (필수)</label>
         <p class="msg" role="alert"></p>
-        <button class="btn btn-o w100" type="submit">주문하고 입금 계좌 받기</button>
+        <button class="btn btn-o w100" type="submit">시범 주문하기 (실제 결제 없음)</button>
       </form>
     </section>
 
     <section class="view" data-view="deposit" hidden>
-      <h2 tabindex="-1">입금 안내</h2>
-      <p class="sub">주문이 접수됐어요. 아래 계좌로 <b>입금자명 그대로</b> 입금해 주세요. 입금이 확인되면 ‘결제 완료’로 바뀌고 발송을 준비해요. 기한이 지나면 주문이 자동으로 취소돼요.</p>
+      <h2 tabindex="-1">시범 주문 완료</h2>
+      <div class="fake" role="alert"><b>입금하지 마세요</b><span>아래 은행·계좌번호·예금주는 <strong>모두 가짜</strong>예요. 실제 판매가 아니라서 돈을 보내도 상품을 받을 수 없어요. 주문 흐름은 판매자 화면에서 ‘입금 확인’을 눌러 보여 줘요.</span></div>
       <div class="bankbox">
-        <div><span>은행</span><b id="dp-bank"></b></div>
-        <div class="acct"><span>계좌번호</span><b id="dp-acct"></b></div>
-        <div><span>예금주</span><b id="dp-holder"></b></div>
-        <div><span>입금액</span><b id="dp-amt"></b></div>
+        <p class="bank-fake">가짜 계좌 · 입금 금지</p>
+        <div><span>은행 <i class="fake-tag">가짜</i></span><b id="dp-bank"></b></div>
+        <div class="acct"><span>계좌번호 <i class="fake-tag">가짜</i></span><b id="dp-acct"></b></div>
+        <div><span>예금주 <i class="fake-tag">가짜</i></span><b id="dp-holder"></b></div>
+        <div><span>예시 금액</span><b id="dp-amt"></b></div>
         <div><span>입금자명</span><b id="dp-name"></b></div>
         <div><span>입금 기한</span><b id="dp-due"></b></div>
       </div>
       <p class="msg" role="status"></p>
-      <div class="btn-row"><button class="btn btn-o" type="button" id="btn-copy-acct">계좌번호 복사</button><button class="btn btn-n" type="button" data-go="orders">주문 내역 보기</button></div>
+      <div class="btn-row"><button class="btn btn-n" type="button" data-go="orders">주문 내역 보기</button></div>
     </section>
 
     <section class="view" data-view="result" hidden>
@@ -309,6 +314,6 @@
 <script src="assets/ui.js?v=d8b04638"></script>
 
 
-<script type="module" src="assets/shop.js?v=f9481f67"></script>
+<script type="module" src="assets/shop.js?v=dafd45eb"></script>
 </body>
 </html>

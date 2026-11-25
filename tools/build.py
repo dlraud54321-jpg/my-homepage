@@ -120,7 +120,7 @@ def footer(R):
   <!-- TODO: 실제 문의 이메일로 바꾸세요. 개인 전화번호·집 주소는 넣지 마세요. -->
   <dl class="biz">
     <div><dt>상호</dt><dd>SETSIGN 세트사인</dd></div>
-    <div><dt>운영</dt><dd>대학 과제 프로젝트 · 시범 판매</dd></div>
+    <div><dt>운영</dt><dd>대학 과제 프로젝트 · <b>실제로 판매하지 않아요</b></dd></div>
     <div><dt>이메일</dt><dd>hello@example.com</dd></div>
     <div><dt>호스팅</dt><dd>Render(서버) · GitHub(소스)</dd></div>
   </dl>
@@ -486,7 +486,7 @@ def build():
 
     # 구매 -----------------------------------------------------------
     R = ''
-    price = part('sec-price.html').replace('<p class="eyebrow">가격</p>', '<p class="eyebrow">구매</p>').replace('class="sec orange price"', 'class="sec orange price ph-first"')
+    price = part('sec-price.html').replace('<p class="eyebrow">가격</p>', '<p class="eyebrow">구매</p><div class="fake" role="note"><b>실제 판매 사이트가 아니에요</b><span>SETSIGN은 대학 과제로 만든 가상의 제품이에요. 주문은 흐름을 보여 주는 시범 기능이고, 안내되는 계좌는 가짜예요. <strong>절대 돈을 보내지 마세요.</strong></span></div>').replace('class="sec orange price"', 'class="sec orange price ph-first"')
     flow = '''<section class="sec white"><p class="eyebrow">주문 방법</p><h2 class="big">계좌이체로<br>4단계.</h2>
 <ol class="tiles steps4 flow">
 <li><div><span class="st-n">01</span><b>구글로 로그인</b><span>처음이면 약관 동의 한 번으로 가입이 끝나요. 비밀번호는 받지 않아요.</span></div></li>

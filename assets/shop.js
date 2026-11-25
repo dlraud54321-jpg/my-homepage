@@ -205,8 +205,7 @@ function startOrder() {
 }
 function openOrder() {
   if (!user) return startOrder();
-  const f = $('#f-order'); if (!f.name.value && user.name) f.name.value = user.name;
-  if (!f.depositor.value && user.name) f.depositor.value = user.name;
+  const f = $('#f-order');   // 시범 사이트라 실제 이름을 미리 채우지 않아요 (예시 정보를 적게)
   renderSum(); view('order');
   if (B.mode === 'live' && !B.cfg?.bankEnabled) say(f, '지금은 주문을 받을 수 없어요. 판매자가 입금 계좌를 준비 중이에요.');
 }
@@ -216,7 +215,7 @@ function showDeposit(o) {
   $('#dp-due').textContent = o.depositDue ? new Date(o.depositDue).toLocaleDateString('ko-KR') + '까지' : '';
   view('deposit');
 }
-$('#btn-copy-acct').addEventListener('click', async () => {
+$('#btn-copy-acct')?.addEventListener('click', async () => {
   const box = $('[data-view="deposit"]', shop), t = $('#dp-acct').textContent;
   try { await navigator.clipboard.writeText(t); say(box, '계좌번호를 복사했어요.'); } catch { say(box, '복사하지 못했어요. 계좌번호를 길게 눌러 복사해 주세요.'); }
 });
@@ -247,8 +246,8 @@ const fmtDay = d => d ? new Date(d).toLocaleDateString('ko-KR', { month:'long', 
 const mk = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
 let myOrders = [];
 function statusLine(o) {
-  if (o.status === 'WAITING_DEPOSIT') return `${fmtDay(o.depositDue)}까지 입금해 주세요`;
-  if (o.status === 'DONE') return '입금 확인 완료 · 배송 준비 중';
+  if (o.status === 'WAITING_DEPOSIT') return '시범 주문 · 입금하지 마세요 (가짜 계좌)';
+  if (o.status === 'DONE') return '판매자 확인 완료 (시범 주문 · 실제 배송 없음)';
   if (o.status === 'EXPIRED') return '입금 기한이 지나 주문이 멈췄어요';
   if (o.status === 'CANCELED') return (o.canceledBy === 'buyer' ? '직접 취소한 주문이에요' : '판매자가 취소했어요') + (o.cancelReason ? ` · 사유: ${o.cancelReason}` : '');
   return '';
@@ -275,8 +274,8 @@ function openDetail(id) {
   const [label, cls] = STATUS[o.status] || [o.status, 'ready'];
   $('#od-chip').replaceChildren(mk('span', 'badge ' + cls, label));
   const T = {
-    WAITING_DEPOSIT: ['입금을 기다리고 있어요', `${fmtDay(o.depositDue)}까지 아래 계좌로 입금자명 그대로 입금해 주세요. 판매자가 통장에서 확인하면 ‘결제 완료’로 바뀌어요.`],
-    DONE: ['결제가 확인됐어요', `${fmt(o.approvedAt)}에 입금이 확인됐어요. 상품을 준비해서 보내 드릴게요.`],
+    WAITING_DEPOSIT: ['시범 주문이 접수됐어요', '과제용 시범 사이트라 실제 결제는 없어요. 아래 계좌는 가짜이니 입금하지 마세요. 판매자 화면에서 ‘입금 확인’을 누르면 ‘결제 완료’로 바뀌어요.'],
+    DONE: ['결제 완료로 바뀌었어요', `${fmt(o.approvedAt)}에 판매자가 확인했어요. 시범 주문이라 실제로 배송되지는 않아요.`],
     EXPIRED: ['입금 기한이 지났어요', '기한 안에 입금이 확인되지 않아 주문이 멈췄어요. 필요하면 다시 주문해 주세요.'],
     CANCELED: ['주문이 취소됐어요', `${fmt(o.canceledAt)}에 ${o.canceledBy === 'buyer' ? '직접 취소했어요.' : '판매자가 주문을 취소했어요.'}`],
   }[o.status] || [label, ''];
@@ -294,18 +293,20 @@ function openDetail(id) {
   if (o.status === 'WAITING_DEPOSIT' && o.bank) {
     const box = mk('div', 'bankbox');
     const line = (k, v, c) => { const d = mk('div', c || ''); d.append(mk('span', '', k), mk('b', '', v)); box.append(d); };
-    line('은행', o.bank.bank); line('계좌번호', o.bank.account, 'acct'); line('예금주', o.bank.holder);
-    line('입금액', won(o.amount)); line('입금자명', o.depositor || ''); line('입금 기한', fmtDay(o.depositDue) + '까지');
+    box.append(mk('p', 'bank-fake', '가짜 계좌 · 입금 금지'));
+    const fk = (k, v, c) => { const d = mk('div', c || ''); const sp = mk('span', '', k + ' '); sp.append(mk('i', 'fake-tag', '가짜')); d.append(sp, mk('b', '', v)); box.append(d); };
+    fk('은행', o.bank.bank); fk('계좌번호', o.bank.account, 'acct'); fk('예금주', o.bank.holder);
+    line('예시 금액', won(o.amount)); line('입금자명', o.depositor || ''); line('입금 기한', fmtDay(o.depositDue) + '까지');
     extra.append(box);
   }
   if (o.status === 'CANCELED') {
     const n = mk('div', 'od-note');
     n.append(mk('b', '', o.canceledBy === 'buyer' ? '직접 취소한 주문이에요' : '판매자가 취소한 주문이에요'));
     if (o.cancelReason) n.append(mk('span', '', `사유: ${o.cancelReason}`), mk('br'));
-    n.append(mk('span', '', '이미 입금하셨다면 주문번호와 함께 문의해 주세요. 확인 후 환불해 드려요.'));
+    n.append(mk('span', '', '과제용 시범 주문이라 실제 결제·환불은 없어요.'));
     extra.append(n);
   }
-  if (o.status === 'EXPIRED') { const n = mk('div', 'od-note'); n.append(mk('b', '', '이미 입금하셨나요?'), mk('span', '', '판매자가 통장을 확인하면 ‘결제 완료’로 바뀌어요. 늦어지면 주문번호와 함께 문의해 주세요.')); extra.append(n); }
+  if (o.status === 'EXPIRED') { const n = mk('div', 'od-note'); n.append(mk('b', '', '시범 주문이에요'), mk('span', '', '실제 결제가 없는 과제용 주문이라 입금할 필요가 없어요.')); extra.append(n); }
   // 주문 정보
   const info = $('#od-info'); info.replaceChildren();
   const sh = o.shipping || {};
@@ -317,7 +318,6 @@ function openDetail(id) {
   $('#od-msg').textContent = '';
   const acts = $('#od-acts'); acts.replaceChildren(); acts.nextElementSibling?.classList.contains('od-confirm') && acts.nextElementSibling.remove();
   const btn = (text, cls, fn) => { const b = mk('button', 'btn ' + cls, text); b.type = 'button'; b.addEventListener('click', fn); acts.append(b); return b; };
-  if (o.status === 'WAITING_DEPOSIT') btn('계좌번호 복사', 'btn-o', async () => { try { await navigator.clipboard.writeText(o.bank?.account || ''); $('#od-msg').textContent = '계좌번호를 복사했어요.'; } catch { $('#od-msg').textContent = '복사하지 못했어요. 계좌번호를 길게 눌러 복사해 주세요.'; } });
   if (o.status === 'EXPIRED' || o.status === 'CANCELED') { const b = btn('다시 주문하기', 'btn-o', () => {}); b.dataset.buy = ''; }
   if (o.status === 'WAITING_DEPOSIT' || o.status === 'EXPIRED') btn('주문 취소하기', 'btn-ghost', () => askCancel(o));
   if (o.status === 'CANCELED' || o.status === 'EXPIRED' || o.status === 'DONE') btn('문의하기', 'btn-ghost', () => { shop.close(); location.href = ROOT + 'contact.html'; });

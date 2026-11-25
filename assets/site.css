@@ -643,3 +643,17 @@ a.ss-card{text-decoration:none}
   .contact-h{white-space:normal}
   .tabs a{min-height:40px;padding:0 12px;font-size:14px}
 }
+
+/* 실제 판매가 아님을 알리는 안내 (로그인·가입·주문서·배송 정보·계좌) */
+.fake{display:grid;gap:6px;margin:0 0 18px;padding:16px 18px 16px 62px;position:relative;background:var(--orange);color:var(--navy);border:3px solid var(--navy);font-size:15px;line-height:1.55}
+.fake::before{content:'!';position:absolute;left:16px;top:14px;width:32px;height:32px;display:grid;place-items:center;background:var(--navy);color:var(--orange);font:400 24px/1 var(--en)}
+.fake b{font:400 22px/1.2 var(--disp)}
+.fake strong{font-weight:900;text-decoration:underline;text-underline-offset:3px}
+.fake.s{padding:12px 14px 12px 54px;font-size:14px}
+.fake.s::before{left:12px;top:12px;width:28px;height:28px;font-size:20px}
+.fake.s b{font-size:18px}
+.bank-fake{margin:0 0 8px;padding:8px 10px;background:var(--orange);color:var(--navy);font:400 20px/1.2 var(--disp);text-align:center;letter-spacing:.02em}
+.fake-tag{display:inline-block;margin-left:4px;padding:1px 6px;background:var(--orange);color:var(--navy);font-style:normal;font-weight:900;font-size:12px;vertical-align:2px}
+.bankbox .acct b{text-decoration:line-through;text-decoration-thickness:2px;text-decoration-color:var(--orange)}
+.orange .fake{background:var(--navy);color:var(--white);border-color:var(--navy);max-width:760px}
+.orange .fake::before{background:var(--orange);color:var(--navy)}
