@@ -1,0 +1,44 @@
+<section class="sec white try" id="try" aria-labelledby="try-h">
+  <div class="giant-out" aria-hidden="true" data-drift="-260">TRY</div>
+  <div class="try-grid">
+    <div class="try-copy">
+      <p class="eyebrow">직접 해 보기</p>
+      <h2 class="big" id="try-h">눌러 봐요.<br>말은 필요 없어요.</h2>
+      <p class="lede">버튼을 누르면 스크롤 때와 같은 모션이 나와요. 물병은 좌우로 드래그해서 돌려 볼 수 있어요.</p>
+      <div class="ctrl" role="group" aria-label="3D 물병 조작">
+        <button class="btn btn-n" type="button" data-act="pull" aria-pressed="false">카드 뽑기</button>
+        <button class="btn btn-o" type="button" data-act="swap">바꿔 꽂기</button>
+        <div class="seg" role="group" aria-label="밴드 사이즈">
+          <button type="button" data-size="0" aria-pressed="true" aria-label="S 사이즈, 캡슐형 쉐이커">S</button>
+          <button type="button" data-size="1" aria-pressed="false" aria-label="L 사이즈, 기본형 쉐이커">L</button>
+        </div>
+        <button class="btn btn-ghost" type="button" data-act="explode" aria-pressed="false">분해 보기</button>
+      </div>
+      <div class="water">
+        <label class="water-l" for="water-r"><span>쉐이커 속 물</span><b id="water-v">250mL</b></label>
+        <input type="range" id="water-r" min="0" max="700" step="10" value="250" aria-describedby="stab">
+        <div class="stab" id="stab" aria-live="polite">
+          <div><small>무게중심 치우침</small><b id="stab-x">0.0mm</b><span id="stab-x2">균형 패드가 없으면 0.0mm</span></div>
+          <div><small>버티는 기울기</small><b id="stab-t">0°</b><span id="stab-t2">균형 패드가 없으면 0°</span></div>
+        </div>
+        <p class="fine"><b id="stab-basis"></b><br>물을 빼 보세요. 거의 비어도 포켓 쪽으로 쏠리지 않아요. 설계값으로 계산한 추정치예요.</p>
+        <p class="warn-s">일회용 생수병은 계산과 달리 벽이 얇아 찌그러지고 밴드가 미끄러져요. 쉐이커·텀블러에 써 주세요.</p>
+      </div>
+      <p class="now" aria-live="polite">앞 칸 <b id="now-front">같이 써요</b> · 뒤 칸 <b id="now-back">세트 중</b></p>
+      <p class="chips-label" id="chips-l">앞 칸에 꽂을 카드 고르기</p>
+      <div class="chips" role="group" aria-labelledby="chips-l">
+        <button class="chip" type="button" data-card="together" aria-pressed="true">같이 써요</button>
+        <button class="chip" type="button" data-card="set" aria-pressed="false">세트 중</button>
+        <button class="chip" type="button" data-card="left2" aria-pressed="false">2세트 남음</button>
+        <button class="chip" type="button" data-card="last" aria-pressed="false">마지막 세트</button>
+        <button class="chip" type="button" data-card="away" aria-pressed="false">잠깐 비움</button>
+        <button class="chip" type="button" data-card="spot" aria-pressed="false">스팟 가능</button>
+      </div>
+    </div>
+    <div class="stage" id="a-try" data-stage data-bg="white" tabindex="0" role="img" aria-label="조작할 수 있는 3D 물병(AI 생성). 좌우로 드래그하거나 화살표 키로 돌려 볼 수 있어요.">
+      <span class="ring" aria-hidden="true"></span>
+      <span class="ai-tag">AI 생성 3D</span>
+      <span class="hint" aria-hidden="true"><svg width="18" height="10" viewBox="0 0 18 10" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 1 1 5l4 4M13 1l4 4-4 4M1 5h16"/></svg>드래그</span>
+    </div>
+  </div>
+</section>

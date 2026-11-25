@@ -1,0 +1,40 @@
+<dialog class="quiz" id="quiz" aria-labelledby="quiz-title">
+  <div class="qz">
+    <div class="qz-top">
+      <p class="logo" id="quiz-title">SETSIGN <small>내향인 테스트</small></p>
+      <div class="qz-bar" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      <button class="x" type="button" data-quiz-close aria-label="테스트 닫기"><svg width="18" height="18" viewBox="0 0 18 18" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M2 2l14 14M16 2 2 16"/></svg></button>
+    </div>
+    <div class="qz-body">
+      <div class="qz-pane qz-start" data-pane="start">
+        <p class="qz-friend" id="qz-friend" hidden></p>
+        <h2>나는 내향인<br><span>몇 퍼센트?</span></h2>
+        <p>질문 300개 중에서 매번 다른 10개가 나와요. 깊이 생각하지 말고, 평소의 나와 더 가까운 쪽을 고르세요. 재미로 보는 테스트라 정답은 없고, 답은 어디에도 보내지 않아요.</p>
+        <div class="cta"><button class="btn btn-o" type="button" id="qz-go">시작하기</button></div>
+      </div>
+      <div class="qz-pane" data-pane="q" hidden>
+        <p class="qz-no" aria-hidden="true"><b id="qz-n">01</b>/<span id="qz-tot">10</span></p>
+        <h2 class="qz-q" id="qz-q" tabindex="-1"></h2>
+        <p class="qz-hint" id="qz-hint"></p>
+        <ul class="qz-opts" id="qz-opts"></ul>
+        <div class="qz-nav"><button class="link" type="button" id="qz-back">← 이전 질문</button><span id="qz-count" class="sr" aria-live="polite"></span></div>
+      </div>
+      <div class="qz-pane qz-res" data-pane="res" hidden>
+        <div>
+          <p class="eyebrow">내향인 지수</p>
+          <p class="qz-pct" role="img" id="qz-pct-wrap"><span id="qz-pct">0</span><small>%</small></p>
+          <div class="qz-meter" aria-hidden="true"><i id="qz-fill"></i></div>
+          <div class="qz-ends" aria-hidden="true"><span>말이 곧 카드</span><span>눈빛으로 대화</span></div>
+        </div>
+        <div>
+          <h2 id="qz-title" tabindex="-1"></h2>
+          <p class="qz-verdict" id="qz-verdict"></p>
+          <p id="qz-desc"></p>
+          <p id="qz-card"></p>
+          <div class="cta"><button class="btn btn-o" type="button" data-buy id="qz-buy">주문하기</button><button class="btn btn-ghost" type="button" id="qz-share">결과 공유하기</button><button class="btn btn-ghost" type="button" id="qz-again">다시 하기</button></div>
+          <p class="fine" id="qz-msg" role="status" style="margin-top:16px">재미로 보는 테스트예요. 심리 검사가 아니에요.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</dialog>

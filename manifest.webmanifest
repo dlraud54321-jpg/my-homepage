@@ -10,11 +10,34 @@
   "background_color": "#0E1240",
   "theme_color": "#0E1240",
   "icons": [
-    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
-    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
   ],
   "shortcuts": [
-    { "name": "내 물병 사이즈 찾기", "short_name": "사이즈 찾기", "url": "./index.html#fit" },
-    { "name": "내향인 테스트", "short_name": "테스트", "url": "./index.html#test" }
+    {
+      "name": "내 물병 사이즈 찾기",
+      "short_name": "사이즈 찾기",
+      "url": "./size.html#fit"
+    },
+    {
+      "name": "내향인 테스트",
+      "short_name": "테스트",
+      "url": "./test.html"
+    },
+    {
+      "name": "영상 보기",
+      "short_name": "영상",
+      "url": "./videos.html"
+    }
   ]
 }

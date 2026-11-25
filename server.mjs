@@ -18,7 +18,9 @@
 // HTTPS, 세션 저장소(재시작해도 유지), 요청 횟수 제한 등을 갖춰 주세요.
 
 import http from 'node:http';
-import { readFile, writeFile } from 'node:fs/promises';
+import { readFile, writeFile, stat } from 'node:fs/promises';
+import { createReadStream } from 'node:fs';
+import path from 'node:path';
 import { existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { randomBytes, randomUUID, timingSafeEqual, createPublicKey, verify as cryptoVerify } from 'node:crypto';
@@ -312,12 +314,45 @@ const routes = {
 
 /* ---------- 서버 ---------- */
 const here = name => new URL('./' + name, import.meta.url);
-const STATIC = {
-  '/manifest.webmanifest': ['manifest.webmanifest', 'application/manifest+json; charset=utf-8'],
-  '/sw.js': ['sw.js', 'text/javascript; charset=utf-8'],
-  '/admin.html': ['admin.html', 'text/html; charset=utf-8'],
-  '/icon-192.png': ['icon-192.png', 'image/png'], '/icon-512.png': ['icon-512.png', 'image/png'],
+// 공개 파일: 이 폴더들 안의, 아래 확장자만 내보내요 (server.mjs·data.json·설정 파일은 절대 안 나가요)
+const MIME = {
+  '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8', '.js': 'text/javascript; charset=utf-8',
+  '.webmanifest': 'application/manifest+json; charset=utf-8', '.png': 'image/png', '.jpg': 'image/jpeg',
+  '.svg': 'image/svg+xml', '.mp4': 'video/mp4', '.ico': 'image/x-icon',
 };
+const PUBLIC_DIRS = new Set(['', 'assets', 'cards', 'size', 'how', 'product', 'videos']);
+const ALIAS = { '/': '/index.html', '/privacy': '/privacy.html', '/terms': '/terms.html', '/refund': '/refund.html' };
+const ROOT_DIR = path.dirname(fileURLToPath(import.meta.url));
+function staticFile(pathname) {
+  let p = ALIAS[pathname] || pathname;
+  try { p = decodeURIComponent(p); } catch { return null; }
+  if (p.includes('\0') || p.includes('..') || p.includes('\\') || /\/\./.test(p)) return null;
+  if (!path.extname(p)) p = p.replace(/\/$/, '') + '.html';          // /product → /product.html
+  const ext = path.extname(p).toLowerCase();
+  if (!MIME[ext]) return null;
+  const rel = p.replace(/^\/+/, ''), dir = path.dirname(rel) === '.' ? '' : path.dirname(rel);
+  if (!PUBLIC_DIRS.has(dir)) return null;
+  return { file: path.join(ROOT_DIR, rel), type: MIME[ext], ext };
+}
+async function serveStatic(req, res, f, status = 200) {
+  let st; try { st = await stat(f.file); } catch { return false; }
+  if (!st.isFile()) return false;
+  const cache = f.ext === '.html' || f.file.endsWith('sw.js') ? 'no-cache' : f.ext === '.mp4' ? 'public, max-age=86400' : 'public, max-age=3600';
+  const headers = { ...pageHeaders(f.type), 'Cache-Control': cache, 'Accept-Ranges': 'bytes', 'Last-Modified': st.mtime.toUTCString() };
+  // 영상은 일부분씩 요청해요 (Range). 휴대폰 Safari는 이게 없으면 재생하지 않아요
+  const m = /^bytes=(\d*)-(\d*)$/.exec(req.headers.range || '');
+  if (m && status === 200) {
+    let start = m[1] === '' ? st.size - Number(m[2]) : Number(m[1]);
+    let end = m[1] === '' || m[2] === '' ? st.size - 1 : Math.min(Number(m[2]), st.size - 1);
+    if (!(start >= 0 && start <= end)) { res.writeHead(416, { 'Content-Range': `bytes */${st.size}` }); res.end(); return true; }
+    res.writeHead(206, { ...headers, 'Content-Range': `bytes ${start}-${end}/${st.size}`, 'Content-Length': end - start + 1 });
+    if (req.method === 'HEAD') { res.end(); return true; }
+    createReadStream(f.file, { start, end }).pipe(res); return true;
+  }
+  res.writeHead(status, { ...headers, 'Content-Length': st.size });
+  if (req.method === 'HEAD') { res.end(); return true; }
+  createReadStream(f.file).pipe(res); return true;
+}
 const send = (res, status, data) => {
   res.writeHead(status, { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' });
   res.end(JSON.stringify(data));
@@ -334,20 +369,17 @@ if (!existsSync(INDEX)) {
 const server = http.createServer(async (req, res) => {
   const url = new URL(req.url, 'http://localhost');
   try {
-    if (req.method === 'GET' && STATIC[url.pathname]) {
-      const [file, type] = STATIC[url.pathname];
-      res.writeHead(200, pageHeaders(type));
-      return res.end(await readFile(here(file)));
-    }
     if (url.pathname.startsWith('/api/')) {
       const handler = routes[`${req.method} ${url.pathname}`];
       if (!handler) throw new HttpError(404, '찾을 수 없어요.');
       if (req.method === 'POST' && req.headers.origin && new URL(req.headers.origin).host !== req.headers.host) throw new HttpError(403, '허용되지 않은 요청이에요.');
       return send(res, 200, await handler(req, res));
     }
-    if (req.method === 'GET' || req.method === 'HEAD') {          // 그 밖의 주소는 모두 홈페이지로 (예: /, /index.html, /?pay=success)
-      res.writeHead(200, pageHeaders('text/html; charset=utf-8'));
-      return res.end(req.method === 'HEAD' ? undefined : await readFile(INDEX));
+    if (req.method === 'GET' || req.method === 'HEAD') {          // 페이지·이미지·영상. 없는 주소는 404 페이지
+      const f = staticFile(url.pathname);
+      if (f && await serveStatic(req, res, f)) return;
+      if (await serveStatic(req, res, { file: path.join(ROOT_DIR, '404.html'), type: MIME['.html'], ext: '.html' }, 404)) return;
+      throw new HttpError(404, '찾을 수 없어요.');
     }
     throw new HttpError(404, '찾을 수 없어요.');
   } catch (e) {

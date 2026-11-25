@@ -57,12 +57,45 @@ BANK_NAME=○○은행 BANK_ACCOUNT=000-0000-0000 BANK_HOLDER=예금주 ADMIN_TO
 - 무료 서버의 회원·주문 데이터는 재배포하거나 잠들면 지워져요. 실제 판매 전에는 데이터베이스를 연결하세요.
 - `render.yaml`의 계좌·설정 값은 `sync: false`라서, 대시보드에서 넣은 값을 배포 때 덮어쓰지 않아요.
 
+## 페이지 구성
+
+메뉴 10개가 각각 다른 페이지예요. 메뉴는 어느 화면에서나 위에 고정돼 있어서 모든 페이지가 한 번에 열려요.
+
+| 메뉴 | 파일 | 상세페이지 |
+|---|---|---|
+| 홈 | `index.html` (3D 물병, 스크롤 사용법, 직접 해 보기) | |
+| 제품 | `product.html` | `product/band.html`, `pocket.html`, `balance-pad.html`, `pet-bottle.html` |
+| 사용법 | `how.html` | `how/step-1.html` ~ `step-4.html` |
+| 카드 | `cards.html` | `cards/together.html`, `set.html`, `left2.html`, `last.html`, `away.html`, `spot.html` |
+| 사이즈 | `size.html` (사이즈 찾기) | `size/s.html`, `size/l.html` |
+| 내향인 테스트 | `test.html` | |
+| 영상 | `videos.html` | |
+| 구매 | `shop.html` | |
+| FAQ | `faq.html` | |
+| 문의 | `contact.html` (QR코드) | |
+
+약관: `terms.html`, `privacy.html`, `refund.html` · 없는 주소: `404.html`
+
+## 고치는 법
+
+페이지 HTML은 `tools/build.py`가 만들어요. 문구를 바꿀 때는 `tools/build.py`(상세페이지 내용)나 `tools/parts/`(섹션 조각)를 고친 뒤 실행하세요.
+
+```bash
+python3 tools/build.py
+```
+
 ## 파일
 
-- `index.html` — 홈페이지 전체 (3D, 내향인 테스트, 구글 로그인, 주문·계좌 안내 화면)
+- `assets/site.css` — 전체 디자인 (휴대폰·태블릿·PC 반응형)
+- `assets/ui.js` — 스크롤 연출, 등장 효과, 앱 설치
+- `assets/shop.js` — 구글 로그인, 주문서, 계좌 안내, 주문 내역, 사이즈 찾기
+- `assets/quiz.js` — 내향인 테스트 (질문 300개)
+- `assets/bottle3d.js` — 3D 물병 (홈)
+- `assets/qr-setsign.png`, `qr-setsign.svg` — 사이트로 이동하는 정적 QR코드 (만료 없음)
+- `videos/` — 숏폼 3편 + 60초 소개 영상 (세로 1080×1920, AI 생성)
 - `admin.html` — 판매자용 주문 관리 (입금 확인·취소)
-- `server.mjs` — 구글 로그인 검증·주문·입금 확인 API, 외부 패키지 없음
+- `server.mjs` — 구글 로그인 검증·주문·입금 확인 API, 페이지·영상 전송, 외부 패키지 없음
 - `render.yaml`, `package.json` — Render 배포 설정
 - `manifest.webmanifest`, `sw.js`, `icon-192.png`, `icon-512.png` — 앱 설치(PWA)
 
-페이지의 3D 쉐이커·카드·일러스트는 AI로 만든 그래픽이에요.
+사이트의 3D 쉐이커·카드·일러스트·영상은 AI로 만든 그래픽이에요. 글꼴은 Black Han Sans·Anton·Noto Sans KR(SIL OFL), 3D는 three.js(MIT)를 써요. 영상 배경음은 코드로 직접 합성했어요.

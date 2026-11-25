@@ -1,0 +1,436 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>SETSIGN 소개 영상</title>
+<style>
+@font-face{font-family:'BHS';src:url(fonts/BlackHanSans-Regular.ttf)}
+@font-face{font-family:'Anton';src:url(fonts/Anton-Regular.ttf)}
+:root{--n:#0E1240;--o:#FF5A1F;--w:#F5F5F0}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1080px;height:1920px;overflow:hidden;background:var(--n)}
+body{font-family:'Noto Sans CJK KR','Noto Sans KR',sans-serif;color:var(--w);word-break:keep-all}
+#stage{position:relative;width:1080px;height:1920px;overflow:hidden}
+#bg{position:absolute;inset:0;background:var(--n)}
+#world{position:absolute;inset:0;transform-origin:540px 960px}
+.L{position:absolute;will-change:transform,opacity;opacity:0;white-space:nowrap}
+.bhs{font-family:'BHS',sans-serif;line-height:1.02;letter-spacing:-.01em}
+.ant{font-family:'Anton',sans-serif;line-height:1}
+.c{display:inline-block;will-change:transform,opacity}
+.kick{font-weight:900;font-size:54px;color:var(--o);letter-spacing:.02em}
+.body{font-weight:700;font-size:46px;line-height:1.45}
+#bgword{position:absolute;right:-140px;top:-80px;font-family:'Anton';font-size:520px;line-height:.86;color:transparent;-webkit-text-stroke:3px rgba(255,90,31,.55);writing-mode:vertical-rl;opacity:0}
+#wipe{position:absolute;left:0;top:0;width:1080px;height:1920px;background:var(--o);transform:translateX(-110%)}
+#wipe2{position:absolute;left:0;top:0;width:1080px;height:1920px;background:var(--n);transform:translateX(-110%)}
+#mark{position:absolute;left:60px;top:70px;font-family:'Anton';font-size:52px;letter-spacing:.03em}
+#mark small{font-family:'Noto Sans CJK KR';font-weight:900;font-size:24px;color:var(--o);margin-left:12px;letter-spacing:0;vertical-align:8px}
+#ai{position:absolute;right:48px;bottom:56px;padding:8px 14px;border:2.5px solid currentColor;font-weight:900;font-size:26px;letter-spacing:.04em}
+#sh,#cap{overflow:visible}
+#sh{position:absolute;left:0;top:0;width:588px;height:1120px;transform-origin:294px 560px;opacity:0}
+#cap{position:absolute;left:0;top:0;width:420px;height:900px;transform-origin:210px 450px;opacity:0}
+.bubble{position:relative;width:820px;height:360px;border:12px solid var(--n);border-radius:180px;display:flex;align-items:center;justify-content:center;font-family:'BHS';font-size:110px;color:var(--n);background:#fff}
+.bubble::after{content:'';position:absolute;left:140px;bottom:-70px;width:90px;height:90px;background:#fff;border-left:12px solid var(--n);border-bottom:12px solid var(--n);transform:skewY(-30deg) rotate(-10deg)}
+#slash{position:absolute;left:90px;top:860px;width:900px;height:44px;background:var(--o);transform-origin:0 50%;transform:rotate(-12deg) scaleX(0)}
+.lbl{display:flex;align-items:center;gap:18px;font-weight:900;font-size:44px}
+.lbl i{display:block;width:60px;height:5px;background:var(--o);transform-origin:0 50%}
+.step-n{font-family:'Anton';font-size:300px;line-height:.8;color:var(--o)}
+.bigcard{width:780px;height:492px;border-radius:34px;padding:48px 56px;display:flex;flex-direction:column;justify-content:space-between;box-shadow:18px 18px 0 rgba(14,18,64,.35)}
+.bigcard .top{display:flex;justify-content:space-between;font-family:'Anton';font-size:40px;letter-spacing:.04em}
+.bigcard .t{font-family:'BHS';font-size:150px;line-height:1}
+.bigcard .s{font-weight:900;font-size:44px}
+.chk{display:flex;align-items:center;gap:26px;font-weight:900;font-size:58px}
+.chk b{display:grid;place-items:center;width:72px;height:72px;background:var(--o);color:var(--n);font-size:46px;flex:none}
+.url{padding:22px 36px;background:var(--n);color:var(--w);font-family:'Anton';font-size:66px;letter-spacing:.02em}
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="bg"></div>
+  <div id="bgword">SETSIGN</div>
+  <div id="world">
+
+    <!-- S1 -->
+    <div class="L kick" id="s1k" style="left:90px;top:520px">헬스장에서,</div>
+    <div class="L bhs" id="s1a" style="left:80px;top:620px;font-size:200px">“같이</div>
+    <div class="L bhs" id="s1b" style="left:80px;top:830px;font-size:200px">쓰실래요?”</div>
+    <div class="L bhs" id="s1c" style="left:90px;top:520px;font-size:130px">이 한마디가</div>
+    <div class="L bhs" id="s1d" style="left:90px;top:680px;font-size:170px;color:var(--o)">제일<br>무거워요.</div>
+
+    <!-- S2 -->
+    <div class="L" id="s2bub" style="left:130px;top:700px"><div class="bubble">같이 쓰실래요?</div></div>
+    <div id="slash"></div>
+    <div class="L bhs" id="s2a" style="left:70px;top:1260px;font-size:150px;color:var(--n)">말하기 힘들면</div>
+    <div class="L bhs" id="s2b" style="left:60px;top:660px;font-size:330px;color:var(--n)">말 대신,</div>
+
+    <!-- S3 -->
+    <div class="L bhs" id="s3a" style="left:60px;top:170px;font-size:540px;color:var(--o)">꽂아.</div>
+    <div class="L ant" id="s3m" style="left:90px;top:1500px;font-size:150px;letter-spacing:.02em">SETSIGN</div>
+    <div class="L" id="s3s" style="left:96px;top:1670px;font-weight:900;font-size:48px">세트사인 · 물병 카드 밴드</div>
+
+    <!-- S4 -->
+    <div class="L bhs" id="s4h" style="left:80px;top:230px;font-size:140px">구조는<br><span style="color:var(--o)">이게 전부.</span></div>
+    <div class="L lbl" id="s4l1" style="left:520px;top:1085px"><i></i>실리콘 밴드</div>
+    <div class="L lbl" id="s4l2" style="left:520px;top:1372px"><i></i>2겹 카드 포켓</div>
+    <div class="L lbl" id="s4l3" style="left:520px;top:1660px"><i></i>문구 카드 6장</div>
+
+    <!-- S5 -->
+    <div class="L step-n" id="s5n" style="left:70px;top:215px;color:var(--o)">01</div>
+    <div class="L bhs" id="s5t" style="left:80px;top:480px;font-size:150px;color:var(--n)">끼운다</div>
+    <div class="L body" id="s5d" style="left:84px;top:660px;color:var(--n)">실리콘 밴드를 물병 가운데에 쭉.</div>
+
+    <!-- S6 -->
+    <div class="L bhs" id="s6h" style="left:80px;top:230px;font-size:140px;color:var(--n)">카드 6장,<br><span style="color:var(--w)">상황마다 한 장씩.</span></div>
+    <div class="L ant" id="s6n" style="left:60px;top:1330px;font-size:420px;color:var(--n);opacity:0">01</div>
+    <div class="L" id="s6card" style="left:150px;top:760px"><div class="bigcard" id="bc"><div class="top"><span>SETSIGN</span><span id="bcn">01</span></div><div><div class="t" id="bct">같이 써요</div><div class="s" id="bcs">교대로 쓰셔도 돼요</div></div></div></div>
+
+    <!-- S7 -->
+    <div class="L bhs" id="s7h" style="left:80px;top:220px;font-size:130px">쉐이커 굵기만<br><span style="color:var(--o)">보면 돼요.</span></div>
+    <div class="L" id="s7s" style="left:110px;top:1540px"><div class="ant" style="font-size:150px;color:var(--o)">S</div><div style="font-weight:900;font-size:40px">슬림·캡슐<br>지름 7.5–9cm</div></div>
+    <div class="L" id="s7l" style="left:620px;top:1540px"><div class="ant" style="font-size:150px;color:var(--o)">L</div><div style="font-weight:900;font-size:40px">와이드 쉐이커<br>지름 9–10.5cm</div></div>
+    <div class="L bhs" id="s7h2" style="left:80px;top:220px;font-size:130px">거의 빈 쉐이커도<br><span style="color:var(--o)">안 쓰러지게.</span></div>
+    <div class="L body" id="s7d" style="left:84px;top:1660px">뒷면 균형 패드가<br>포켓 무게를 맞받쳐요.</div>
+
+    <!-- S8 -->
+    <div class="L" id="s8bottle" style="left:380px;top:880px">
+      <svg width="210" height="504" viewBox="0 0 150 360"><path d="M58 8h34v26c0 10 18 22 18 46v250c0 14-8 22-22 22H62c-14 0-22-8-22-22V80c0-24 18-36 18-46z" fill="none" stroke="#0E1240" stroke-width="7" stroke-linejoin="round"/><rect x="54" y="2" width="42" height="18" rx="4" fill="#0E1240"/><path d="M40 140h70M40 230h70" stroke="#0E1240" stroke-width="5" stroke-dasharray="10 9"/></svg>
+    </div>
+    <div class="L" id="s8x" style="left:560px;top:1020px"><svg width="340" height="340" viewBox="0 0 100 100"><path d="M10 10L90 90M90 10L10 90" stroke="#FF5A1F" stroke-width="13" stroke-linecap="square"/></svg></div>
+    <div class="L bhs" id="s8a" style="left:80px;top:230px;font-size:130px;color:var(--n)">일회용 생수병엔</div>
+    <div class="L bhs" id="s8b" style="left:80px;top:380px;font-size:150px;color:var(--o)">권장하지<br>않아요</div>
+    <div class="L body" id="s8c" style="left:84px;top:1520px;color:var(--n)">물이 줄면 밴드가 헐거워지고<br>가벼운 물병이 쓰러질 수 있어요.</div>
+    <div class="L" id="s8d" style="left:84px;top:1700px;padding:16px 26px;background:var(--n);color:var(--w);font-weight:900;font-size:46px">프로틴 쉐이커·텀블러에 써 주세요</div>
+
+    <!-- S9 -->
+    <div class="L" id="s9k" style="left:90px;top:300px;font-weight:900;font-size:54px;color:var(--o)">밴드 + 2겹 포켓 + 카드 6장</div>
+    <div class="L ant" id="s9p" style="left:70px;top:420px;font-size:330px;color:var(--o)"><span id="s9num">9,900</span><span class="bhs" style="font-size:150px;color:var(--w);margin-left:20px">원</span></div>
+    <div class="L chk" id="s9c1" style="left:90px;top:1000px"><b>✓</b>실리콘 밴드 1개 (S 또는 L)</div>
+    <div class="L chk" id="s9c2" style="left:90px;top:1130px"><b>✓</b>2겹 카드 포켓 1개</div>
+    <div class="L chk" id="s9c3" style="left:90px;top:1260px"><b>✓</b>문구 카드 6장</div>
+    <div class="L" id="s9f" style="left:90px;top:1460px;font-weight:700;font-size:40px;opacity:.85">쉐이커는 포함되지 않아요 · 결제는 계좌이체로</div>
+
+    <!-- S10 -->
+    <div class="L bhs" id="s10a" style="left:70px;top:330px;font-size:250px;color:var(--n)">말 대신,</div>
+    <div class="L bhs" id="s10b" style="left:70px;top:590px;font-size:330px;color:var(--w)">꽂아.</div>
+    <div class="L ant" id="s10m" style="left:80px;top:1330px;font-size:130px;color:var(--n)">SETSIGN</div>
+    <div class="L" id="s10s" style="left:86px;top:1480px;font-weight:900;font-size:44px;color:var(--n)">세트사인 · 물병 카드 밴드</div>
+    <div class="L url" id="s10u" style="left:80px;top:1580px">setsign.onrender.com</div>
+    <div class="L" id="s10q" style="left:680px;top:930px;text-align:center"><div style="background:#fff;padding:16px;border:6px solid var(--n)"><img src="qr.svg" width="290" height="290" style="display:block"></div><div style="margin-top:14px;font-weight:900;font-size:36px;color:var(--n)">찍으면 바로 열려요</div></div>
+    <div class="L" id="tag" style="left:60px;top:150px;padding:10px 18px;background:var(--o);color:var(--n);font-weight:900;font-size:34px"></div>
+
+    <!-- 쉐이커 (L, 기본형) -->
+    <svg id="sh" viewBox="0 0 420 800">
+      <defs><clipPath id="pk"><rect x="118" y="404" width="184" height="118" rx="8"/></clipPath></defs>
+      <g id="shAll">
+        <path d="M150 34c0-30 120-30 120 0" fill="none" stroke="#0E1240" stroke-width="12"/>
+        <rect x="95" y="28" width="230" height="64" rx="18" fill="#0E1240" stroke="#8E93C8" stroke-width="3"/>
+        <rect x="78" y="84" width="264" height="50" rx="10" fill="#FF5A1F"/>
+        <path id="shBody" d="M82 134H338L321 738Q319 772 288 772H132Q101 772 99 738Z" fill="#FFFFFF" stroke="#0E1240" stroke-width="7" stroke-linejoin="round"/>
+        <path id="shWater" d="M95 600H325L321 738Q319 772 288 772H132Q101 772 99 738Z" fill="#0E1240" opacity=".14"/>
+        <g stroke="#0E1240" stroke-width="5" opacity=".55"><path d="M108 230h34M108 310h22M108 390h34M108 630h34M108 700h22"/></g>
+        <g font-family="Anton" font-size="20" fill="#0E1240" opacity=".55"><text x="150" y="237">700 ML</text><text x="150" y="637">300</text></g>
+        <g id="kit">
+          <g id="band">
+            <rect x="86" y="396" width="248" height="134" rx="6" fill="#232968" stroke="#8E93C8" stroke-width="3"/>
+            <rect x="88" y="398" width="244" height="12" fill="#353C8A"/><rect x="88" y="516" width="244" height="12" fill="#353C8A"/>
+          </g>
+          <g id="cards">
+            <g id="cardB"><rect x="126" y="406" width="168" height="108" rx="9" fill="#F5F5F0" stroke="#0E1240" stroke-width="3"/><text id="cBt" x="210" y="468" text-anchor="middle" font-family="BHS" font-size="34" fill="#0E1240">세트 중</text><text x="138" y="426" font-family="Anton" font-size="12" fill="#0E1240">SETSIGN</text></g>
+            <g id="cardA"><rect x="126" y="414" width="168" height="108" rx="9" fill="#FF5A1F" stroke="#0E1240" stroke-width="3"/><text id="cAt" x="210" y="476" text-anchor="middle" font-family="BHS" font-size="34" fill="#0E1240">같이 써요</text><text x="138" y="434" font-family="Anton" font-size="12" fill="#0E1240">SETSIGN</text></g>
+          </g>
+          <g id="cardOut"></g>
+          <g id="pocket"><rect x="116" y="402" width="188" height="122" rx="9" fill="rgba(245,245,240,.10)" stroke="#8E93C8" stroke-width="3"/><path d="M128 410h60" stroke="#fff" stroke-width="4" opacity=".55" stroke-linecap="round"/></g>
+        </g>
+      </g>
+    </svg>
+
+    <!-- 캡슐형 쉐이커 (S) -->
+    <svg id="cap" viewBox="0 0 420 900">
+      <rect x="140" y="20" width="140" height="56" rx="16" fill="#232968" stroke="#8E93C8" stroke-width="3"/>
+      <path d="M90 250C90 120 140 72 210 72S330 120 330 250V650C330 780 280 828 210 828S90 780 90 650Z" fill="#FFFFFF" stroke="#0E1240" stroke-width="7"/>
+      <rect x="90" y="190" width="240" height="22" fill="#FF5A1F"/>
+      <rect x="90" y="370" width="240" height="134" rx="6" fill="#232968" stroke="#8E93C8" stroke-width="3"/>
+      <rect x="118" y="378" width="184" height="118" rx="9" fill="#FF5A1F" stroke="#8E93C8" stroke-width="3"/>
+      <text x="210" y="448" text-anchor="middle" font-family="BHS" font-size="34" fill="#0E1240">스팟 가능</text>
+    </svg>
+  </div>
+
+  <div id="wipe"></div><div id="wipe2"></div>
+  <div id="mark">SETSIGN<small>세트사인</small></div>
+  <div id="ai">AI 생성</div>
+</div>
+
+<script>
+const N = '#0E1240', O = '#FF5A1F', W = '#F5F5F0';
+const $ = id => document.getElementById(id);
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const prog = (t, a, b) => clamp((t - a) / (b - a));
+const lerp = (a, b, p) => a + (b - a) * p;
+const E = {
+  out: p => 1 - Math.pow(1 - p, 3),
+  expo: p => p >= 1 ? 1 : 1 - Math.pow(2, -10 * p),
+  inOut: p => p < .5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2,
+  in: p => p * p * p,
+  back: p => { const c1 = 1.9, c3 = c1 + 1; return 1 + c3 * Math.pow(p - 1, 3) + c1 * Math.pow(p - 1, 2); },
+};
+// 감쇠 진동 (튕김)
+const spring = (p, k = 7, f = 3) => 1 - Math.exp(-k * p) * Math.cos(f * Math.PI * p);
+
+// 글자 단위로 쪼개기 (키네틱 타이포)
+function split(el) {
+  const walk = node => {
+    [...node.childNodes].forEach(n => {
+      if (n.nodeType === 3) {
+        const frag = document.createDocumentFragment();
+        for (const ch of n.textContent) { const s = document.createElement('span'); s.className = 'c'; s.textContent = ch === ' ' ? ' ' : ch; frag.append(s); }
+        n.replaceWith(frag);
+      } else if (n.nodeType === 1 && n.tagName !== 'BR') walk(n);
+    });
+  };
+  walk(el); return [...el.querySelectorAll('.c')];
+}
+const CH = {};
+['s1a','s1b','s1c','s1d','s2a','s2b','s3a','s3m','s4h','s5t','s6h','s7h','s7h2','s8a','s8b','s10a','s10b','s10m'].forEach(id => CH[id] = split($(id)));
+
+// 등장·퇴장 공통 처리. kind: up | pop | slam | left | right | fade | chars | charsPop
+function A(id, t, tin, tout, kind = 'up', o = {}) {
+  const el = $(id), d = o.d ?? .45, xd = o.xd ?? .28;
+  if (t < tin - .001 || t > tout) { el.style.opacity = 0; return 0; }
+  const p = prog(t, tin, tin + d), q = prog(t, tout - xd, tout);
+  let op = 1, tx = 0, ty = 0, sc = 1, rot = 0;
+  if (kind === 'chars' || kind === 'charsPop') {
+    const cs = CH[id], st = o.st ?? .035;
+    cs.forEach((c, i) => {
+      const pp = prog(t, tin + i * st, tin + i * st + d);
+      if (kind === 'chars') { const e = E.expo(pp); c.style.transform = `translateY(${(1 - e) * 110}%)`; c.style.opacity = pp > 0 ? 1 : 0; }
+      else { const e = E.back(pp); c.style.transform = `scale(${Math.max(0, e)}) rotate(${(1 - pp) * -14}deg)`; c.style.opacity = pp > 0 ? 1 : 0; }
+    });
+    el.style.clipPath = kind === 'chars' ? 'inset(-10% -5% -12% -5%)' : 'none';
+  } else {
+    const e = kind === 'slam' ? E.expo(p) : kind === 'pop' ? E.back(p) : E.out(p);
+    if (kind === 'up') { ty = (1 - e) * 90; op = p; }
+    if (kind === 'fade') op = p;
+    if (kind === 'pop') { sc = Math.max(0, e); op = p > 0 ? 1 : 0; }
+    if (kind === 'slam') { sc = lerp(2.4, 1, e); op = clamp(p * 3); }
+    if (kind === 'left') { tx = (1 - e) * -700; op = p > 0 ? 1 : 0; }
+    if (kind === 'right') { tx = (1 - e) * 900; op = p > 0 ? 1 : 0; }
+  }
+  // 퇴장: 위로 살짝 빠지며 사라짐
+  if (q > 0) { const e = E.in(q); op *= 1 - e; ty += -60 * e; }
+  el.style.opacity = op;
+  el.style.transform = `translate(${tx + (o.x || 0)}px,${ty + (o.y || 0)}px) scale(${sc * (o.s || 1)}) rotate(${rot + (o.r || 0)}deg)`;
+  return p;
+}
+const SCN = [0, 6, 10, 14, 18, 30, 40, 46, 50, 56, 60];
+const BG = [N, W, N, N, W, O, N, W, N, O];
+const sceneOf = t => { for (let i = SCN.length - 2; i >= 0; i--) if (t >= SCN[i]) return i; return 0; };
+const beatPulse = (t, amt = .03) => 1 + amt * Math.exp(-((t % .5) / .5) * 6);
+
+// 쉐이커 배치: 월드 좌표의 중심(x,y), 배율, 회전
+function placeShaker(x, y, s, r = 0, op = 1) { const el = $('sh'); el.style.opacity = op; el.style.transform = `translate(${x - 294}px,${y - 560}px) scale(${s}) rotate(${r}deg)`; }
+const setT = (id, x = 0, y = 0, s = 1, r = 0) => $(id).setAttribute('transform', `translate(${x} ${y}) rotate(${r} 210 460) scale(${s})`);
+
+let cardFront = 'A';
+function cardOrder(front) {
+  if (front === cardFront) return;
+  const g = $('cards'); if (front === 'A') g.append($('cardA')); else g.append($('cardB')); cardFront = front;
+}
+
+function render(t) {
+  const sc = sceneOf(t);
+  $('bg').style.background = BG[sc];
+  // 기본값 리셋
+  ['s1k','s1a','s1b','s1c','s1d','s2bub','s2a','s2b','s3a','s3m','s3s','s4h','s4l1','s4l2','s4l3','s5n','s5t','s5d','s6h','s6n','s6card','s7h','s7s','s7l','s7h2','s7d','s8bottle','s8x','s8a','s8b','s8c','s8d','s9k','s9p','s9c1','s9c2','s9c3','s9f','s10a','s10b','s10m','s10s','s10u','s10q'].forEach(id => $(id).style.opacity = 0);
+  $('sh').style.opacity = 0; $('cap').style.opacity = 0; $('slash').style.transform = 'rotate(-12deg) scaleX(0)';
+  ['band','pocket','cards','kit','cardA','cardB'].forEach(id => $(id).setAttribute('transform', ''));
+  $('shWater').setAttribute('transform', '');
+  cardOrder('A'); $('cAt').textContent = '같이 써요'; $('cBt').textContent = '세트 중';
+
+  // 카메라
+  let cx = 0, cy = 0, cs = 1, cr = 0;
+  const shake = (at, amp = 18, dur = .35) => { const p = prog(t, at, at + dur); if (p > 0 && p < 1) { const k = (1 - p) * amp; cx += Math.sin(t * 90) * k; cy += Math.cos(t * 77) * k; } };
+
+  // 배경 세로 글자
+  const navyScene = BG[sc] === N;
+  $('bgword').style.opacity = navyScene ? .9 : 0;
+  $('bgword').style.transform = `translateY(${-((t * 40) % 600)}px)`;
+
+  // 워드마크·AI 표시 색
+  $('mark').style.color = BG[sc] === N ? W : N;
+  $('mark').style.opacity = (sc === 2 && t > 12.4) || sc === 9 ? 0 : 1;
+  $('ai').style.color = BG[sc] === N ? W : N;
+
+  /* S1 0–6: 같이 쓰실래요? 그 말이 무겁다 */
+  if (sc === 0) {
+    A('s1k', t, .25, 2.9, 'up');
+    A('s1a', t, .75, 3.0, 'chars', { xd: .01 });
+    A('s1b', t, 1.25, 3.0, 'chars', { xd: .01 });
+    // 2.5부터 글자가 무게에 눌려 아래로 떨어짐
+    const fall = prog(t, 2.45, 3.0), fe = E.in(fall);
+    if (fall > 0) {
+      ['s1a','s1b'].forEach((id, k) => { const el = $(id); el.style.opacity = 1;
+        CH[id].forEach((c, i) => { const dl = clamp(fall * 1.4 - i * .05); c.style.transform = `translateY(${E.in(dl) * (1150 - k * 210)}px) rotate(${E.in(dl) * (i % 2 ? 9 : -7)}deg) scaleY(${1 - .2 * E.in(dl)})`; }); });
+    }
+    shake(3.0, 26, .45);
+    A('s1c', t, 3.25, 5.85, 'chars');
+    A('s1d', t, 3.75, 5.85, 'charsPop', { st: .05, d: .5 });
+    cs = 1 + t * .012;
+  }
+
+  /* S2 6–10: 말하기 힘들면 → 말 대신, */
+  if (sc === 1) {
+    A('s2bub', t, 6.0, 7.75, 'pop', { d: .5 });
+    const sl = E.expo(prog(t, 7.0, 7.25)); if (t < 7.75) $('slash').style.transform = `rotate(-12deg) scaleX(${sl})`;
+    shake(7.0, 14, .3);
+    A('s2a', t, 6.5, 7.75, 'up');
+    A('s2b', t, 8.0, 10, 'chars', { st: .06, xd: .01, d: .5 });
+    shake(8.0, 16, .3);
+    // 9.5부터 쉼표로 줌인 → 화면이 남색으로 덮임
+    const z = E.in(prog(t, 9.45, 10));
+    cs = lerp(1, 9, z); cx = lerp(0, -2200, z); cy = lerp(0, 120, z);
+  }
+
+  /* S3 10–14: 꽂아. 제품 등장 */
+  if (sc === 2) {
+    A('s3a', t, 10.0, 13.75, 'right', { d: .6 });
+    const enter = E.out(prog(t, 10.5, 11.2));
+    placeShaker(740, lerp(2200, 1120, enter), .92, lerp(-14, -4, enter));
+    // 카드가 옆 입구로 들어옴
+    const ci = E.expo(prog(t, 11.5, 11.9));
+    setT('cardA', lerp(260, 0, ci), 0); setT('cardB', lerp(260, 0, E.expo(prog(t, 11.25, 11.6))), 0);
+    shake(11.75, 12, .3);
+    A('s3m', t, 12.5, 14, 'chars', { st: .05, xd: .01 });
+    A('s3s', t, 12.9, 14, 'up', { xd: .01 });
+    cs = 1 + E.inOut(prog(t, 13.4, 14)) * .35; cy = -E.inOut(prog(t, 13.4, 14)) * 140;
+  }
+
+  /* S4 14–18: 구조 분해 */
+  if (sc === 3) {
+    A('s4h', t, 14.0, 17.8, 'chars', { st: .04 });
+    const ex = E.inOut(prog(t, 14.4, 15.2)) * (1 - E.inOut(prog(t, 17.0, 17.6)));
+    placeShaker(lerp(560, 280, ex), 1150, lerp(1.02, .92, ex), 0);
+    setT('band', ex * 310, ex * -190); setT('pocket', ex * 310, ex * 40); setT('cards', ex * 310, ex * 262);
+    [['s4l1', 14.9], ['s4l2', 15.3], ['s4l3', 15.7]].forEach(([id, a]) => { A(id, t, a, 17.0, 'left', { d: .5 }); const i = $(id).querySelector('i'); i.style.transform = `scaleX(${E.expo(prog(t, a + .2, a + .6))})`; });
+    cs = 1.02 + Math.sin(t * .8) * .01;
+  }
+
+  /* S5 18–30: 사용법 4단계 */
+  if (sc === 4) {
+    const steps = [
+      [18, '01', '끼운다', '실리콘 밴드를 물병 가운데에 쭉.'],
+      [21, '02', '뽑는다', '앞 칸 카드를 옆 입구로 쓱.'],
+      [24, '03', '바꿔 꽂는다', '뒤 칸 카드를 앞 칸으로.'],
+      [27, '04', '두면 끝', '벤치 옆에 세워 두세요.'],
+    ];
+    const k = Math.min(3, Math.floor((t - 18) / 3)), [a, n, ti, de] = steps[k];
+    if ($('s5n').textContent !== n) { $('s5n').textContent = n; $('s5t').textContent = ti; CH.s5t = split($('s5t')); $('s5d').textContent = de; }
+    A('s5n', t, a, a + 2.95, 'slam', { d: .4, xd: .15 });
+    A('s5t', t, a + .15, a + 2.95, 'chars', { xd: .15 });
+    A('s5d', t, a + .45, a + 2.95, 'up', { xd: .15 });
+    let x = 600, y = 1240, s = .92, r = 0;
+    if (k === 0) { const p = E.out(prog(t, 18.6, 19.6)); setT('kit', 0, lerp(-360, 0, p)); }
+    if (k === 1) { const p = E.inOut(prog(t, 21.6, 22.4)); setT('cardA', p * 250, 0, 1, p * 6); }
+    if (k === 2) {
+      const p1 = E.inOut(prog(t, 24.3, 24.9)), p2 = E.inOut(prog(t, 25.0, 25.7));
+      cardOrder(p2 > .5 ? 'B' : 'A');
+      setT('cardB', 0, p1 * 8); // 뒤 칸 카드가 앞으로
+      setT('cardA', lerp(250, 0, p2), lerp(0, -8, p2), 1, lerp(6, 0, p2));
+      if (p2 >= 1) cardOrder('B');
+    }
+    if (k === 3) { cardOrder('B'); const p = E.inOut(prog(t, 27.3, 28.4)); s = lerp(.92, .7, p); y = lerp(1240, 1300, p); }
+    placeShaker(x, y, s * beatPulse(t, .012), r);
+    cs = 1 + (k === 1 || k === 2 ? E.inOut(prog(t, a, a + .6)) * .045 : 0); cy = (k === 1 || k === 2) ? -30 * E.inOut(prog(t, a, a + .6)) : 0;
+  }
+
+  /* S6 30–40: 카드 6장 */
+  if (sc === 5) {
+    A('s6h', t, 30.0, 31.0, 'chars', { st: .03, xd: .2 });
+    const cards = [['같이 써요', '교대로 쓰셔도 돼요', O, N], ['세트 중', '지금 운동 중이에요', N, W], ['2세트 남음', '조금만 기다려 주세요', W, N], ['마지막 세트', '곧 자리 비워요', N, W], ['잠깐 비움', '물 마시고 올게요', W, N], ['스팟 가능', '보조 필요하면 불러 주세요', N, O]];
+    if (t >= 31) {
+      const i = Math.min(5, Math.floor((t - 31) / 1.5)), lt = t - 31 - i * 1.5, [ti, su, bg, fg] = cards[i];
+      const bc = $('bc'); bc.style.background = bg === O ? W : bg; bc.style.color = bg === O ? N : fg;
+      if (i === 0) { bc.style.background = N; bc.style.color = W; }
+      $('bct').textContent = ti; $('bcs').textContent = su; $('bcn').textContent = `0${i + 1} / 06`;
+      $('bct').style.color = i === 5 ? O : 'inherit';
+      const fl = clamp(lt / .3), e = E.back(fl);
+      const out = prog(lt, 1.32, 1.5);
+      const el = $('s6card'); el.style.opacity = 1;
+      el.style.transform = `translate(${(1 - E.out(fl)) * 260 - E.in(out) * 900}px,${(1 - E.out(fl)) * 40}px) rotate(${(1 - e) * 10 - out * 8}deg) scale(${.9 + .1 * Math.min(1, e)})`;
+      if (i === 5 && t > 39.5) el.style.transform = `translate(0,0) rotate(0) scale(${1 - E.in(prog(t, 39.6, 40)) * .2})`;
+      const nn = $('s6n'); nn.textContent = `0${i + 1}`; nn.style.opacity = .25 + .75 * E.out(clamp(lt / .25)); nn.style.transform = `translateY(${(1 - E.out(clamp(lt / .3))) * 80}px)`;
+    }
+    cs = 1 + Math.sin(t * 1.3) * .012;
+  }
+
+  /* S7 40–46: 사이즈와 안정성 */
+  if (sc === 6) {
+    A('s7h', t, 40.0, 42.9, 'chars', { st: .035, xd: .2 });
+    const pS = E.back(prog(t, 40.5, 41.0)), pL = E.back(prog(t, 41.0, 41.5));
+    const split = E.inOut(prog(t, 42.8, 43.4));
+    const capEl = $('cap'); capEl.style.opacity = t < 43.4 ? 1 : 0;
+    capEl.style.transform = `translate(${300 - 210 - split * 700}px,${1010 - 450}px) scale(${.85 * Math.max(0, pS)})`;
+    A('s7s', t, 40.7, 42.9, 'up'); A('s7l', t, 41.2, 42.9, 'up');
+    // L 쉐이커: 처음엔 오른쪽, 43초부터 가운데로 와서 기울였다가 버팀
+    const lx = lerp(760, 560, split), ls = lerp(.72, .85, split) * Math.max(0, pL);
+    let tilt = 0;
+    if (t > 43.6) { const pp = prog(t, 43.6, 45.6); tilt = 13 * Math.sin(Math.min(1, pp * 2.2) * Math.PI / 2) * (1 - spring(clamp((pp - .25) / .75), 5, 2.4)) ; if (pp > .25) tilt = 13 * (1 - spring((pp - .25) / .75, 5, 2.4)); else tilt = 13 * E.out(pp / .25); }
+    $('shWater').setAttribute('transform', 'translate(0 120)');
+    $('sh').style.transformOrigin = '420px 1080px';
+    placeShaker(lx, lerp(1020, 1150, split), ls, tilt);
+    A('s7h2', t, 43.1, 45.85, 'chars', { st: .035 });
+    A('s7d', t, 43.8, 45.85, 'up');
+  } else { $('sh').style.transformOrigin = '294px 560px'; }
+
+  /* S8 46–50: 일회용 생수병 경고 */
+  if (sc === 7) {
+    A('s8a', t, 46.0, 49.9, 'chars', { st: .03 });
+    A('s8b', t, 46.35, 49.9, 'charsPop', { st: .05 });
+    const b = $('s8bottle'); b.style.opacity = 1;
+    const fall = E.in(prog(t, 47.3, 47.75)), bounce = prog(t, 47.75, 48.2);
+    const ang = fall * 78 - (bounce > 0 ? Math.sin(bounce * Math.PI) * 8 * (1 - bounce) : 0);
+    b.style.transformOrigin = '160px 504px';
+    b.style.transform = `translate(${(1 - E.out(prog(t, 46.2, 46.7))) * 600}px, 0) rotate(${ang}deg)`;
+    shake(47.75, 16, .3);
+    A('s8x', t, 47.8, 49.9, 'pop', { d: .35 });
+    A('s8c', t, 48.0, 49.9, 'up');
+    A('s8d', t, 48.6, 49.9, 'left', { d: .4 });
+  }
+
+  /* S9 50–56: 가격 */
+  if (sc === 8) {
+    A('s9k', t, 50.1, 55.85, 'up');
+    A('s9p', t, 50.4, 55.85, 'slam', { d: .4 });
+    const v = Math.round(E.out(prog(t, 50.5, 51.5)) * 99) * 100; $('s9num').textContent = v.toLocaleString('en-US');
+    $('s9p').style.transform += ` scale(${beatPulse(t, .02)})`;
+    A('s9c1', t, 52.0, 55.85, 'left', { d: .4 }); A('s9c2', t, 52.5, 55.85, 'left', { d: .4 }); A('s9c3', t, 53.0, 55.85, 'left', { d: .4 });
+    A('s9f', t, 54.0, 55.85, 'fade');
+    shake(50.5, 10, .25);
+    cs = 1 + (t - 50) * .01;
+  }
+
+  /* S10 56–60: 마무리 */
+  if (sc === 9) {
+    A('s10a', t, 56.0, 60.5, 'chars', { st: .05 });
+    A('s10b', t, 56.5, 60.5, 'slam', { d: .45 });
+    shake(56.55, 20, .4);
+    A('s10q', t, 57.0, 60.5, 'pop', { d: .5 });
+    A('s10m', t, 57.4, 60.5, 'chars', { st: .05 });
+    A('s10s', t, 57.8, 60.5, 'up');
+    A('s10u', t, 58.2, 60.5, 'left', { d: .45 });
+    cs = 1 + (t - 56) * .008;
+  }
+
+  // 장면 전환 와이프 (컷 순간 화면을 덮었다 걷힘)
+  const wipe = (at, el, dir = 1) => { const p = prog(t, at - .22, at + .2); if (p <= 0 || p >= 1) return false; $(el).style.transform = `translateX(${lerp(-105, 105, E.inOut(p)) * dir}%)`; return true; };
+  $('wipe').style.transform = 'translateX(-110%)'; $('wipe2').style.transform = 'translateX(-110%)';
+  [6, 18, 40, 50].some(a => wipe(a, 'wipe')); [30, 46, 56].some(a => wipe(a, 'wipe2', -1));
+  if (t > 14 && t < 14.15) { $('wipe2').style.transform = `translateX(0)`; $('wipe2').style.opacity = 1 - prog(t, 14, 14.15); } else $('wipe2').style.opacity = 1;
+
+  $('world').style.transform = `translate(${cx}px,${cy}px) scale(${cs}) rotate(${cr}deg)`;
+}
+const TAG = new URLSearchParams(location.search).get('tag') || '';
+const render0 = render;
+window.render = t => { render0(t); const el = $('tag'); el.textContent = TAG; el.style.opacity = TAG ? 1 : 0; el.style.background = BG[sceneOf(t)] === O ? N : O; el.style.color = BG[sceneOf(t)] === O ? W : N; };
+window.ready = document.fonts.ready.then(() => Promise.all([document.fonts.load('100px BHS'), document.fonts.load('100px Anton'), document.fonts.load('900 40px "Noto Sans CJK KR"')]));
+</script>
+</body>
+</html>
